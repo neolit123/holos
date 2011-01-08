@@ -1,0 +1,8 @@
+.svn
+bin
+*.o
+*.so
+*.dll
+*.exe
+*.log
+holos_backup*.*

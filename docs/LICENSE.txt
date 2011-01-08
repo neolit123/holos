@@ -1,0 +1,185 @@
+================================================================================
+                Holos Library License, Version 1.0 (HLL) 28-09-2010
+================================================================================
+
+I. PROJECT DESCRIPTION
+
+    Project: Holos Library
+    Website: http://holos.googlecode.com/
+                            
+    Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
+
+================================================================================
+
+II. LICENSE INFORMATION
+
+    Everyone is permitted to copy and distribute verbatim copies
+    of this license document, but changing the license conditions is not
+    allowed.
+
+  * From here below, in sections III, IV and V:
+    - "The/This Library" or <the library> will be referring to the name of
+    this project.
+    - <library url> will be referring to this project's website.
+    - "The/This License" or "HLL" will be referring to the Holos Library
+    License.
+    
+================================================================================
+
+III. TERMS AND CONDITIONS
+
+                            HOLOS LIBRARY LICENSE
+        TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+    1. This Library contains FREE SOFTWARE and the copyright holders grant
+    permission for additional uses of the source code contained in this release
+    of the Library if licensed under the Holos Library License, applying either
+    version 1.0 of The License, or any later version of The License as published
+    by the copyright holders of version 1.0 of The License document
+    (LICENSE_HOLOS).
+        
+    2. The Library user is not allowed to change the authors or misinterpret
+    the origin of the source code included in The Library.
+    
+    3. Acknowledgement of the use of The Library in all projects is
+    OBLIGATORY, with the following text in any documents or visuals that are
+    part of a project distribution:
+      " <my project name> is using <the library>.
+        <library url> "
+        
+    4. The Library user is allowed to use, copy, link, modify and distribute 
+    under his own conditions binary object code versions of works based on The
+    Library, such as statically or dynamically linkable shared objects or
+    executables, UNLESS such are in conflict with The License or any other
+    used licenses.
+    
+    5. The Library user is not allowed to include source code from The Library
+    in COMMERCIAL project distributions where value is added to the code itself
+    and sold for a price with the exception of files which briefly describe The
+    Library interface.
+    
+    6. The License does not permit distribution of object code (binaries)
+    without providing its users with ALL THE SOURCE CODE from
+    The Library or additional code that was used in the production of the
+    object code in question. Notably that even if a similar condition does not
+    apply to third party source code protected by a different license, such
+    source code MUST BE DISTRIBUTED or MADE AVAILABLE aswell. In the case of
+    third party code which cannot be redistributed, a publicly accessable URL
+    web address MUST BE PROVIDED.
+    
+    7. As a special exception The License grants permission for a copy of The
+    Library to be maintained and distributed at any time, under either the GNU
+    General Public License or the GNU Lesser General Public License.
+    All files protected by The License must be modified with copyright 
+    notices that match the target license in such a copy.
+    
+    8. Any files that are considered documentation or code which generates
+    documentation and are part of The Library fall under this licensing
+    agreement and are protected by The License. As a special exception
+    The Library user is allowed to release a separate copy of the documentation
+    under the GNU Free Documentation License, while changing all the copyright
+    information accordingly.
+    
+    9. Any modifications that are made on The Library or its documentation
+    must be redistributed under The License, even if such modifications
+    are already released under the GNU General Public License, the
+    GNU Lesser General Public License or the GNU Free Documentation License
+    as a copy.
+
+    10. The following line of text must remain present in header files that
+    are an original part of The Library at all times and under any
+    licensing condition (GPL or LGPL):
+      "This file is part of <the library>."
+      
+    11. The License does not apply to files that are part of The Library
+    distribution, unless noted otherwise by a copyright notice.
+    
+    12. Neither the name of The Library nor the names of its authors and
+    contributors may be used to endorse or promote products derived from this
+    software without specific prior written permission.
+    
+    13. The Library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY, without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    
+================================================================================
+
+IV. IN CODE COPYRIGHT NOTICE
+
+  The following lines of text should be present in all files that contain source
+  code and are part of a library:
+  
+    ----------------------------------------------------------------------------
+
+    Copyright (c) <year> <authors>
+    This file is part of <library name>.
+    <website>
+
+    <library name> is free software: you can redistribute it and/or modify
+    it under the terms of the Holos Library License, either version 1.0
+    of the License, or (at your option) any later version.
+
+    <library name> is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See LICENSE_HOLOS for more details.
+
+    You should have received a copy of the Holos Library License
+    If not, see <http://holos.googlecode.com/>.
+    
+    ----------------------------------------------------------------------------
+
+================================================================================
+
+V. QUESTIONS AND ANSWERS
+
+  Q: What notable restrictions are there in the Holos Library License?
+  A:
+  - You cannot include the source code in a binary distribution if you are
+  selling it, but you must always make it available for users
+  (e.g. via download).
+  - Any modifications you have made on The Library should be released under
+  the Holos Library License. Please read III. 7, 8.
+  - You should not change the origin of the files contained in The Library.  
+  - You must notify of the use of The Library in all projects.
+  Please read III. 2, 3.  
+  
+  Q: Is it OK to use the VST SDK with this Library?
+  A: If you are using the Library with the VST SDK you should read the
+  Steinberg VST PlugIns SDK Licensing Agreement as you are not permitted
+  to modify the VST SDK or redistribute it. The VST SDK is also NOT FULLY
+  COMPATIBLE with the GNU GPL and therefore with a version of the Library
+  released under GPL (You cannot distribute binaries based on GPL code if you
+  do not distribute ALL the source code for them). Same does not apply if the
+  Library uses HLL.
+        
+  Q: Can I use this Library for my commercial binaries?
+  A: Yes, but you can only add value to binaries and sell them. You also must
+  provide a download location for ABSOLUTELY ALL the source code that was used
+  to create such. Please read III. 5, 6, 7.
+  
+  Q: Can i use LGPL or GPL code with The Library?
+  A: Yes you can. HLL also permits a (L)GPL copy/snapshot of of the Library to
+  be released at any given moment, but you will have to change the licensing
+  condition in all The Library files. Please read III. 7, 8, 9.
+  
+  Q: Is HLL a viral license like GPL?
+  A: No. Adding files to a HLL project distribution will not enforce the
+  license on them, but for a binary product the non-HLL licensed files will
+  have to be made available as well, otherwise there will be a violation
+  of the HLL licensing agreement. Please read III. 6.
+  
+  Q: Is HLL code compatible with MIT code for example?
+  A: Yes. HLL should be compatible with most known licenses, unless for example
+  one has a condition to FORCE the users to make their code closed source. 
+
+  Q: Can I use the HLL with my own library?
+  A: Yes. Just modify the lines on top of this document (section I) stating the
+  authors, project name and project web page. You should also copy and modify
+  the copyright notice from section IV in all files that are part of
+  your library.
+  
+  Q: Where can I ask more questions?
+  A: Please visit http://holos.googlecode.com/
+
+================================================================================
