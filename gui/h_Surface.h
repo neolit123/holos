@@ -21,9 +21,13 @@
 #define h_Surface_included
 //----------------------------------------------------------------------
 
-class h_Surface
-{
-};
+#ifdef H_WIN32
+  #include "gui/impl/h_Surface_Win32.h"
+#endif
+
+#ifdef H_LINUX
+  #include "gui/impl/h_Surface_Linux.h"
+#endif
 
 //----------------------------------------------------------------------
 #endif

@@ -21,6 +21,12 @@
 #define h_Descriptor_Included
 //----------------------------------------------------------------------
 
+#define df_None       0
+#define df_HasEditor  1
+#define df_IsSynth    2
+
+#include "lib/h_Rect.h"
+
 class h_Descriptor
 {
   public:
@@ -29,6 +35,9 @@ class h_Descriptor
     const char* m_Name;
     const char* m_Author;
     const char* m_Product;
+    //
+    int     m_Flags;
+    h_Rect  m_EditorRect;
 };
 
 //----------------------------------------------------------------------

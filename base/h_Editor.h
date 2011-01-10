@@ -27,12 +27,18 @@ class h_Editor
 {
   private:
     h_Window* m_Window;
+    h_Rect    m_Rect;
+
+  public:
+    inline h_Window* getWindow(void) { return m_Window; }
+    inline h_Rect    getRect(void)   { return m_Rect; }
 
   public:
 
     h_Editor(h_Instance* a_Instance)
       {
         m_Window = H_NULL;
+        m_Rect   = h_Rect(256,256);
       }
 
     virtual ~h_Editor()
@@ -40,15 +46,17 @@ class h_Editor
         if (m_Window) delete m_Window;
       }
 
+    //virtual
     void open(void* a_Parent)
       {
         if (!m_Window)
         {
-          m_Window = new h_Window(320,240,a_Parent);
+          m_Window = new h_Window(m_Rect,a_Parent);
           m_Window->show();
         }
       }
 
+    //virtual
     void close(void)
       {
         if (m_Window)
@@ -59,6 +67,7 @@ class h_Editor
         }
       }
 
+    //virtual
     void eventLoop(void)
       {
         if (m_Window)

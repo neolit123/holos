@@ -50,6 +50,8 @@
 //#define SPL float
 //#define STR h_String
 //#define REC h_Rect
+//#define COL h_Color;
+
 
 // platform
 // -----------------------------------------------------------------------------

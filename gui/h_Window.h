@@ -21,15 +21,6 @@
 #define h_Window_included
 //----------------------------------------------------------------------
 
-#include "gui/h_Widget.h"
-
-class h_Window_Base
-{
-  public:
-    h_Window_Base() {}
-    virtual ~h_Window_Base() {}
-};
-
 #ifdef H_WIN32
   #include "gui/impl/h_Window_Win32.h"
 #endif
@@ -37,24 +28,6 @@ class h_Window_Base
 #ifdef H_LINUX
   #include "gui/impl/h_Window_Linux.h"
 #endif
-
-class h_Window : public h_Window_Impl,
-                 public h_WidgetOwner
-{
-  public:
-    h_Window(int a_Width, int a_Height, void* a_Parent)
-    : h_Window_Win32(a_Width,a_Height,a_Parent)
-      {
-      }
-    virtual ~h_Window() {}
-
-    // widget owner
-    virtual void on_Redraw(void) {}
-    virtual void on_Redraw(h_Rect a_Rect) {}
-    virtual void on_Redraw(h_Widget* a_Widget) {}
-
-
-};
 
 //----------------------------------------------------------------------
 #endif

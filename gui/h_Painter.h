@@ -24,22 +24,49 @@
 class h_PaintSource
 {
   public:
-    virtual void getHandle(void) {}
+    virtual HDC getDC(void) { return 0; }
 };
 
-//----------
-
-class h_PaintTarget
-{
-  public:
-    virtual void getHandle(void) {}
-};
+//class h_PaintTarget
+//{
+//};
 
 //----------------------------------------------------------------------
 
-class h_Painter
-{
-};
+//class h_Painter_Base
+//{
+//  public:
+//    h_Painter_Base()
+//      {
+//      }
+//    virtual ~h_Painter_Base()
+//      {
+//      }
+//};
+
+//----------------------------------------------------------------------
+
+#ifdef H_WIN32
+  #include "gui/impl/h_Painter_Win32.h"
+#endif
+
+#ifdef H_LINUX
+  #include "gui/impl/h_Painter_Linux.h"
+#endif
+
+//----------------------------------------------------------------------
+
+//class h_Painter : public h_Painter_Impl
+//{
+//  public:
+//    h_Painter()
+//    : h_Painter_Impl()
+//      {
+//      }
+//    virtual ~h_Painter()
+//      {
+//      }
+//};
 
 //----------------------------------------------------------------------
 #endif

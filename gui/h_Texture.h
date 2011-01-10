@@ -21,9 +21,40 @@
 #define h_Texture_included
 //----------------------------------------------------------------------
 
-class h_Texture
-{
-};
+//class h_Texture_Base
+//{
+//  public:
+//    h_Texture_Base()
+//      {
+//      }
+//    virtual ~h_Texture_Base()
+//      {
+//      }
+//};
+
+//----------------------------------------------------------------------
+
+//#ifdef H_WIN32
+//  #include "gui/impl/h_Texture_Win32.h"
+//#endif
+//
+//#ifdef H_LINUX
+//  #include "gui/impl/h_Texture_Linux.h"
+//#endif
+
+//----------------------------------------------------------------------
+
+//class h_Texture : public h_Texture_Impl
+//{
+//  public:
+//    h_Texture()
+//    : h_Texture_Impl()
+//      {
+//      }
+//    virtual ~h_Texture()
+//      {
+//      }
+//};
 
 //----------------------------------------------------------------------
 #endif

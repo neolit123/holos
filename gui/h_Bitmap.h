@@ -21,8 +21,51 @@
 #define h_Bitmap_included
 //----------------------------------------------------------------------
 
-class h_Bitmap
+//class h_Bitmap_Base
+//{
+//  protected:
+//
+//  public:
+//
+//    h_Bitmap_Base()
+//      {
+//      }
+//
+//    virtual ~h_Bitmap_Base()
+//      {
+//      }
+//
+//    //----------
+//};
+
+//----------------------------------------------------------------------
+
+#ifdef H_WIN32
+  #include "gui/impl/h_Bitmap_Win32.h"
+#endif
+
+#ifdef H_LINUX
+  #include "gui/impl/h_Bitmap_Linux.h"
+#endif
+
+//----------------------------------------------------------------------
+
+class h_Bitmap : public h_Bitmap_Impl
 {
+  public:
+    h_Bitmap(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
+    : h_Bitmap_Impl(a_Width,a_Height,a_Depth,a_Buffer)
+      {
+      }
+    h_Bitmap(int a_Width, int a_Height, int a_Depth)
+    : h_Bitmap_Impl(a_Width,a_Height,a_Depth)
+      {
+      }
+    virtual ~h_Bitmap()
+      {
+      }
+    //TODO:
+    // bitmap-functions (h_BitmapUtils.h)
 };
 
 //----------------------------------------------------------------------
