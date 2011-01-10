@@ -20,70 +20,6 @@
 #ifndef h_DspModule_included
 #define h_DspModule_included
 //----------------------------------------------------------------------
-
-class h_DspModule //: public h_
-{
-  public:
-    h_DspModule() /*: h_()*/ {}
-    ~h_DspModule() {}
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//
-//
-//
-///*
-// * This file is part of Axonlib.
-// *
-// * Axonlib is free software: you can redistribute it and/or modify
-// * it under the terms of the Axonlib License, either version 1.0
-// * of the License, or (at your option) any later version.
-// *
-// * Axonlib is distributed in the hope that it will be useful,
-// * but WITHOUT ANY WARRANTY; without even the implied warranty of
-// * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// * See LICENSE_AX for more details.
-// *
-// * You should have received a copy of the Axonlib License
-// * If not, see <http://axonlib.googlecode.com/>.
-// */
-//
-//#ifndef axModule_included
-//#define axModule_included
-////----------------------------------------------------------------------
 ///*
 //
 //  - a graph has a list of modules, and is-a (via inheritance) a module itself
@@ -297,5 +233,5 @@ class h_DspModule //: public h_
 //
 //
 //*/
-////----------------------------------------------------------------------
-//#endif
+//----------------------------------------------------------------------
+#endif

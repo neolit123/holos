@@ -21,81 +21,23 @@
 #define h_VoiceManager_included
 //----------------------------------------------------------------------
 
-//#include ""
-
-class h_VoiceManager //: public h_
-{
-  public:
-    h_VoiceManager() /*: h_()*/ {}
-    ~h_VoiceManager() {}
-};
-
-//----------------------------------------------------------------------
-#endif
+// polyphonic voice manager
 
 
+// - max block size: 999999 samples
+//     a biiig offset that we will hopefully never reach
+// - max events per block: #define MAX_EVENTS 1024
+//     a static buffer for the incoming events, to avoid runtime memory juggling
+// - very basic nna/note-stealing (works ok-ish)
+// - currently only note on/off
+// - converts events in processSample
+//     could be done in processBlock (does it matter?)
+// - not optimized
+//     but 16 basic saw voices uses only around 0.8% cpu (reaper/wine)
+//     so i've postponed that until it gets problematic
+// - bugs?
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-///*
-// * This file is part of Axonlib.
-// *
-// * Axonlib is free software: you can redistribute it and/or modify
-// * it under the terms of the Axonlib License, either version 1.0
-// * of the License, or (at your option) any later version.
-// *
-// * Axonlib is distributed in the hope that it will be useful,
-// * but WITHOUT ANY WARRANTY; without even the implied warranty of
-// * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// * See LICENSE_AX for more details.
-// *
-// * You should have received a copy of the Axonlib License
-// * If not, see <http://axonlib.googlecode.com/>.
-// */
-//
-///**
-//  \file axVoices.h
-//  \brief polyphonic voice manager
-// */
-//
-//#ifndef axVoices_included
-//#define axVoices_included
-////----------------------------------------------------------------------
-//
-//// - max block size: 999999 samples
-////     a biiig offset that we will hopefully never reach
-//// - max events per block: #define MAX_EVENTS 1024
-////     a static buffer for the incoming events, to avoid runtime memory juggling
-//// - very basic nna/note-stealing (works ok-ish)
-//// - currently only note on/off
-//// - converts events in processSample
-////     could be done in processBlock (does it matter?)
-//// - not optimized
-////     but 16 basic saw voices uses only around 0.8% cpu (reaper/wine)
-////     so i've postponed that until it gets problematic
-//// - bugs?
-//
-//#include "core/axList.h"
+//#include "lib/h_List.h"
 //
 ////----------------------------------------------------------------------
 ////
@@ -110,15 +52,15 @@ class h_VoiceManager //: public h_
 //
 ////----------
 //
-//class axVoice : public axListNode
+//class h_Voice : public h_ListNode
 //{
-//  friend class axVoiceManager;
+//  friend class h_VoiceManager;
 //  protected:
 //    int   mState;
 //    float iRate;
 //  public:
-//    axVoice() { mState = vs_Off; }
-//    virtual ~axVoice() {}
+//    h_Voice() { mState = vs_Off; }
+//    virtual ~h_Voice() {}
 //    virtual void  setSampleRate(float aRate) { iRate = 1/aRate; }
 //    virtual void  noteOn(int aNote, int aVel) {}
 //    virtual void  noteOff(int aNote, int aVel) {}
@@ -128,7 +70,7 @@ class h_VoiceManager //: public h_
 //    virtual void  process(float* outs) {}
 //};
 //
-//typedef axArray<axVoice*> axVoices;
+//typedef h_Array<h_Voice*> h_Voices;
 //
 ////----------------------------------------------------------------------
 ////
@@ -182,7 +124,7 @@ class h_VoiceManager //: public h_
 //
 ////----------------------------------------
 //
-//class axVoiceManager
+//class h_VoiceManager
 //{
 //  private:
 //    int       mOffset;
@@ -193,27 +135,27 @@ class h_VoiceManager //: public h_
 //    int       mNumPlaying;
 //
 //  protected:
-//    axVoice*  mNoteMap[128];
-//    axVoices  mAllVoices;
-//    axList    mFreeVoices;
-//    axList    mPlayingVoices;
-//    axList    mReleasedVoices;
+//    h_Voice*  mNoteMap[128];
+//    h_Voices  mAllVoices;
+//    h_List    mFreeVoices;
+//    h_List    mPlayingVoices;
+//    h_List    mReleasedVoices;
 //  public:
 //
-//    axVoiceManager()
+//    h_VoiceManager()
 //      {
-//        axMemset(mNoteMap,0,sizeof(mNoteMap));
+//        h_Memset(mNoteMap,0,sizeof(mNoteMap));
 //        mOffset = 0;
 //        mCurrEvent = 0;
 //        mNextEvent = 999999;
 //        mNumEvents = 0;
-//        axMemset(mEvents,0,sizeof(mEvents));
+//        h_Memset(mEvents,0,sizeof(mEvents));
 //        mNumPlaying = 0;
 //      }
 //
 //    //----------
 //
-//    virtual ~axVoiceManager()
+//    virtual ~h_VoiceManager()
 //      {
 //        #ifndef AX_NOAUTODELETE
 //        deleteVoices();
@@ -222,10 +164,10 @@ class h_VoiceManager //: public h_
 //
 //    //----------------------------------------
 //
-//    virtual void appendVoice(axVoice* V)
+//    virtual void appendVoice(h_Voice* V)
 //      {
 //        mAllVoices.append(V);
-//        mFreeVoices.append(V);
+//        mFreeVoices.appendNode(V);
 //      }
 //
 //    //----------
@@ -250,11 +192,11 @@ class h_VoiceManager //: public h_
 //
 //    virtual void noteOn(int aNote, int aVel)
 //      {
-//        axVoice* V = (axVoice*)mFreeVoices.getTail();
+//        h_Voice* V = (h_Voice*)mFreeVoices.tail();
 //        if (V) { mFreeVoices.removeTail(); }
 //        else
 //        {
-//          V = (axVoice*)mReleasedVoices.getHead();
+//          V = (h_Voice*)mReleasedVoices.getHead();
 //          if (V) { mReleasedVoices.removeHead(); }
 //        }
 //        if (V)
@@ -271,7 +213,7 @@ class h_VoiceManager //: public h_
 //
 //    virtual void noteOff(int aNote, int aVel)
 //      {
-//        axVoice* V = mNoteMap[aNote];
+//        h_Voice* V = mNoteMap[aNote];
 //        if (V)
 //        {
 //          mNoteMap[aNote] = NULL;
@@ -349,17 +291,17 @@ class h_VoiceManager //: public h_
 //        float right = 0;
 //        float _outs[2];
 //        // playing voices
-//        axVoice* V = (axVoice*)mPlayingVoices.getHead();
+//        h_Voice* V = (h_Voice*)mPlayingVoices.getHead();
 //        while (V)
 //        {
 //          //out += V->process();
 //          V->process(&_outs[0]);
 //          left += _outs[0];
 //          right += _outs[1];
-//          V = (axVoice*)V->getNext();
+//          V = (h_Voice*)V->getNext();
 //        }
 //        // released voices
-//        V = (axVoice*)mReleasedVoices.getHead();
+//        V = (h_Voice*)mReleasedVoices.getHead();
 //        while (V)
 //        {
 //          if (V->mState!=vs_Off) //out += V->process();
@@ -368,7 +310,7 @@ class h_VoiceManager //: public h_
 //            left += _outs[0];
 //            right += _outs[1];
 //          }
-//          V = (axVoice*)V->getNext();
+//          V = (h_Voice*)V->getNext();
 //        }
 //        //return out;
 //        outs[0] = left;
@@ -379,22 +321,22 @@ class h_VoiceManager //: public h_
 //
 //    void postProcess(void)
 //      {
-//        axVoice* V = (axVoice*)mReleasedVoices.getHead();
+//        h_Voice* V = (h_Voice*)mReleasedVoices.getHead();
 //        while (V)
 //        {
 //          if (V->mState==vs_Off)
 //          {
-//            axVoice* next = (axVoice*)V->getNext();
+//            h_Voice* next = (h_Voice*)V->getNext();
 //            mReleasedVoices.remove(V);
 //            mFreeVoices.append(V);
 //            V = next;
 //          }
-//          else V = (axVoice*)V->getNext();
+//          else V = (h_Voice*)V->getNext();
 //        }
 //        mNumEvents = 0;
 //      }
 //
 //};
-//
-////----------------------------------------------------------------------
-//#endif
+
+//----------------------------------------------------------------------
+#endif

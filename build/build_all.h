@@ -7,6 +7,7 @@
 
 #include "audio/h_AudioGraph.h"
 #include "audio/h_DspModule.h"
+#include "audio/h_Libaam.h"
 #include "audio/h_VoiceManager.h"
 
 #include "audio/dsp/dsp_DCF.h"
@@ -20,6 +21,7 @@
 #include "audio/dsp/dsp_SVF.h"
 
 #include "gfx/h_BitmapUtils.h"
+#include "gfx/h_Color.h"
 #include "gfx/h_PngDecoder.h"
 #include "gfx/h_PolyFiller.h"
 #include "gfx/h_RayTracer.h"
@@ -51,6 +53,7 @@
 #include "lib/h_Defines.h"
 #include "lib/h_DetectWine.h"
 #include "lib/h_Events.h"
+#include "lib/h_ExpressionEvaluator.h"
 #include "lib/h_File.h"
 #include "lib/h_Globals.h"
 #include "lib/h_Integer.h"
@@ -59,6 +62,7 @@
 #include "lib/h_Math.h"
 #include "lib/h_Memory.h"
 #include "lib/h_Mutex.h"
+#include "lib/h_PatternMatch.h"
 #include "lib/h_Point.h"
 #include "lib/h_Queue.h"
 #include "lib/h_Rand.h"

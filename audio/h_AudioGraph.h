@@ -21,56 +21,6 @@
 #define h_AudioGraph_included
 //----------------------------------------------------------------------
 
-#include "audio/h_DspModule.h"
-
-class h_AudioGraph //: public h_
-{
-  public:
-    h_AudioGraph() /*: h_()*/ {}
-    ~h_AudioGraph() {}
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//
-//
-///*
-// * This file is part of Axonlib.
-// *
-// * Axonlib is free software: you can redistribute it and/or modify
-// * it under the terms of the Axonlib License, either version 1.0
-// * of the License, or (at your option) any later version.
-// *
-// * Axonlib is distributed in the hope that it will be useful,
-// * but WITHOUT ANY WARRANTY; without even the implied warranty of
-// * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// * See LICENSE_AX for more details.
-// *
-// * You should have received a copy of the Axonlib License
-// * If not, see <http://axonlib.googlecode.com/>.
-// */
-//
-//#ifndef axGraph_included
-//#define axGraph_included
-////----------------------------------------------------------------------
 ///*
 //  graph = collection of modules
 //  called once per sample
@@ -79,25 +29,25 @@ class h_AudioGraph //: public h_
 //*/
 ////----------------------------------------------------------------------
 //
-//#include "core/axDefines.h"
-//#include "audio/axModule.h"
+//#include "lib/h_Defines.h"
+//#include "audio/h_DspModule.h"
 //
-//class axGraph : public axModule,
-//                public axModuleListener
+//class h_AudioGraph : public h_DspModule,
+//                     public h_DspModuleListener
 //{
 //  protected:
-//    axModules mModules;
-//    axModules mExecList;
+//    h_DspModules mModules;
+//    h_DspModules mExecList;
 //    bool      mCompiled;
 //  public:
 //
-//    axGraph(axString aName)
-//    : axModule(NULL,aName)
+//    h_AudioGraph(h_String aName)
+//    : h_DspModule(NULL,aName)
 //      {
 //        mCompiled = false;
 //      }
 //
-//    virtual ~axGraph()
+//    virtual ~h_AudioGraph()
 //      {
 //        #ifndef AX_NOAUTODELETE
 //        deleteModules();
@@ -106,7 +56,7 @@ class h_AudioGraph //: public h_
 //
 //    //----------
 //
-//    virtual void appendModule(axModule* aModule) { mModules.append(aModule); }
+//    virtual void appendModule(h_DspModule* aModule) { mModules.append(aModule); }
 //    virtual void deleteModules(void) { for (int i=0; i<mModules.size(); i++) delete mModules[i]; }
 //
 //    //----------------------------------------
@@ -139,7 +89,7 @@ class h_AudioGraph //: public h_
 //        for (int i=0; i<mModules.size(); i++)
 //        {
 //          //mModules[i]->doProcess(aInputs,aOutputs);
-//          axModule* moo = mModules[i];
+//          h_Module* moo = mModules[i];
 //          if (moo->isActive()) moo->doProcess(aInputs,aOutputs);
 //        }
 //      }
@@ -191,5 +141,6 @@ class h_AudioGraph //: public h_
 //
 //};
 //
-////----------------------------------------------------------------------
-//#endif
+
+//----------------------------------------------------------------------
+#endif

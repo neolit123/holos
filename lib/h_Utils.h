@@ -35,11 +35,6 @@
 //
 //----------------------------------------------------------------------
 
-//#define h_StrExpand(x) #x
-//#define h_Str(x) h_StrExpand(x)
-
-//----------
-
 /**
  * swap the values of two variables <br>
  \code

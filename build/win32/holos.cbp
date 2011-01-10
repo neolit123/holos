@@ -78,6 +78,7 @@
 		<Unit filename="..\..\extern\readme.txt" />
 		<Unit filename="..\..\extern\stb_truetype.h" />
 		<Unit filename="..\..\gfx\h_BitmapUtils.h" />
+		<Unit filename="..\..\gfx\h_Color.h" />
 		<Unit filename="..\..\gfx\h_PngDecoder.h" />
 		<Unit filename="..\..\gfx\h_PolyFiller.h" />
 		<Unit filename="..\..\gfx\h_RayTracer.h" />
@@ -109,6 +110,7 @@
 		<Unit filename="..\..\lib\h_Defines.h" />
 		<Unit filename="..\..\lib\h_DetectWine.h" />
 		<Unit filename="..\..\lib\h_Events.h" />
+		<Unit filename="..\..\lib\h_ExpressionEvaluator.h" />
 		<Unit filename="..\..\lib\h_File.h" />
 		<Unit filename="..\..\lib\h_Globals.h" />
 		<Unit filename="..\..\lib\h_Integer.h" />
@@ -116,12 +118,14 @@
 		<Unit filename="..\..\lib\h_Math.h" />
 		<Unit filename="..\..\lib\h_Memory.h" />
 		<Unit filename="..\..\lib\h_Mutex.h" />
+		<Unit filename="..\..\lib\h_PatternMatch.h" />
 		<Unit filename="..\..\lib\h_Point.h" />
 		<Unit filename="..\..\lib\h_Queue.h" />
 		<Unit filename="..\..\lib\h_Rand.h" />
 		<Unit filename="..\..\lib\h_Rect.h" />
 		<Unit filename="..\..\lib\h_Stack.h" />
 		<Unit filename="..\..\lib\h_Stdlib.h" />
+		<Unit filename="..\..\lib\h_Stream.h" />
 		<Unit filename="..\..\lib\h_String.h" />
 		<Unit filename="..\..\lib\h_Thread.h" />
 		<Unit filename="..\..\lib\h_Types.h" />

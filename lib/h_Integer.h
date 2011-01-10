@@ -22,6 +22,7 @@
 //----------------------------------------------------------------------
 
 // http://eli.thegreenplace.net/2004/07/30/a-cool-algorithm-for-counting-ones-in-a-bitstring/
+
 unsigned int h_NumBits(unsigned int a_Num)
   {
     unsigned count = 0;
@@ -33,9 +34,10 @@ unsigned int h_NumBits(unsigned int a_Num)
     return count;
   }
 
-//----------------------------------------------------------------------
+//----------
 
 // http://bits.stephan-brumme.com/isPowerOfTwo.html
+
 bool h_IsPowerOfTwo(unsigned int x)
   {
     return ((x&(x-1))==0);
@@ -44,6 +46,7 @@ bool h_IsPowerOfTwo(unsigned int x)
 //----------
 
 // http://bits.stephan-brumme.com/roundUpToNextPowerOfTwo.html
+
 unsigned int h_NextPowerOfTwo(unsigned int x)
   {
     x--;
@@ -56,7 +59,6 @@ unsigned int h_NextPowerOfTwo(unsigned int x)
     return x;
   }
 
-//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
 /**
@@ -85,6 +87,8 @@ unsigned int h_BitReverse(unsigned int v)
     return r;
   }
 
+//----------
+
 /**
  * returns a specific bit of an integer
  * \code
@@ -100,6 +104,9 @@ unsigned int h_BitReverse(unsigned int v)
  */
 
 #define h_GetBit(x, bit) ( 1 & ((x) >> (bit)) )
+
+//#define LoByte(x) ((unsigned char)((x) & 0xff))
+//#define HiByte(x) ((unsigned char)((unsigned short)(x) >> 8))
 
 
 //----------------------------------------------------------------------

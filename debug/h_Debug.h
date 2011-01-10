@@ -118,7 +118,7 @@ class h_Debug
     void initialize(void)
       {
         #ifdef H_DEBUG_CON
-          m_Console = new h_Console();
+          m_Console = new h_Console(); // xbtn,ontop,resize
         #endif
         #ifdef H_DEBUG_LOG
           m_LogFile = new h_LogFile(H_DEBUG_LOG);
@@ -134,8 +134,8 @@ class h_Debug
 
 //----------------------------------------
 
-#undef _trace
-#undef _traceout
+#undef _dbg_trace
+#undef _dbg_traceout
 
 //----------------------------------------------------------------------
 

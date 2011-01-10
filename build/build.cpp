@@ -22,12 +22,20 @@
 //#undef H_DEBUG
 
 #define H_DEBUG_LOG "holos_win.log"
+
 #define H_DEBUG_CON
+
+#define H_DEBUG_CON_CANQUIT
+#define H_DEBUG_CON_NOTOP
+#define H_DEBUG_CON_NORESIZE
+
 #define H_DEBUG_MEM
 #define H_DEBUG_NEW
 
 #include "holos.h"
 #include "build/build_all.h"
+
+#include "lib/h_PatternMatch.h"
 
 //----------------------------------------------------------------------
 
@@ -55,6 +63,12 @@ class my_Instance : public h_Instance
     : h_Instance(a_Descriptor)
       {
         trace("hello world!");
+
+//        h_Pattern pattern;
+//        pattern.setPattern("*.png");
+//        bool res = pattern.match("test1.png");
+//        trace( "match: " << (res?"true":"false") );
+
       }
     virtual ~my_Instance()
       {

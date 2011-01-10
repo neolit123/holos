@@ -21,8 +21,12 @@
 #define h_Rand_included
 //------------------------------------------------------------------------------
 
+// H_HOT_INLINE_RAND
+// H_NO_RAND
+// H_USE_BETTER_RAND
+
 /*
-  axonlib's builtin random number generators
+  holos's builtin random number generators
   64 bit integers are used so you might need to disable the 'long long'
   warning in g++: -Wno-long-long
 
@@ -113,7 +117,6 @@ unsigned int h_RandBit(const unsigned int range=16)
 */
 
 #define H_RAND_MAX        2147483647L
-//#define INV_H_RAND_MAX    4.656612875245796924105750827168e-10f
 #define H_INV_RAND_MAX    4.656612875245796924105750827168e-10f
 #define H_RAND_MAXLL      9223372036854775806LL
 #define _H_RAND_FLOAT     ( ( (float)( ( a * b ) >> 2) ) * 0.00000000093f )
