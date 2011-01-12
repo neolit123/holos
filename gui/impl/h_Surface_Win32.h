@@ -44,7 +44,6 @@ class h_Surface_Win32 : public h_PaintSource
     // h_PaintSource
     virtual HDC getDC(void) { return m_Painter->getDC(); }
 
-
   public:
 
     h_Surface_Win32(int a_Width, int a_Height, int a_Depth)

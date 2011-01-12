@@ -50,23 +50,23 @@
 
 //----------------------------------------------------------------------
 
-class h_Bitmap : public h_Bitmap_Impl
-{
-  public:
-    h_Bitmap(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
-    : h_Bitmap_Impl(a_Width,a_Height,a_Depth,a_Buffer)
-      {
-      }
-    h_Bitmap(int a_Width, int a_Height, int a_Depth)
-    : h_Bitmap_Impl(a_Width,a_Height,a_Depth)
-      {
-      }
-    virtual ~h_Bitmap()
-      {
-      }
-    //TODO:
-    // bitmap-functions (h_BitmapUtils.h)
-};
+//class h_Bitmap : public h_Bitmap_Impl
+//{
+//  public:
+//    h_Bitmap(int a_Width, int a_Height, int a_Depth, unsigned long* a_Buffer)
+//    : h_Bitmap_Impl(a_Width,a_Height,a_Depth,a_Buffer)
+//      {
+//      }
+//    h_Bitmap(int a_Width, int a_Height, int a_Depth)
+//    : h_Bitmap_Impl(a_Width,a_Height,a_Depth)
+//      {
+//      }
+//    virtual ~h_Bitmap()
+//      {
+//      }
+//    //TODO:
+//    // bitmap-functions (h_BitmapUtils.h)
+//};
 
 //----------------------------------------------------------------------
 #endif

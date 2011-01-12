@@ -17,3 +17,29 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
+#ifndef wdg_Panel_included
+#define wdg_Panel_included
+//----------------------------------------------------------------------
+
+#include "gui/h_Widget.h"
+
+class wdg_Panel : public h_Widget
+{
+  private:
+
+  public:
+
+    wdg_Panel(h_WidgetListener* a_Listener, h_Rect a_Rect)
+    : h_Widget(a_Listener,a_Rect)
+      {
+      }
+    virtual ~wdg_Panel()
+      {
+      }
+
+  public:
+
+};
+
+//----------------------------------------------------------------------
+#endif

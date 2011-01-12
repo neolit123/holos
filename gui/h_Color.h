@@ -21,40 +21,8 @@
 #define h_Color_included
 //----------------------------------------------------------------------
 
-typedef unsigned long h_Color;
-
-//----------------------------------------------------------------------
-
-/*
-#define RED_SHIFT   24
-#define GREEN_SHIFT 16
-#define BLUE_SHIFT  8
-#define ALPHA_SHIFT 0
-#define RED_MASK    0xff000000
-#define GREEN_MASK  0x00ff0000
-#define BLUE_MASK   0x0000ff00
-#define ALPHA_MASK  0x000000ff
-*/
-
-/*
-#define H_RGBA(r,g,b,a) \
-  ( (r<<RED_SHIFT)   +  \
-    (g<<GREEN_SHIFT) +  \
-    (b<<BLUE_SHIFT)  +  \
-    (a<<ALPHA_SHIFT) )
-*/
-
-/*
-#define H_RGB(r,g,b)    \
-  ( (r<<RED_SHIFT)   +  \
-    (g<<GREEN_SHIFT) +  \
-    (b<<BLUE_SHIFT)  +  \
-    (0) )
-*/
-
-//----------------------------------------------------------------------
-
 #ifdef H_WIN32
+  typedef unsigned long h_Color;
   #define H_RGB(r,g,b)  RGB(r,g,b)
 #endif
 
@@ -62,6 +30,31 @@ typedef unsigned long h_Color;
 #ifdef H_LINUX
   #define H_RGB(r,g,b)  0
 #endif
+
+//----------------------------------------------------------------------
+
+#define H_BLACK         H_RGB(  0,  0,  0)
+#define H_DARK_GREY     H_RGB( 64, 64, 64)
+#define H_GREY          H_RGB(128,128,128)
+#define H_LIGHT_GREY    H_RGB(192,192,192)
+#define H_WHITE         H_RGB(255,255,255)
+
+#define H_RED           H_RGB(255,  0,  0)
+#define H_ORANGE        H_RGB(255,128,  0)
+#define H_YELLOW        H_RGB(255,255,  0)
+#define H_GREEN         H_RGB(  0,255,  0)
+#define H_CYAN          H_RGB(  0,255,255)
+#define H_BLUE          H_RGB(  0,  0,255)
+#define H_MAGENTA       H_RGB(255,  0,255)
+
+#define H_DARK_RED      H_RGB(128,  0,  0)
+#define H_DARK_ORANGE   H_RGB(128, 64,  0)
+#define H_DARK_YELLOW   H_RGB(128,128,  0)
+#define H_DARK_GREEN    H_RGB(  0,128,  0)
+#define H_DARK_CYAN     H_RGB(  0,128,128)
+#define H_DARK_BLUE     H_RGB(  0,  0,128)
+#define H_DARK_MAGENTA  H_RGB(128,  0,128)
+
 
 //----------------------------------------------------------------------
 #endif

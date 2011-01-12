@@ -46,6 +46,20 @@
 
 #define H_DEFAULT_PENWIDTH -1
 
+//----------
+
+class h_PaintSource
+{
+  public:
+    virtual HDC getDC(void) { return 0; }
+};
+
+//class h_PaintTarget
+//{
+//};
+
+//----------
+
 class h_Painter_Win32 //: public h_Painter_Base
 {
   private:
@@ -484,7 +498,6 @@ class h_Painter_Win32 //: public h_Painter_Base
 
         //mFont = CreateFontIndirect(&LFont);
         //SelectObject(mDC,mFont);
-
 
         LOGFONT lfont;
         HFONT font = (HFONT)GetCurrentObject(m_DC,OBJ_FONT);

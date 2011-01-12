@@ -1,3 +1,23 @@
+/*
+  Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
+
+  This file is part of the Holos Library.
+  http://holos.googlecode.com
+
+  the Holos Library is free software: you can redistribute it and/or modify
+  it under the terms of the Holos Library License, either version 1.0
+  of the License, or (at your option) any later version.
+
+  the Holos Library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See LICENSE_HOLOS for more details.
+
+  You should have received a copy of the Holos Library License
+  If not, see <http://holos.googlecode.com/>.
+*/
+//----------------------------------------------------------------------
+
 #include <stdio.h>
 
 #define NUM 16
@@ -24,17 +44,17 @@ int main (int argc, char **argv)
 		fprintf(stderr,"error: can't create %s.\n",argv[2]);
 		return 1;
 	}
-	
+
 	if (argv[3] == NULL)
 	{
 		printf("error: name[] required\n");
 		return 1;
 	}
-	
+
 	fseek (in, 0, SEEK_END);
 	size = ftell(in);
 	fseek (in, 0, SEEK_SET);
-	
+
 	fprintf (out,"const unsigned %s_size = %u;\n", argv[3], size);
 	fprintf (out,"const unsigned char %s[] = \n{\n", argv[3]);
 	while ((c=fread(a,1,NUM,in))!=0)
@@ -43,7 +63,7 @@ int main (int argc, char **argv)
 		if (c == NUM)
 		{
 			for (i=0; i<c; i++) fprintf(out,"0x%02x, ",a[i]);
-			fprintf(out,"\n");			
+			fprintf(out,"\n");
 		} else
 		{
 			for (i=0; i<c-1; i++) fprintf(out,"0x%02x, ",a[i]);

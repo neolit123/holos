@@ -17,43 +17,46 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Main_Exe_included
-#define h_Main_Exe_included
+#ifndef wdg_Background_included
+#define wdg_Background_included
 //----------------------------------------------------------------------
 
-int main(void)
+#include "gui/h_Color.h"
+#include "gui/h_Widget.h"
+
+class wdg_Background : public h_Widget
 {
+  private:
+    h_Color   m_Color;
 
-  // holos
+  public:
 
-  static_Debug.initialize();
-  static_Core.initialize();
+    wdg_Background(h_WidgetListener* a_Listener, h_Color a_Color=H_GREY)
+    : h_Widget(a_Listener,NULL_RECT)
+      {
+        m_Color = a_Color;
+      }
+    virtual ~wdg_Background()
+      {
+      }
 
-  // instance
+  public:
 
-  h_Host* host = new h_Host(H_NULL);
-  h_Descriptor* desc = static_Base.createDescriptor(host);
-  h_Instance*   inst = static_Base.createInstance(desc);
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+      {
+        //trace("do_Paint("<<a_Rect.x<<","<<a_Rect.y <<","<< a_Rect.w<<","<<a_Rect.h<<")");
+        a_Painter->setBrushColor(m_Color);
+        a_Painter->fillRect(a_Rect.x,a_Rect.y,a_Rect.x2(),a_Rect.y2());
+      }
 
-  // editor
+    //test
+    virtual void do_MouseDown(int x, int y, int b, int s)
+      {
+        if (m_Listener) m_Listener->on_Hint((char*)"click");
+      }
 
-  if (desc->m_Flags & df_HasEditor)
-  {
-    h_Editor*     edit = static_Base.createEditor(inst);
-      edit->open(H_NULL);
-      edit->eventLoop();
-      edit->close();
-    delete edit;
-  }
 
-  // ---
-
-  delete inst;
-  delete desc;
-  delete host;
-
-  return 0;
-}
+};
 
 //----------------------------------------------------------------------
 #endif

@@ -24,6 +24,7 @@
 #include <windows.h>
 #include "gui/h_Widget.h"
 #include "gui/h_Painter.h"
+#include "gui/h_Skin.h"
 
 // #DEFINE idc_arrow       (32512)
 // #DEFINE idc_ibeam       (32513)
@@ -78,228 +79,57 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 //----------------------------------------------------------------------
 
-class h_Window_Win32
+class h_Window_Win32 : public h_PaintSource
 {
 
   private:
-    HWND        m_Parent;
+
+    //char*       m_ClassName;
     HINSTANCE   m_Instance;
-    char*       m_ClassName;
-    bool        m_Embedded;
-    HWND        m_Window;
-    int         m_AdjustWidth, m_AdjustHeight;
+    HWND        m_Parent;
     PAINTSTRUCT m_PS;
-    int         m_ClickedButton;
     HCURSOR     m_WinCursor;
-    int         m_PrevCursor;
+    HWND        m_Window;
 
-    h_Widget*   m_Root;
-    h_Painter*  m_Painter;
     h_Rect      m_Rect;
+    h_Painter*  m_Painter;
+    h_Widget*   m_Root;
 
-//  private:
-//    HINSTANCE   mInstance;
-//    HWND        mWindow;
-//    axString    mWinName;
-//    PAINTSTRUCT mPS;
-//    //int mWinCursor,mPrevCursor;
-//    //HCURSOR mWinCursor;
-//    HCURSOR     mWinCursor;
-//    int         mPrevCursor;
-//    int         mClickedButton;
-//    int         mParent;
-//    int         mAdjustWidth, mAdjustHeight;
+    int         m_AdjustHeight;
+    int         m_AdjustWidth;
+    int         m_ClickedButton;
+    bool        m_Embedded;
+    int         m_PrevCursor;
 
   public:
     inline h_Painter* getPainter(void)  { return m_Painter; }
     inline h_Rect     getRect(void)     { return m_Rect; }
 
+    // h_PaintSource
+    virtual HDC getDC(void) { return m_Painter->getDC(); }
+
+
 //  public:
 //    // widget owner (called by widgets)
-//   virtual void on_Redraw(void) {}
+//    virtual void on_Redraw(void) {}
 //    virtual void on_Redraw(h_Rect a_Rect) {}
 //    virtual void on_Redraw(h_Widget* a_Widget) {}
 
   public:
 
-//    axWindowWin32(axContext* aContext, axRect aRect, int aWinFlags)
-//    : axWindowBase(aContext,aRect,aWinFlags)
-//      {
-//        //trace("axWindowWin32.constructor()");
-//        mInstance   = aContext->mInstance;
-//        mWinName    = aContext->mWinClassName;
-//        mParent     = (int)aContext->mWindow;
-//        mWinCursor  = LoadCursor(NULL,IDC_ARROW);
-//        mPrevCursor = 0;
-//        //trace(mWinName.ptr());
-//        mClickedButton = bu_None;
-//        //mAdjustWidth = 0;
-//        //mAdjustHeight = 0;
-//
-//        // --- register window class ---
-//
-//        //http://msdn.microsoft.com/en-us/library/ms633586%28v=VS.85%29.aspx
-//        //RegisterClass:
-//        //  All window classes that an application registers are unregistered when it terminates.
-//        //  Windows NT/2000/XP: No window classes registered by a DLL are unregistered when the DLL is unloaded.
-//        //  A DLL must explicitly unregister its classes when it is unloaded.
-//
-//        // multiple instances:
-//        // what happens when we try to register a window with similar name
-//        // and shouldn't we unregister it?
-//        // (or is it done automatically when dll is unloaded?)
-//
-//        char* classname = mWinName.ptr();//(char*)"axonlib";
-//        //trace("window class name:" << classname);
-//        WNDCLASS wc;
-//        memset(&wc,0,sizeof(wc));
-//        wc.style          = CS_HREDRAW | CS_VREDRAW;
-//        wc.lpfnWndProc    = &eventProc;
-//        wc.hInstance      = mInstance;
-//        wc.lpszClassName  = classname;
-//        wc.hCursor        = (HICON)mWinCursor; //LoadCursor(NULL, IDC_ARROW);
-//        // rc_default.rc: axicon ICON "rc_axlogo.ico"
-//        HICON hIcon = LoadIcon(mInstance, "axicon");
-//        if (hIcon) wc.hIcon = hIcon;
-//
-//        RegisterClass(&wc);
-//
-//        // The AdjustWindowRectEx function calculates the required size of the
-//        // window rectangle, based on the desired client-rectangle size.
-//        // The window rectangle can then be passed to the CreateWindow function
-//        // to create a window whose client area is the desired size.
-//        // To specify an extended window style, use the AdjustWindowRectEx function.
-//        //
-//        // BOOL AdjustWindowRectEx(
-//        //   __inout  LPRECT lpRect,
-//        //   __in     DWORD dwStyle,
-//        //   __in     BOOL bMenu,
-//        //   __in     DWORD dwExStyle
-//        // );
-//        //
-//        // lpRect: Pointer to a RECT  structure that contains the coordinates of
-//        // the top-left and bottom-right corners of the desired client area.
-//        // When the function returns, the structure contains the coordinates of
-//        // the top-left and bottom-right corners of the window to accommodate
-//        // the desired client area.
-//        // dwStyle: Specifies the window style of the window whose required size
-//        // is to be calculated. Note that you cannot specify the WS_OVERLAPPED style.
-//        // bMenu: Specifies whether the window has a menu.
-//        // dwExStyle: Specifies the extended window style of the window whose
-//        // required size is to be calculated. For more information, see CreateWindowEx.
-//
-//        // --- adjust window size ---
-//
-//        // Remarks
-//        // By convention, the right and bottom edges of the rectangle are normally
-//        // considered exclusive. In other words, the pixel whose coordinates are
-//        // (right,bottom) lies immediately outside of the the rectangle.
-//        // For example, when RECT is passed to the FillRect function, the rectangle
-//        // is filled up to, but not including, the right column and bottom row of pixels.
-//
-//        //trace("width/height: " << mRect.w << "," << mRect.h);
-//        RECT rc = { mRect.x, mRect.y, mRect.x2(), mRect.y2() }; // left, top, right, bottom
-//        //trace("RECT rc: " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
-//
-////        //RECT rc = {mRect.x,mRect.y,mRect.x2(),mRect.y2()};
-////        RECT rc = { mRect.x, mRect.y, mRect.w, mRect.h };
-////        // get w, h
-////        const u32 wWidth = (rc.right - rc.left - 1);  // -1 reduces the window dim by 1 px
-////        const u32 wHeight = (rc.bottom - rc.top - 1);
-////        #ifdef AX_FORMAT_EXE
-////          // adjust rect for exe
-////          AdjustWindowRect(&rc,WS_OVERLAPPEDWINDOW|WS_POPUP,FALSE);
-////          // get screen w, h and define a center pos
-////          const u32 wPosX = ((GetSystemMetrics(SM_CXSCREEN)-wWidth)>>1) + rc.left;
-////          const u32 wPosY = ((GetSystemMetrics(SM_CYSCREEN)-wHeight)>>1) + rc.top;
-////        #endif
-////        #ifdef AX_FORMAT_VST
-////          // no centering for vst
-////          const u32 wPosX = rc.left;
-////          const u32 wPosY = rc.top;
-////        #endif
-//
-//        // --- create window ---
-//
-//        if (mWinFlags&AX_WIN_EMBEDDED) // embedded ---
-//        {
-//          AdjustWindowRectEx(&rc,/*WS_OVERLAPPEDWINDOW|*/WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
-//          //trace("adjusted rc (embedded): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
-//          mWindow = CreateWindowEx(
-//            WS_EX_TOOLWINDOW,
-//            classname,
-//            0,
-//            WS_POPUP,
-//            rc.left,//wPosX,          // center x
-//            rc.top,//wPosY,           // center y
-//            rc.right-rc.left+1,         //wWidth,
-//            rc.bottom-rc.top+1,         //wHeight,
-//            0,                        //(HWND)mParent,//0,
-//            0,
-//            mInstance,
-//            0
-//          );
-//          reparent(mParent);
-//        } //embedded
-//
-//        else // windowed ---
-//        {
-//          AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
-//          //trace("adjusted rc (windowed): " << rc.left << "," << rc.top << " : " << rc.right << "," << rc.bottom);
-//          const unsigned int wPosX =
-//            ((GetSystemMetrics(SM_CXSCREEN)-mRect.w)>>1) + rc.left;
-//          const unsigned int wPosY =
-//            ((GetSystemMetrics(SM_CYSCREEN)-mRect.h)>>1) + rc.top;
-//          mWindow = CreateWindowEx(
-//            WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
-//            classname,                // lpClassName
-//            0,                        // lpWindowName
-//            WS_OVERLAPPEDWINDOW,      // dwStyle
-//            wPosX,                    // center x
-//            wPosY,                    // center y
-//            rc.right-rc.left+1,       // wWidth,
-//            rc.bottom-rc.top+1,       // wHeight,
-//            0,                        // hWndParent
-//            0,                        // hMenu
-//            mInstance,                // hInstance
-//            0                         // lpParam
-//          );
-//          SetFocus(mWindow);
-//        }
-//
-//        mAdjustWidth = (rc.right - rc.left + 1) - mRect.w;
-//        mAdjustHeight = (rc.bottom - rc.top + 1) - mRect.h;
-//        //trace("mAdjustWidth: " << mAdjustWidth << ", mAdjustHeight: " << mAdjustHeight);
-//
-//        //mRect.x = rc.left;
-//        //mRect.y = rc.top;
-//        //mRect.w = (rc.right-rc.left);
-//        //mRect.h = (rc.bottom-rc.top);
-//
-//        // ---
-//
-//        SetWindowLong(mWindow,GWL_USERDATA,(int)this);
-//        //DragAcceptFiles(mWindow,true);
-//        mCanvas = createCanvas();
-//        if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
-//
-//      }
 
     h_Window_Win32(h_Rect a_Rect, void* a_Parent)
     //: h_Window_Base(a_Parent,a_Rect)
       {
-        //m_Width         = a_Width;
-        //m_Height        = a_Height;
-        m_Rect = a_Rect;
-        m_Root          = H_NULL;
         m_Parent        = (HWND)a_Parent;
+        m_Instance      = static_Core.getWinInstance();
+        //m_ClassName     = static_Core.getWinClassName();
+        m_Rect          = a_Rect;
+        m_Root          = H_NULL;
         m_WinCursor     = LoadCursor(NULL,IDC_ARROW);
         m_PrevCursor    = 0;
         m_ClickedButton = bu_None;
-        m_Instance      = static_Core.getWinInstance();
-        m_ClassName     = static_Core.getWinClassName();
 
-        //RECT rc = {0,0,a_Width-1,a_Height-1}; // left, top, right, bottom
         RECT rc = {m_Rect.x, m_Rect.y, m_Rect.x2(), m_Rect.y2()}; // left, top, right, bottom
 
         if (m_Parent) // --- embedded ---
@@ -308,7 +138,7 @@ class h_Window_Win32
           AdjustWindowRectEx(&rc,WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           m_Window = CreateWindowEx(
             WS_EX_TOOLWINDOW,
-            m_ClassName,
+            static_Core.getWinClassName(),//m_ClassName,
             0,
             WS_POPUP,
             rc.left,
@@ -330,8 +160,8 @@ class h_Window_Win32
           const unsigned int wPosY = ((GetSystemMetrics(SM_CYSCREEN)-m_Rect.h)>>1) + rc.top;
           m_Window = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
-            m_ClassName,              // lpClassName
-            m_ClassName, /*0,*/       // lpWindowName
+            static_Core.getWinClassName(),//m_ClassName,              // lpClassName
+            static_Core.getWinClassName(),//m_ClassName, /*0,*/       // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
             wPosX,                    // center x
             wPosY,                    // center y
@@ -355,25 +185,6 @@ class h_Window_Win32
 
     //----------
 
-//    ~axWindowWin32()
-//      {
-//        //if (mWinCursor>=0) XFreeCursor(mDisplay,mWinCursor);
-//        DestroyWindow(mWindow);
-//        if (mCanvas) delete mCanvas;
-//        if (mSurface) delete mSurface;
-//
-//        // can this be dangerous if moutlple plugin instances uses the plugin?
-//        // or is there some reference-counting going on?
-//        //http://msdn.microsoft.com/en-us/library/ms644899%28v=VS.85%29.aspx
-//        //UnregisterClass:
-//        //  If the function succeeds, the return value is nonzero.
-//        //  If the class could not be found or if a window still exists
-//        //  that was created with the class, the return value is zero
-//        // unregister window?
-//        // what if multiple instances is using the same window?
-//        UnregisterClass( mWinName.ptr(), mInstance);
-//      }
-
     virtual ~h_Window_Win32()
       {
         delete m_Painter;
@@ -381,9 +192,14 @@ class h_Window_Win32
       }
 
     //----------------------------------------
+    //
+    //----------------------------------------
 
-    virtual void setRoot(h_Widget* a_Widget)
+    //virtual
+    void setRoot(h_Widget* a_Widget)
       {
+        //a_Widget->setPainter(m_Painter);
+        //a_Widget->setSkin(m_Skin);
         m_Root = a_Widget;
       }
 
@@ -696,7 +512,11 @@ class h_Window_Win32
             //{
 
             //  m_Painter->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
+
+              //TODO: blit from back-buffer
+              // assume this is already updated by the widgets themselves
               if (m_Root) m_Root->do_Paint(m_Painter,rc);
+
             //  m_Painter->clearClipRect();
 
             //}

@@ -21,11 +21,11 @@
 #define h_Painter_included
 //----------------------------------------------------------------------
 
-class h_PaintSource
-{
-  public:
-    virtual HDC getDC(void) { return 0; }
-};
+//class h_PaintSource
+//{
+//  public:
+//    virtual HDC getDC(void) { return 0; }
+//};
 
 //class h_PaintTarget
 //{

@@ -26,54 +26,61 @@
 class h_Bitmap_Win32// : public h_Bitmap_Base
 {
   private:
-    int       m_Width;
-    int       m_Height;
-    int       m_Depth;
-    bool      m_Allocated;
-    char*     m_Buffer;
-    bool      m_Prepared;
-    HBITMAP   m_Bitmap;
+    int             m_Width;
+    int             m_Height;
+    int             m_Depth;
+    bool            m_Allocated;
+    unsigned long*  m_Buffer;
+    bool            m_Prepared;
+    HBITMAP         m_Bitmap;
 
   public:
 
     inline int      getWidth(void)  { return m_Width; }
     inline int      getHeight(void) { return m_Height; }
     inline int      getDepth(void)  { return m_Depth; }
-    inline char*    getBuffer(void) { return m_Buffer; }
+    inline void*    getBuffer(void) { return m_Buffer; }
     inline HBITMAP  getBitmap(void) { return m_Bitmap; }
 
   public:
 
-    h_Bitmap_Win32(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
-    //: h_Bitmap_Base()
-      {
-        m_Width     = a_Width;
-        m_Height    = a_Height;
-        m_Depth     = a_Depth;
-        m_Prepared  = false;
-        if (a_Buffer)
-        {
-          m_Allocated = false;
-          m_Buffer    = a_Buffer;
-        }
-        else
-        {
-          m_Allocated = true;
-          m_Buffer    = new char[m_Width*m_Height*4]; // 32bit rgba
-        }
-      }
+    // create & prepare (for rendering) a bitmap
 
     h_Bitmap_Win32(int a_Width, int a_Height, int a_Depth)
+      {
+        m_Width  = a_Width;
+        m_Height = a_Height;
+        m_Depth  = a_Depth;
+        prepare();
+      }
+
+    // create a bitmap (but not prepare)
+    // if a_Buffer is H_NULL, a memory buffer is allocated internally,
+    // and freed (automatically) when bitmap is deleted.
+    // if a_Buffer is not null, it should point to a pre-allocated buffer
+    // to use..
+
+    h_Bitmap_Win32(int a_Width, int a_Height, int a_Depth, unsigned long* a_Buffer)
     //: h_Bitmap_Base()
       {
+        m_Width  = a_Width;
+        m_Height = a_Height;
+        m_Depth  = a_Depth;
+        m_Buffer = a_Buffer;
+        allocate();
+      }
 
-        m_Width     = a_Width;
-        m_Height    = a_Height;
-        m_Depth     = a_Depth;
-        m_Allocated = false;
-        //m_Buffer    = H_NULL;
-        //m_Bitmap    = H_NULL;
+    ~h_Bitmap_Win32()
+      {
+        if (m_Prepared) DeleteObject(m_Bitmap); // deletes allocated buffer
+        if (m_Allocated) delete[] m_Buffer;
+      }
 
+    //----------
+
+    void prepare(/*int a_Width, int a_Height*/)
+      {
+        if (/*m_Buffer ||*/ m_Prepared) return;// false;
         BITMAPINFO bmi;
         h_Memset(&bmi,0,sizeof(BITMAPINFO));
         bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
@@ -83,52 +90,38 @@ class h_Bitmap_Win32// : public h_Bitmap_Base
         bmi.bmiHeader.biBitCount    = 32;           // bits per pixel
         bmi.bmiHeader.biCompression = BI_RGB;       // uncompressed
         bmi.bmiHeader.biSizeImage   = 0;            // size, in bytes, of the image. may be set to zero for BI_RGB bitmaps.
-
-        //http://msdn.microsoft.com/en-us/library/dd183494%28VS.85%29.aspx
-        //
-        //HBITMAP CreateDIBSection(
-        //  HDC hdc,
-        //  const BITMAPINFO *pbmi,
-        //  UINT iUsage,
-        //  VOID **ppvBits,
-        //  HANDLE hSection,
-        //  DWORD dwOffset
-        //);
-        //
-        //The CreateDIBSection function creates a DIB that applications can write to directly.
-        //The function gives you a pointer to the location of the bitmap bit values.
-        //You can supply a handle to a file-mapping object that the function will use to create the bitmap,
-        //or you can let the system allocate the memory for the bitmap.
-        //
-        //If hSection is NULL, the system allocates memory for the DIB.
-        //In this case, the CreateDIBSection function ignores the dwOffset parameter.
-        //An application cannot later obtain a handle to this memory.
-        //The dshSection member of the DIBSECTION structure filled in
-        //by calling the GetObject function will be NULL.
-        //
-        //If the function succeeds, the return value is a handle to the newly created DIB,
-        //and *ppvBits points to the bitmap bit values.
-        //If the function fails, the return value is NULL, and *ppvBits is NULL.
-
         void* ptr;
         HDC tempdc = GetDC(0); // GetDC(mWin);
         m_Bitmap = CreateDIBSection(tempdc,&bmi,DIB_RGB_COLORS,&ptr,NULL,0);
         ReleaseDC(0,tempdc);
-        m_Buffer = (char*)ptr;
+        if (m_Buffer)
+        {
+          h_Memcpy(ptr,m_Buffer,m_Width*m_Height*4);
+        }
+        if (m_Allocated)
+        {
+          delete[] m_Buffer; // assumes created with new, not malloc
+          m_Allocated = false;
+        }
+        m_Buffer = (unsigned long*)ptr;
         m_Prepared = true;
       }
 
-    ~h_Bitmap_Win32()
-      {
-        if (m_Prepared) DeleteObject(m_Bitmap); // deletes allocated buffer
-        if (m_Allocated) delete[] m_Buffer;
-      }
+    //----------
 
+    void allocate(void)
+      {
+        if (m_Buffer || m_Allocated) return;// false;
+        m_Buffer = new unsigned long[m_Width*m_Height];// 32bit rgba
+        m_Allocated = true; // DeleteObject() in destructor deletes allocated buffer
+        //return true;
+      }
 };
 
 //----------------------------------------------------------------------
 
-typedef h_Bitmap_Win32 h_Bitmap_Impl;
+//typedef h_Bitmap_Win32 h_Bitmap_Impl;
+typedef h_Bitmap_Win32 h_Bitmap;
 
 //----------------------------------------------------------------------
 #endif

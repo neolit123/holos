@@ -15,20 +15,20 @@
 int main(void)
 {
   h_Debug debug;
-  
+
   int* j = (int*)malloc(100);
   int* p = new int[5];
-  
-  int a = 1;
-  while (a)
+
+  int a = 10;
+  while (--a)
   {
     dtrace("\n");
     trace("trace ok");
     dtrace("\n");
   }
-  
+
   free(j);
   delete[] p;
-  
-  return 0; 
+
+  return 0;
 }
