@@ -17,30 +17,37 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Instance_Included
-#define h_Instance_Included
+#ifndef h_Format_Ladspa_included
+#define h_Format_Ladspa_included
 //----------------------------------------------------------------------
 
-//class h_Instance
-//{
-//  public:
-//    h_Instance(h_Descriptor* a_Descriptor) {}
-//    virtual ~h_Instance() {}
-//};
+#include "core/h_Interface.h"
 
-#ifdef H_EXE
-  #include "base/impl/h_Instance_Exe.h"
-#endif
+class h_Format_Ladspa : public h_Interface
+{
+  public:
 
-#ifdef H_LADSPA
-  #include "base/impl/h_Instance_Ladspa.h"
-#endif
+    h_Format_Ladspa()
+    : h_Interface()
+      {
+      }
 
-#ifdef H_VST
-  #include "base/impl/h_Instance_Vst.h"
-#endif
+    virtual ~h_Format_Ladspa()
+      {
+      }
 
+    virtual void initialize(void)
+      {
+        h_Interface::initialize();
+      }
+
+};
+
+//----------------------------------------------------------------------
+
+typedef h_Format_Ladspa h_Format;
+
+#define H_MAIN "main/impl/h_Main_Ladspa.h"
 
 //----------------------------------------------------------------------
 #endif
-

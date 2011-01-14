@@ -17,43 +17,19 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Main_Exe_included
-#define h_Main_Exe_included
+#ifndef h_Host_Ladspa_Included
+#define h_Host_Ladspa_Included
 //----------------------------------------------------------------------
 
-int main(void)
+class h_Host_Ladspa
 {
+  public:
+    h_Host_Ladspa(void* a_Ptr) {}
+    virtual ~h_Host_Ladspa() {}
+};
 
-  // holos
-
-  static_Debug.initialize();
-  static_Core.initialize();
-
-  // instance
-
-  h_Host* host = new h_Host(H_NULL);
-  h_Descriptor* desc = static_Base.createDescriptor(host);
-  h_Instance*   inst = static_Base.createInstance(desc);
-
-  // editor
-
-  if (desc->m_Flags & df_HasEditor)
-  {
-    h_Editor*     edit = static_Base.createEditor(inst);
-      edit->open(H_NULL);
-      edit->eventLoop();
-      edit->close();
-    delete edit;
-  }
-
-  // ---
-
-  delete inst;
-  delete desc;
-  delete host;
-
-  return 0;
-}
+typedef h_Host_Ladspa h_Host;
 
 //----------------------------------------------------------------------
 #endif
+

@@ -79,22 +79,25 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 //----------------------------------------------------------------------
 
-class h_Window_Win32 : public h_PaintSource
+class h_Window_Win32 : public h_Widget,
+                       public h_PaintSource
 {
 
   private:
 
-    //char*       m_ClassName;
+
+  //win32
+    HWND        m_Parent; // override from h_Widget:
     HINSTANCE   m_Instance;
-    HWND        m_Parent;
     PAINTSTRUCT m_PS;
     HCURSOR     m_WinCursor;
     HWND        m_Window;
 
+  //holos
     h_Rect      m_Rect;
     h_Painter*  m_Painter;
-    h_Widget*   m_Root;
 
+  //other
     int         m_AdjustHeight;
     int         m_AdjustWidth;
     int         m_ClickedButton;
@@ -119,13 +122,14 @@ class h_Window_Win32 : public h_PaintSource
 
 
     h_Window_Win32(h_Rect a_Rect, void* a_Parent)
-    //: h_Window_Base(a_Parent,a_Rect)
+    : h_Widget(H_NULL,a_Rect)
+
       {
         m_Parent        = (HWND)a_Parent;
         m_Instance      = static_Core.getWinInstance();
         //m_ClassName     = static_Core.getWinClassName();
         m_Rect          = a_Rect;
-        m_Root          = H_NULL;
+        //m_Root          = H_NULL;
         m_WinCursor     = LoadCursor(NULL,IDC_ARROW);
         m_PrevCursor    = 0;
         m_ClickedButton = bu_None;
@@ -195,13 +199,19 @@ class h_Window_Win32 : public h_PaintSource
     //
     //----------------------------------------
 
+    // do/on..
+
+    //----------------------------------------
+    //
+    //----------------------------------------
+
     //virtual
-    void setRoot(h_Widget* a_Widget)
-      {
-        //a_Widget->setPainter(m_Painter);
-        //a_Widget->setSkin(m_Skin);
-        m_Root = a_Widget;
-      }
+    //void setRoot(h_Widget* a_Widget)
+    //  {
+    //    //a_Widget->setPainter(m_Painter);
+    //    //a_Widget->setSkin(m_Skin);
+    //    m_Root = a_Widget;
+    //  }
 
     //----------------------------------------
     //
@@ -479,7 +489,8 @@ class h_Window_Win32 : public h_PaintSource
             //else
             //{
               //resizeBuffer(w,h);
-              if (m_Root) m_Root->do_SetSize(w,h);
+              //if (m_Root) m_Root->do_SetSize(w,h);
+              do_SetSize(w,h);
             //}
             result = 0;
             break;
@@ -515,7 +526,8 @@ class h_Window_Win32 : public h_PaintSource
 
               //TODO: blit from back-buffer
               // assume this is already updated by the widgets themselves
-              if (m_Root) m_Root->do_Paint(m_Painter,rc);
+              //if (m_Root) m_Root->do_Paint(m_Painter,rc);
+              do_Paint(m_Painter,rc);
 
             //  m_Painter->clearClipRect();
 
@@ -537,7 +549,8 @@ class h_Window_Win32 : public h_PaintSource
               case WM_RBUTTONDOWN: b = bu_Right;  break;
             }
             m_ClickedButton = b;
-            if (m_Root) m_Root->do_MouseDown(x,y,b,remapKey(wParam));
+            //if (m_Root) m_Root->do_MouseDown(x,y,b,remapKey(wParam));
+            do_MouseDown(x,y,b,remapKey(wParam));
             //if (m_CapturedWidget) grabCursor();
             break;
 
@@ -554,7 +567,8 @@ class h_Window_Win32 : public h_PaintSource
               case WM_RBUTTONUP: b = bu_Right;  break;
             }
             m_ClickedButton = bu_None;
-            if (m_Root) m_Root->do_MouseUp(x,y,b,remapKey(wParam));
+            //if (m_Root) m_Root->do_MouseUp(x,y,b,remapKey(wParam));
+            do_MouseUp(x,y,b,remapKey(wParam));
             //if (!mCapturedWidget) releaseCursor();
             break;
 
@@ -562,7 +576,8 @@ class h_Window_Win32 : public h_PaintSource
 
             x = short(LOWORD(lParam));
             y = short(HIWORD(lParam));
-            if (m_Root) m_Root->do_MouseMove(x,y,/*m_ClickedButton|*/remapKey(wParam));
+            //if (m_Root) m_Root->do_MouseMove(x,y,/*m_ClickedButton|*/remapKey(wParam));
+            do_MouseMove(x,y,/*m_ClickedButton|*/remapKey(wParam));
             break;
 
           //case WM_CHAR:
@@ -572,12 +587,14 @@ class h_Window_Win32 : public h_PaintSource
 
           case WM_KEYDOWN:
 
-            if (m_Root) m_Root->do_KeyDown(wParam,lParam);
+            //if (m_Root) m_Root->do_KeyDown(wParam,lParam);
+            do_KeyDown(wParam,lParam);
             break;
 
           case WM_KEYUP:
 
-            if (m_Root) m_Root->do_KeyDown(wParam,lParam);
+            //if (m_Root) m_Root->do_KeyDown(wParam,lParam);
+            do_KeyDown(wParam,lParam);
             break;
 
           case WM_SETCURSOR:
@@ -592,7 +609,7 @@ class h_Window_Win32 : public h_PaintSource
 
           case WM_TIMER:
 
-            if (wParam==667) if (m_Root) m_Root->do_Timer();
+            if (wParam==667) /*if (m_Root) m_Root->*/do_Timer();
             result = 0;
             break;
 

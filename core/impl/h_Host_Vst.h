@@ -17,29 +17,20 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Base_included
-#define h_Base_included
+#ifndef h_Host_Vst_Included
+#define h_Host_Vst_Included
 //----------------------------------------------------------------------
 
-#include "base/h_Descriptor.h"
-#include "base/h_Instance.h"
-#include "base/h_Editor.h"
-#include "base/h_Host.h"
-
-template<class t_Descriptor,class t_Instance, class t_Editor>
-class h_Base
+class h_Host_Vst
 {
   public:
-    //h_Base() {}
-    //~h_Base() {}
-    inline h_Descriptor* createDescriptor(h_Host* a_Host)           { return new t_Descriptor(a_Host); }
-    inline h_Instance*   createInstance(h_Descriptor* a_Descriptor) { return new t_Instance(a_Descriptor); }
-    inline h_Editor*     createEditor(h_Instance* a_Instance)       { return new t_Editor(a_Instance); }
+    h_Host_Vst(void* a_Ptr) {}
+    virtual ~h_Host_Vst() {}
 };
 
-#define H_BASE(D,I,E) static h_Base<D,I,E> static_Base;
-#define H_PLUGIN      H_BASE
-#define H_APPLICATION H_BASE
+typedef h_Host_Vst h_Host;
 
 //----------------------------------------------------------------------
 #endif
+
+

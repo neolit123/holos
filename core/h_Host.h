@@ -17,14 +17,21 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef holos_included
-#define holos_included
+#ifndef h_Host_included
+#define h_Host_included
 //----------------------------------------------------------------------
 
-#include "lib/h_Defines.h"
-#include "debug/h_Debug.h"
-#include "core/h_Core.h"
-#include "core/h_Base.h"
+#ifdef H_EXE
+  #include "core/impl/h_Host_Exe.h"
+#endif
+
+#ifdef H_LADSPA
+  #include "core/impl/h_Host_Ladspa.h"
+#endif
+
+#ifdef H_VST
+  #include "core/impl/h_Host_Vst.h"
+#endif
 
 //----------------------------------------------------------------------
 #endif

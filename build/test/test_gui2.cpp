@@ -51,20 +51,7 @@ class my_Descriptor : public h_Descriptor
 
 //------------------------------
 
-class my_Instance : public h_Instance
-{
-  public:
-    my_Instance(h_Descriptor* a_Descriptor)
-    : h_Instance(a_Descriptor)
-      {
-      }
-    virtual ~my_Instance()
-      {
-      }
-};
-
-//------------------------------
-
+//class my_Editor;
 class my_Editor : public h_Editor//,
                   //public h_WidgetListener
 {
@@ -75,15 +62,18 @@ class my_Editor : public h_Editor//,
     my_Editor(h_Instance* a_Instance)
     : h_Editor(a_Instance)
       {
-        back = new wdg_Background(this,H_DARK_RED);
+        trace("my_Editor");
+        //back = new wdg_Background(this,H_DARK_RED);
       }
     virtual ~my_Editor()
       {
-        delete back;
+        //delete back;
       }
     virtual void do_Open(h_Window* a_Window)
       {
-        a_Window->setRoot(back);
+        //a_Window->setRoot(back);
+        trace("do_Open");
+        //a_Window->show();
       }
     // widget listener
     virtual void on_Change(h_Widget* a_Widget)
@@ -93,6 +83,41 @@ class my_Editor : public h_Editor//,
     virtual void on_Hint(char* a_Text)
       {
         trace(a_Text);
+      }
+
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+      {
+        trace("do_Paint");
+      }
+
+};
+
+//------------------------------
+
+class my_Instance : public h_Instance
+{
+  private:
+    h_Editor* m_Editor;
+  public:
+    my_Instance(h_Descriptor* a_Descriptor)
+    : h_Instance(a_Descriptor)
+      {
+      }
+    virtual ~my_Instance()
+      {
+      }
+    virtual void* do_OpenEditor(void* a_Parent)
+      {
+        trace("my_instance.do_OpenEditor");
+        m_Editor = new my_Editor(this);
+        m_Editor->open(a_Parent);
+        return (void*)m_Editor;
+      }
+    virtual void do_CloseEditor(void)
+      {
+        m_Editor->close();
+        delete m_Editor;
+        m_Editor = H_NULL;
       }
 
 };

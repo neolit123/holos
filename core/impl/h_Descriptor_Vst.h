@@ -17,14 +17,17 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef holos_included
-#define holos_included
+#ifndef h_Descriptor_Vst_Included
+#define h_Descriptor_Vst_Included
 //----------------------------------------------------------------------
 
-#include "lib/h_Defines.h"
-#include "debug/h_Debug.h"
-#include "core/h_Core.h"
-#include "core/h_Base.h"
+class h_Descriptor_Vst
+{
+  private:
+  public:
+};
+
+typedef h_Descriptor_Vst h_Descriptor_Base
 
 //----------------------------------------------------------------------
 #endif

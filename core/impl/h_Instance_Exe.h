@@ -17,43 +17,53 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Format_Exe_included
-#define h_Format_Exe_included
+#ifndef h_Instance_Exe_Included
+#define h_Instance_Exe_Included
 //----------------------------------------------------------------------
 
-#include "core/h_Interface.h"
+#include "gui/h_Window.h"
 
-class h_Format_Exe : public h_Interface
+class h_Instance_Exe
 {
+  private:
+    h_Descriptor* m_Descriptor;
+    int           m_ReturnValue;
+
   public:
-
-    h_Format_Exe()
-    : h_Interface()
+    h_Instance_Exe(h_Descriptor* a_Descriptor)
       {
+        m_Descriptor = a_Descriptor;
+        m_ReturnValue = 0;
       }
-
-    virtual ~h_Format_Exe()
+    virtual ~h_Instance_Exe()
       {
-      }
-
-    virtual void initialize(void)
-      {
-        h_Interface::initialize();
       }
 
 //    virtual void* entrypoint(void* a_Ptr)
 //      {
-//        trace("entrypoint");
-//        return H_NULL;
+//        m_ReturnValue = 0;
+//        if (m_Descriptor->m_Flags & df_HasEditor)
+//        {
+//          h_Window* window = (h_Window*)do_OpenEditor(a_Ptr);
+//          window->eventLoop();
+//          do_CloseEditor();
+//          //TODO: timer -> do_IdleEditor
+//        }
+//        return &m_ReturnValue;
 //      }
+
+    //----------
+
+    virtual void* do_OpenEditor(void* a_Parent) { return H_NULL; }
+    virtual void  do_CloseEditor(void) {}
+    virtual void  do_IdleEditor(void) {}
 
 };
 
 //----------------------------------------------------------------------
 
-typedef h_Format_Exe h_Format;
-
-#define H_MAIN "core/impl/h_Main_Exe.h"
+typedef h_Instance_Exe h_Instance;
 
 //----------------------------------------------------------------------
 #endif
+

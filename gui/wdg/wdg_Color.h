@@ -17,21 +17,40 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Host_included
-#define h_Host_included
+#ifndef wdg_Color_included
+#define wdg_Color_included
 //----------------------------------------------------------------------
 
-#ifdef H_EXE
-  #include "base/impl/h_Host_Exe.h"
-#endif
+#include "gui/h_Color.h"
+#include "gui/h_Widget.h"
 
-#ifdef H_LADSPA
-  #include "base/impl/h_Host_Ladspa.h"
-#endif
+class wdg_Color : public h_Widget
+{
+  private:
+    bool      m_Client;
+    h_Color   m_Color;
 
-#ifdef H_VST
-  #include "base/impl/h_Host_Vst.h"
-#endif
+  public:
+
+    wdg_Color(h_WidgetListener* a_Listener, h_Rect a_Rect, h_Color a_Color=H_GREY)
+    : h_Widget(a_Listener,a_Rect)
+      {
+        m_Color = a_Color;
+      }
+    virtual ~wdg_Color()
+      {
+      }
+
+  public:
+
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+      {
+        //trace("do_Paint("<<a_Rect.x<<","<<a_Rect.y <<","<< a_Rect.w<<","<<a_Rect.h<<")");
+        a_Painter->setBrushColor(m_Color);
+        a_Painter->fillRect(a_Rect.x,a_Rect.y,a_Rect.x2(),a_Rect.y2());
+      }
+
+};
 
 //----------------------------------------------------------------------
 #endif

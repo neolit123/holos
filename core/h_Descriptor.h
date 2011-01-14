@@ -17,21 +17,45 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Instance_Exe_Included
-#define h_Instance_Exe_Included
+#ifndef h_Descriptor_Included
+#define h_Descriptor_Included
 //----------------------------------------------------------------------
 
-class h_Instance_Exe
-{
-  public:
-    h_Instance_Exe(h_Descriptor* a_Descriptor) {}
-    virtual ~h_Instance_Exe() {}
-};
+#define df_None       0
+#define df_HasEditor  1
+#define df_IsSynth    2
+
+#include "lib/h_Rect.h"
 
 //----------------------------------------------------------------------
 
-typedef h_Instance_Exe h_Instance;
+#ifdef H_EXE
+  #include "core/impl/h_Descriptor_Exe.h"
+#endif
+
+#ifdef H_LADSPA
+  #include "core/impl/h_Descriptor_Ladspa.h"
+#endif
+
+#ifdef H_VST
+  #include "core/impl/h_Descriptor_Vst.h"
+#endif
+
+//----------------------------------------------------------------------
+
+//class h_Descriptor : public h_Descriptor_Base
+//{
+//  public:
+//    //h_Descriptor() {}
+//    //virtual ~h_Descriptor() {}
+//    const char* m_Name;
+//    const char* m_Author;
+//    const char* m_Product;
+//    //
+//    int     m_Flags;
+//    h_Rect  m_EditorRect;
+//
+//};
 
 //----------------------------------------------------------------------
 #endif
-

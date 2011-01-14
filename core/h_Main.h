@@ -25,15 +25,15 @@
 // H_MAIN set directly to implementation in h_Format...
 
 #ifdef H_EXE
-  #include "main/impl/h_Main_Exe.h"
+  #include "core/impl/h_Main_Exe.h"
 #endif
 
 #ifdef H_LADSPA
-  #include "main/impl/h_Main_Ladspa.h"
+  #include "core/impl/h_Main_Ladspa.h"
 #endif
 
 #ifdef H_VST
-  #include "main/impl/h_Main_Vst.h"
+  #include "core/impl/h_Main_Vst.h"
 #endif
 
 //----------------------------------------------------------------------

@@ -17,14 +17,30 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef holos_included
-#define holos_included
+#ifndef h_Instance_Included
+#define h_Instance_Included
 //----------------------------------------------------------------------
 
-#include "lib/h_Defines.h"
-#include "debug/h_Debug.h"
-#include "core/h_Core.h"
-#include "core/h_Base.h"
+//class h_Instance
+//{
+//  public:
+//    h_Instance(h_Descriptor* a_Descriptor) {}
+//    virtual ~h_Instance() {}
+//};
+
+#ifdef H_EXE
+  #include "core/impl/h_Instance_Exe.h"
+#endif
+
+#ifdef H_LADSPA
+  #include "core/impl/h_Instance_Ladspa.h"
+#endif
+
+#ifdef H_VST
+  #include "core/impl/h_Instance_Vst.h"
+#endif
+
 
 //----------------------------------------------------------------------
 #endif
+

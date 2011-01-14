@@ -17,14 +17,11 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef holos_included
-#define holos_included
+#ifndef h_Main_Ladspa_included
+#define h_Main_Ladspa_included
 //----------------------------------------------------------------------
 
-#include "lib/h_Defines.h"
-#include "debug/h_Debug.h"
-#include "core/h_Core.h"
-#include "core/h_Base.h"
+
 
 //----------------------------------------------------------------------
 #endif

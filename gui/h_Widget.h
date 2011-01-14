@@ -44,6 +44,25 @@ typedef h_Array<h_Widget*> h_Widgets;
 
 //----------------------------------------------------------------------
 
+class h_WidgetBase
+{
+  public:
+    virtual void do_Timer(void) {}
+    virtual void do_SetPos(int x, int y) {}
+    virtual void do_SetSize(int w, int h) {}
+    virtual void do_Realign(void) {}
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) {}
+    virtual void do_Enter(void) {}
+    virtual void do_Leave(void) {}
+    virtual void do_MouseDown(int x, int y, int b, int s) {}
+    virtual void do_MouseUp(int x, int y, int b, int s) {}
+    virtual void do_MouseMove(int x, int t, int s) {}
+    virtual void do_KeyDown(int k, int s) {}
+    virtual void do_KeyUp(int k, int s) {}
+};
+
+//----------------------------------------------------------------------
+
 class h_WidgetListener
 {
   public:
@@ -52,6 +71,7 @@ class h_WidgetListener
 };
 
 //typedef h_Array<h_WidgetListener*> h_WidgetListeners;
+
 
 //----------
 
@@ -66,14 +86,15 @@ class h_WidgetListener
 
 //----------------------------------------------------------------------
 
-class h_Widget
+class h_Widget : public h_WidgetBase,
+                 public h_WidgetListener
 {
-  //private:
+  private:
+    int               m_Index;
   protected:
     int               m_Flags;
-    h_WidgetListener* m_Listener;
     h_Rect            m_Rect;
-    int               m_Index;
+    h_WidgetListener* m_Listener;
     h_Widget*         m_Parent;
     h_Widgets         m_Children;
 
@@ -150,22 +171,7 @@ class h_Widget
 //      }
 
     //----------------------------------------
-    //
-    //----------------------------------------
-
-//    virtual void do_Timer(void) {}
-//    virtual void do_SetPos(int x, int y) {}
-//    virtual void do_SetSize(int w, int h) {}
-//    virtual void do_Realign(void) {}
-//    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) {}
-//    virtual void do_Enter(void) {}
-//    virtual void do_Leave(void) {}
-//    virtual void do_MouseDown(int x, int y, int b, int s) {}
-//    virtual void do_MouseUp(int x, int y, int b, int s) {}
-//    virtual void do_MouseMove(int x, int t, int s) {}
-//    virtual void do_KeyDown(int k, int s) {}
-//    virtual void do_KeyUp(int k, int s) {}
-
+    // widget base/handler
     //----------------------------------------
 
     virtual void do_Timer(void)
@@ -276,8 +282,20 @@ class h_Widget
       }
 
     //----------------------------------------
-    //
+    // widget listener
     //----------------------------------------
+
+    virtual void on_Change(h_Widget* a_Widget)
+      {
+        if (m_Listener) m_Listener->on_Change(a_Widget);
+      }
+
+    //----------
+
+    virtual void on_Hint(char* a_Text)
+      {
+        if (m_Listener) m_Listener->on_Hint(a_Text);
+      }
 
 };
 
