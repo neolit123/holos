@@ -21,119 +21,187 @@
 #define h_Main_Vst_included
 //----------------------------------------------------------------------
 
-//int main(void)
+
+
+//----------------------------------------------------------------------
+#endif
+
+////  typedef audioMasterCallback __may_alias audioMasterCallback_a;
+//
+//#ifdef H_VST
+//
+//  #ifdef H_LINUX
+//    #define _H_ASM_MAIN_SYMBOL asm ("main");
+//  #endif
+//  #ifdef H_WIN32
+//    #define _H_ASM_MAIN_SYMBOL asm ("_main");
+//  #endif
+//
+//  //---
+//
+//  // a.k.a. createEffectInstance
+//  AEffect*  main_plugin(audioMasterCallback audioMaster) _H_ASM_MAIN_SYMBOL
+//  #define   main main_plugin
+//
+//  //---
+//
+//  // note here we init
+//
+//  #define H_MAIN(_D,_I,_E)
+//    H_MAIN_INIT(_D,_I,_E)
+//    AEffect* main(audioMasterCallback audioMaster)
+//    {
+//      if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0;
+//      H_CORE.initialize();
+//      void* res = H_FORMAT->entrypoint( *(void_ptr_a*)&audioMaster );
+//      return (AEffect*)res;
+//    }
+//
+//#endif // H_VST
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////int main(void)
+////{
+////  // holos
+////  static_Debug.initialize();
+////  static_Core.initialize();
+////  // instance
+////  h_Host* host = new h_Host(H_NULL);
+////  h_Descriptor* desc = static_Base.createDescriptor(host);
+////  h_Instance*   inst = static_Base.createInstance(desc);
+////  // editor
+////  if (desc->m_Flags & df_HasEditor)
+////  {
+////    h_Editor*     edit = static_Base.createEditor(inst);
+////      edit->open(H_NULL);
+////      edit->eventLoop();
+////      edit->close();
+////    delete edit;
+////  }
+////  delete inst;
+////  delete desc;
+////  delete host;
+////  return 0;
+////}
+//
+////----------------------------------------------------------------------
+//
+//#ifdef H_LINUX
+//  #define _H_ASM_MAIN_SYMBOL asm ("main");
+//#endif
+//
+//#ifdef H_WIN32
+//  #define _H_ASM_MAIN_SYMBOL asm ("_main");
+//#endif
+//
+////----------------------------------------------------------------------
+//
+//// typedef audioMasterCallback __may_alias audioMasterCallback_a;
+//
+//// a.k.a. createEffectInstance
+//AEffect*  main_plugin(audioMasterCallback audioMaster) _H_ASM_MAIN_SYMBOL
+//#define   main main_plugin
+//
+////----------
+//
+//// main is called for each plugin instance..
+////
+//// we assume audioMaster is always the same for all instances...
+//// (what if each plugin is in a separate process?)
+//
+//static bool static_isFirstInstance = true;
+//static AEffect static_AEffect;
+//
+//AEffect* main(audioMasterCallback audioMaster)
 //{
-//  // holos
+//  if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0; // old version
+//
 //  static_Debug.initialize();
 //  static_Core.initialize();
-//  // instance
-//  h_Host* host = new h_Host(H_NULL);
-//  h_Descriptor* desc = static_Base.createDescriptor(host);
-//  h_Instance*   inst = static_Base.createInstance(desc);
-//  // editor
-//  if (desc->m_Flags & df_HasEditor)
-//  {
-//    h_Editor*     edit = static_Base.createEditor(inst);
-//      edit->open(H_NULL);
-//      edit->eventLoop();
-//      edit->close();
-//    delete edit;
-//  }
-//  delete inst;
-//  delete desc;
-//  delete host;
-//  return 0;
+//  host = new h_Host(audioMaster);
+//  static_Base.initialize(host);
+//
+//
+//
+//    static_Debug.initialize();
+//    static_Core.initialize();
+//  static_Base.initialize();
+//
+////    h_Host* host = new h_Host(audioMaster);
+////    h_Descriptor* desc = static_Base.createDescriptor(host);
+////    h_Instance* inst = static_Base.createInstance(desc);
+//
+//
+//
+//  //void* ptr = static_Base.entrypoint(audioMaster);
+//  //return (AEffect*)ptr;
+//
+////
+////
+////
+////
+////  // instance
+//////  inst->setAudioMaster(m_AudioMaster);
+////
+////  h_Host* host = new h_Host(audioMaster);
+////
+////  h_Descriptor* desc = static_Base.createDescriptor(host);
+////  h_Instance* inst = static_Base.createInstance(desc);
+////  //h_Memset(&m_AEffect,0,sizeof(AEffect));
+////  m_AEffect.magic                   = kEffectMagic;
+////  m_AEffect.object                  = inst;                   //
+////  m_AEffect.user                    = this;                   // ???
+////  m_AEffect.dispatcher              = vst_dispatcher_callback;
+////  m_AEffect.setParameter            = vst_setParameter_callback;
+////  m_AEffect.getParameter            = vst_getParameter_callback;
+////  m_AEffect.processReplacing        = vst_processReplacing_callback;
+////  m_AEffect.processDoubleReplacing  = vst_processDoubleReplacing_callback;
+////  m_AEffect.flags                   = effFlagsCanReplacing;
+////  m_AEffect.version                 = 0;
+////  m_AEffect.uniqueID                = H_MAGIC + 0x0000;
+////  m_AEffect.numPrograms             = 0;
+////  m_AEffect.numParams               = 0;
+////  m_AEffect.numInputs               = 2;
+////  m_AEffect.numOutputs              = 2;
+////  m_AEffect.initialDelay            = 0;
+////  return &m_AEffect;
+////
+////
+//
+//  return H_NULL;
 //}
 
-//----------------------------------------------------------------------
-
-#ifdef H_LINUX
-  #define _H_ASM_MAIN_SYMBOL asm ("main");
-#endif
-
-#ifdef H_WIN32
-  #define _H_ASM_MAIN_SYMBOL asm ("_main");
-#endif
-
-//----------------------------------------------------------------------
-
-// typedef audioMasterCallback __may_alias audioMasterCallback_a;
-
-// a.k.a. createEffectInstance
-AEffect*  main_plugin(audioMasterCallback audioMaster) _H_ASM_MAIN_SYMBOL
-#define   main main_plugin
-
-//----------
-
-// main is called for each plugin instance..
-//
-// we assume audioMaster is always the same for all instances...
-// (what if each plugin is in a separate process?)
-
-static bool static_isFirstInstance = true;
-static AEffect static_AEffect;
-
-AEffect* main(audioMasterCallback audioMaster)
-{
-  if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0; // old version
-
-  static_Debug.initialize();
-  static_Core.initialize();
-  host = new h_Host(audioMaster);
-  static_Base.initialize(host);
 
 
 
-    static_Debug.initialize();
-    static_Core.initialize();
-  static_Base.initialize();
-
-//    h_Host* host = new h_Host(audioMaster);
-//    h_Descriptor* desc = static_Base.createDescriptor(host);
-//    h_Instance* inst = static_Base.createInstance(desc);
 
 
 
-  //void* ptr = static_Base.entrypoint(audioMaster);
-  //return (AEffect*)ptr;
 
-//
-//
-//
-//
-//  // instance
-////  inst->setAudioMaster(m_AudioMaster);
-//
-//  h_Host* host = new h_Host(audioMaster);
-//
-//  h_Descriptor* desc = static_Base.createDescriptor(host);
-//  h_Instance* inst = static_Base.createInstance(desc);
-//  //h_Memset(&m_AEffect,0,sizeof(AEffect));
-//  m_AEffect.magic                   = kEffectMagic;
-//  m_AEffect.object                  = inst;                   //
-//  m_AEffect.user                    = this;                   // ???
-//  m_AEffect.dispatcher              = vst_dispatcher_callback;
-//  m_AEffect.setParameter            = vst_setParameter_callback;
-//  m_AEffect.getParameter            = vst_getParameter_callback;
-//  m_AEffect.processReplacing        = vst_processReplacing_callback;
-//  m_AEffect.processDoubleReplacing  = vst_processDoubleReplacing_callback;
-//  m_AEffect.flags                   = effFlagsCanReplacing;
-//  m_AEffect.version                 = 0;
-//  m_AEffect.uniqueID                = H_MAGIC + 0x0000;
-//  m_AEffect.numPrograms             = 0;
-//  m_AEffect.numParams               = 0;
-//  m_AEffect.numInputs               = 2;
-//  m_AEffect.numOutputs              = 2;
-//  m_AEffect.initialDelay            = 0;
-//  return &m_AEffect;
-//
-//
 
-  return H_NULL;
-}
 
-//----------------------------------------------------------------------
-#endif
 
 
 

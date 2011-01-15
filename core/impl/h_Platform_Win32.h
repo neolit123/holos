@@ -22,67 +22,114 @@
 //----------------------------------------------------------------------
 
 #include <windows.h>
+
 #include "lib/h_Globals.h"
+//static HINSTANCE static_WinInstance = H_NULL;
 
 //----------------------------------------------------------------------
 
-#ifdef H_LIB
+//TODO: DllMain
 
-__externc
-BOOL APIENTRY
-DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
+//----------------------------------------------------------------------
+
+struct h_Platform_Data
 {
-  switch(reason)
-  {
-    case DLL_PROCESS_ATTACH:
-      static_WinInstance = hModule;
-      break;
-    //case DLL_PROCESS_DETACH:
-    //  break;
-    //case DLL_THREAD_ATTACH:
-    //  break;
-    //case DLL_THREAD_DETACH:
-    //  break;
-    //default:
-    //  break;
-  }
-  return TRUE;
-}
-
-#endif // H_LIB
-
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
-
-class h_Platform_Win32
-{
-  private:
-    HINSTANCE m_WinInstance;
-
-  public:
-    inline HINSTANCE getWinInstance(void) { return m_WinInstance; }
-
-  public:
-
-    h_Platform_Win32()
-      {
-      }
-
-    virtual ~h_Platform_Win32()
-      {
-      }
-
-    virtual void initialize(void)
-      {
-        m_WinInstance = static_WinInstance;
-      }
-
+  HINSTANCE m_WinInstance;
 };
 
 //----------------------------------------------------------------------
 
-typedef h_Platform_Win32 h_Platform;
+class h_Platform  : public h_Platform_Base
+{
+  private:
+    h_Platform_Data m_Data;
+  public:
+    virtual h_Platform_Data* getData(void) { return &m_Data; }
+
+  public:
+
+    h_Platform()
+    : h_Platform_Base()
+      {
+        m_Data.m_WinInstance = static_WinInstance;
+      }
+
+    virtual ~h_Platform()
+      {
+      }
+
+    //----------
+
+    //virtual char* getBasePath(void)
+    //  {
+    //    return (char*)"";
+    //  }
+
+};
+
+
+//#include <windows.h>
+//#include "lib/h_Globals.h"
+//
+////----------------------------------------------------------------------
+//
+//#ifdef H_LIB
+//
+//__externc
+//BOOL APIENTRY
+//DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
+//{
+//  switch(reason)
+//  {
+//    case DLL_PROCESS_ATTACH:
+//      static_WinInstance = hModule;
+//      break;
+//    //case DLL_PROCESS_DETACH:
+//    //  break;
+//    //case DLL_THREAD_ATTACH:
+//    //  break;
+//    //case DLL_THREAD_DETACH:
+//    //  break;
+//    //default:
+//    //  break;
+//  }
+//  return TRUE;
+//}
+//
+//#endif // H_LIB
+//
+////----------------------------------------------------------------------
+////
+////----------------------------------------------------------------------
+//
+//class h_Platform_Win32
+//{
+//  private:
+//    HINSTANCE m_WinInstance;
+//
+//  public:
+//    inline HINSTANCE getWinInstance(void) { return m_WinInstance; }
+//
+//  public:
+//
+//    h_Platform_Win32()
+//      {
+//      }
+//
+//    virtual ~h_Platform_Win32()
+//      {
+//      }
+//
+//    virtual void initialize(void)
+//      {
+//        m_WinInstance = static_WinInstance;
+//      }
+//
+//};
+//
+////----------------------------------------------------------------------
+//
+//typedef h_Platform_Win32 h_Platform;
 
 //----------------------------------------------------------------------
 #endif

@@ -21,14 +21,14 @@
 #define h_Host_Vst_Included
 //----------------------------------------------------------------------
 
-class h_Host_Vst
-{
-  public:
-    h_Host_Vst(void* a_Ptr) {}
-    virtual ~h_Host_Vst() {}
-};
-
-typedef h_Host_Vst h_Host;
+//class h_Host_Vst
+//{
+//  public:
+//    h_Host_Vst(void* a_Ptr) {}
+//    virtual ~h_Host_Vst() {}
+//};
+//
+//typedef h_Host_Vst h_Host;
 
 //----------------------------------------------------------------------
 #endif

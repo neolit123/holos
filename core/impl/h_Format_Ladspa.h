@@ -21,33 +21,7 @@
 #define h_Format_Ladspa_included
 //----------------------------------------------------------------------
 
-#include "core/h_Interface.h"
 
-class h_Format_Ladspa : public h_Interface
-{
-  public:
-
-    h_Format_Ladspa()
-    : h_Interface()
-      {
-      }
-
-    virtual ~h_Format_Ladspa()
-      {
-      }
-
-    virtual void initialize(void)
-      {
-        h_Interface::initialize();
-      }
-
-};
-
-//----------------------------------------------------------------------
-
-typedef h_Format_Ladspa h_Format;
-
-#define H_MAIN "main/impl/h_Main_Ladspa.h"
 
 //----------------------------------------------------------------------
 #endif

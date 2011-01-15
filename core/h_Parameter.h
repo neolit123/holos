@@ -17,37 +17,36 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Host_included
-#define h_Host_included
+#ifndef h_Parameter_included
+#define h_Parameter_included
 //----------------------------------------------------------------------
 
 //#ifdef H_EXE
-//  #include "core/impl/h_Host_Exe.h"
+//  #include "core/impl/h_Parameter_Exe.h"
 //#endif
 //
 //#ifdef H_LADSPA
-//  #include "core/impl/h_Host_Ladspa.h"
+//  #include "core/impl/h_Parameter_Ladspa.h"
 //#endif
 //
 //#ifdef H_VST
-//  #include "core/impl/h_Host_Vst.h"
+//  #include "core/impl/h_Parameter_Vst.h"
 //#endif
 
 //----------------------------------------------------------------------
 
-class h_Host : public h_Host_Base
+class h_Parameter
 {
   public:
 
-    h_Host(void* a_Ptr) // audioMaster
-    : h_Host_Base()
+    h_Parameter()
       {
-        //printf("h_Host\n");
       }
 
-    virtual ~h_Host()
+    virtual ~h_Parameter()
       {
       }
+
 };
 
 //----------------------------------------------------------------------

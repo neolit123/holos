@@ -21,16 +21,16 @@
 #define h_Instance_Ladspa_Included
 //----------------------------------------------------------------------
 
-class h_Instance_Ladspa
-{
-  public:
-    h_Instance_Ladspa(h_Descriptor* a_Descriptor) {}
-    virtual ~h_Instance_Ladspa() {}
-};
-
-//----------------------------------------------------------------------
-
-typedef h_Instance_Ladspa h_Instance;
+//class h_Instance_Ladspa
+//{
+//  public:
+//    h_Instance_Ladspa(h_Descriptor* a_Descriptor) {}
+//    virtual ~h_Instance_Ladspa() {}
+//};
+//
+////----------------------------------------------------------------------
+//
+//typedef h_Instance_Ladspa h_Instance;
 
 //----------------------------------------------------------------------
 #endif

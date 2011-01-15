@@ -21,75 +21,98 @@
 #define h_Base_included
 //----------------------------------------------------------------------
 
-#include "core/h_Descriptor.h"
-#include "core/h_Instance.h"
-#include "core/h_Editor.h"
-#include "core/h_Host.h"
+#include "lib/h_Rect.h"
+#include "core/h_Parameter.h"
 
-template<class t_Descriptor,class t_Instance, class t_Editor>
-class h_Base
+//----------------------------------------------------------------------
+
+class h_Host_Base
 {
-  private:
-    //bool m_First;
-    h_Host* m_Host;
-    t_Descriptor* m_Descriptor;
-
   public:
-
-    h_Base()
-      {
-        m_Host = H_NULL;
-        m_Descriptor = H_NULL;
-//        m_First = true;
-      }
-
-    //----------
-
-    ~h_Base()
-      {
-        //if (m_Host) delete m_Host;
-        if (m_Descriptor) delete m_Descriptor;
-      }
-
-    //----------------------------------------
-
-    //inline h_Descriptor* createDescriptor(h_Host* a_Host)           { return new t_Descriptor(a_Host); }
-    inline h_Descriptor* getDescriptor(void)                        { return m_Descriptor; }
-    inline h_Instance*   createInstance(h_Descriptor* a_Descriptor) { return new t_Instance(a_Descriptor); }
-    inline h_Editor*     createEditor(h_Instance* a_Instance)       { return new t_Editor(a_Instance); }
-
-    //----------------------------------------
-
-    virtual void initialize(h_Host* a_Host)
-      {
-        m_Host = a_Host;
-        m_Descriptor = new t_Descriptor(m_Host);
-      }
-
-    //----------
-
-
-//        if (m_First)
-//        {
-//          trace("h_Base.initialize");
-//          m_First = false;
-//          m_Host = a_Host;
-//          m_Descriptor = new t_Descriptor(m_Host);
-//          //m_First = false;
-//        }
-//      }
-
-
-//    void* entrypoint(void* a_Ptr)
-//      {
-//        trace("entrypoint");
-//        return H_NULL;
-//      }
+    h_Host_Base() {}
+    virtual ~h_Host_Base() {}
 };
 
-#define H_BASE(D,I,E) static h_Base<D,I,E> static_Base;
-#define H_PLUGIN      H_BASE
-#define H_APPLICATION H_BASE
+//----------
+
+class h_Descriptor_Base
+{
+  public:
+    const char* m_Name;
+    const char* m_Author;
+    const char* m_Product;
+    int         m_Flags;
+    h_Rect      m_EditorRect;
+};
+
+//----------
+
+class h_Instance_Base
+{
+  public:
+    h_Instance_Base(h_Descriptor_Base* a_Descriptor) {}
+    virtual ~h_Instance_Base() {}
+    virtual void do_HandleState(int a_State) {}
+    virtual void do_HandleTransport(int a_Value) {}
+    virtual void do_HandleMidi(int a_Offset, unsigned char aMsg1, unsigned char aMsg2, unsigned char aMsg3) {}
+    virtual void do_HandleParameter(h_Parameter* a_Parameter) {}
+    virtual bool do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length) { return false; }
+    virtual void do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
+    virtual void do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
+    virtual void do_OpenEditor(void* a_Parent) {}
+    virtual void do_CloseEditor() {}
+    virtual void do_IdleEditor(void) {}
+};
+
+//----------
+
+class h_Editor_Base
+{
+  public:
+    h_Editor_Base(h_Instance_Base* a_Instance, h_Rect a_Rect/*, void* a_Parent*/) {}
+    virtual ~h_Editor_Base() {}
+    virtual void do_Open(void* a_Ptr) {} // h_Window*
+    virtual void do_Close(void) {}
+    virtual void do_EventLoop(void) {}
+    //virtual void on_Change(h_Widget* a_Widget) {}
+};
+
+//----------------------------------------------------------------------
+
+struct h_Platform_Data;
+struct h_Interface_Data;
+//struct h_Format_Data;
+
+//----------------------------------------
+
+class h_Platform_Base
+{
+  public:
+    h_Platform_Base() {}
+    virtual ~h_Platform_Base() {}
+    virtual h_Platform_Data* getData(void) { return H_NULL; }
+};
+
+//----------
+
+class h_Interface_Base
+{
+  public:
+    h_Interface_Base() {}
+    virtual ~h_Interface_Base() {}
+    virtual h_Interface_Data* getData(void) { return H_NULL; }
+};
+
+//----------
+
+class h_Format_Base
+{
+  public:
+    h_Format_Base() {}
+    virtual ~h_Format_Base() {}
+    virtual void* entrypoint(h_Host_Base* a_Host) { return H_NULL; }
+    //virtual h_Format_Data* getData(void) { return H_NULL; }
+};
 
 //----------------------------------------------------------------------
 #endif

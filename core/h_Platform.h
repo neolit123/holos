@@ -20,20 +20,24 @@
 #ifndef h_Platform_included
 #define h_Platform_included
 //----------------------------------------------------------------------
-// platform (os/system) specific layer
 
-//  h_Platform
-//    h_Interface
-//      h_Format
-//        h_Core
+#ifdef H_LINUX
+  #include "core/impl/h_Platform_Linux.h"
+#endif
 
 #ifdef H_WIN32
   #include "core/impl/h_Platform_Win32.h"
 #endif
 
-#ifdef H_LINUX
-  #include "core/impl/h_Platform_Win32.h"
-#endif
+//----------------------------------------------------------------------
+
+//class h_Platform_Base
+//{
+//  public:
+//    h_Platform_Base() {}
+//    virtual ~h_Platform_Base() {}
+//    virtual h_Platform_Data* getData(void) { return H_NULL; }
+//};
 
 //----------------------------------------------------------------------
 #endif

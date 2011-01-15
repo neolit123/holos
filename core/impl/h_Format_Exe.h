@@ -21,39 +21,44 @@
 #define h_Format_Exe_included
 //----------------------------------------------------------------------
 
-#include "core/h_Interface.h"
-
-class h_Format_Exe : public h_Interface
+class h_Format : public h_Format_Base
 {
+  private:
+    int m_Result;
+
   public:
 
-    h_Format_Exe()
-    : h_Interface()
+    h_Format()
+    : h_Format_Base()
       {
       }
 
-    virtual ~h_Format_Exe()
+    virtual ~h_Format()
       {
       }
 
-    virtual void initialize(void)
-      {
-        h_Interface::initialize();
-      }
+    //-------
 
-//    virtual void* entrypoint(void* a_Ptr)
-//      {
-//        trace("entrypoint");
-//        return H_NULL;
-//      }
+    virtual void* entrypoint(h_Host_Base* a_Host)
+      {
+        h_Descriptor_Base* descriptor = static_Core.createDescriptor();
+        h_Instance_Base* instance = static_Core.createInstance(descriptor);
+        // if HasEditor
+        if (descriptor->m_Flags & df_HasEditor)
+        {
+          h_Editor_Base* editor = static_Core.createEditor(instance,h_Rect(256,256),H_NULL);
+          editor->do_Open(H_NULL);
+          editor->do_EventLoop();
+          editor->do_Close();
+          delete editor;
+        }
+        delete instance;
+        delete descriptor;
+        m_Result = 0;
+        return &m_Result;
+      }
 
 };
-
-//----------------------------------------------------------------------
-
-typedef h_Format_Exe h_Format;
-
-#define H_MAIN "core/impl/h_Main_Exe.h"
 
 //----------------------------------------------------------------------
 #endif

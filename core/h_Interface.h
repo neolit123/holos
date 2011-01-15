@@ -20,20 +20,24 @@
 #ifndef h_Interface_included
 #define h_Interface_included
 //----------------------------------------------------------------------
-// interface (gui) specific layer
 
-//  h_Platform
-//    h_Interface
-//      h_Format
-//        h_Core
+#ifdef H_LINUX
+  #include "core/impl/h_Interface_Linux.h"
+#endif
 
 #ifdef H_WIN32
   #include "core/impl/h_Interface_Win32.h"
 #endif
 
-#ifdef H_LINUX
-  #include "core/impl/h_Interface_Win32.h"
-#endif
+//----------------------------------------------------------------------
+
+//class h_Interface_Base
+//{
+//  public:
+//    h_Interface_Base() {}
+//    virtual ~h_Interface_Base() {}
+//    virtual h_Interface_Data* getData(void) { return H_NULL; }
+//};
 
 //----------------------------------------------------------------------
 #endif

@@ -67,16 +67,23 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="..\..\core\h_Base.h" />
+		<Unit filename="..\..\core\h_Core.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="..\..\core\h_Core.h" />
 		<Unit filename="..\..\core\h_Descriptor.h" />
 		<Unit filename="..\..\core\h_Editor.h" />
+		<Unit filename="..\..\core\h_Flags.h" />
 		<Unit filename="..\..\core\h_Format.h" />
 		<Unit filename="..\..\core\h_Host.h" />
 		<Unit filename="..\..\core\h_Instance.h" />
 		<Unit filename="..\..\core\h_Interface.h" />
 		<Unit filename="..\..\core\h_Main.h" />
+		<Unit filename="..\..\core\h_Parameter.h" />
 		<Unit filename="..\..\core\h_Platform.h" />
 		<Unit filename="..\..\core\impl\h_Descriptor_Exe.h" />
+		<Unit filename="..\..\core\impl\h_Descriptor_Ladspa.h" />
 		<Unit filename="..\..\core\impl\h_Descriptor_Vst.h" />
 		<Unit filename="..\..\core\impl\h_Format_Exe.h" />
 		<Unit filename="..\..\core\impl\h_Format_Ladspa.h" />
@@ -87,10 +94,12 @@
 		<Unit filename="..\..\core\impl\h_Instance_Exe.h" />
 		<Unit filename="..\..\core\impl\h_Instance_Ladspa.h" />
 		<Unit filename="..\..\core\impl\h_Instance_Vst.h" />
+		<Unit filename="..\..\core\impl\h_Interface_Linux.h" />
 		<Unit filename="..\..\core\impl\h_Interface_Win32.h" />
 		<Unit filename="..\..\core\impl\h_Main_Exe.h" />
 		<Unit filename="..\..\core\impl\h_Main_Ladspa.h" />
 		<Unit filename="..\..\core\impl\h_Main_Vst.h" />
+		<Unit filename="..\..\core\impl\h_Platform_Linux.h" />
 		<Unit filename="..\..\core\impl\h_Platform_Win32.h" />
 		<Unit filename="..\..\debug\h_Assert.h" />
 		<Unit filename="..\..\debug\h_Console.h" />
@@ -136,6 +145,10 @@
 		<Unit filename="..\..\gui\wdg\wdg_Sizer.h" />
 		<Unit filename="..\..\gui\wdg\wdg_Slider.h" />
 		<Unit filename="..\..\h.h" />
+		<Unit filename="..\..\holos.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="..\..\holos.h" />
 		<Unit filename="..\..\lib\h_Array.h" />
 		<Unit filename="..\..\lib\h_BasePath.h" />

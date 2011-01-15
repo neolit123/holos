@@ -17,17 +17,11 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Descriptor_Vst_Included
-#define h_Descriptor_Vst_Included
+#ifndef h_Descriptor_Vst_included
+#define h_Descriptor_Vst_included
 //----------------------------------------------------------------------
 
-class h_Descriptor_Vst
-{
-  private:
-  public:
-};
 
-typedef h_Descriptor_Vst h_Descriptor_Base
 
 //----------------------------------------------------------------------
 #endif

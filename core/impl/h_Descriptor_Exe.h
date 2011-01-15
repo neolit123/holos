@@ -17,26 +17,11 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Descriptor_Exe_Included
-#define h_Descriptor_Exe_Included
+#ifndef h_Descriptor_Exe_included
+#define h_Descriptor_Exe_included
 //----------------------------------------------------------------------
 
-class h_Descriptor_Exe
-{
-  friend class h_Instance_Exe;
-  private:
-    int m_Result;
-  protected:
-    const char* m_Name;
-    const char* m_Author;
-    const char* m_Product;
-    int         m_Flags;
-    h_Rect      m_EditorRect;
-  public:
-    void* entrypoint(void) { m_Result=0; return &m_Result; }
-};
 
-typedef h_Descriptor_Exe h_Descriptor;
 
 //----------------------------------------------------------------------
 #endif

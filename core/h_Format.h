@@ -20,12 +20,6 @@
 #ifndef h_Format_included
 #define h_Format_included
 //----------------------------------------------------------------------
-// format (plugin/app) specific layer
-
-//  h_Platform
-//    h_Interface
-//      h_Format
-//        h_Core
 
 #ifdef H_EXE
   #include "core/impl/h_Format_Exe.h"
@@ -38,6 +32,17 @@
 #ifdef H_VST
   #include "core/impl/h_Format_Vst.h"
 #endif
+
+//----------------------------------------------------------------------
+
+//class h_Format_Base
+//{
+//  public:
+//    h_Format_Base() {}
+//    virtual ~h_Format_Base() {}
+//    virtual void* entrypoint(h_Host_Base* a_Host) { return H_NULL; }
+//    //virtual h_Format_Data* getData(void) { return H_NULL; }
+//};
 
 //----------------------------------------------------------------------
 #endif

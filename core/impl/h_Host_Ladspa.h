@@ -21,14 +21,14 @@
 #define h_Host_Ladspa_Included
 //----------------------------------------------------------------------
 
-class h_Host_Ladspa
-{
-  public:
-    h_Host_Ladspa(void* a_Ptr) {}
-    virtual ~h_Host_Ladspa() {}
-};
-
-typedef h_Host_Ladspa h_Host;
+//class h_Host_Ladspa
+//{
+//  public:
+//    h_Host_Ladspa(void* a_Ptr) {}
+//    virtual ~h_Host_Ladspa() {}
+//};
+//
+//typedef h_Host_Ladspa h_Host;
 
 //----------------------------------------------------------------------
 #endif

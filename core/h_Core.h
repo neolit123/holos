@@ -21,23 +21,52 @@
 #define h_Core_included
 //----------------------------------------------------------------------
 
-//  h_Platform
-//    h_Interface
-//      h_Format
-//        h_Core
+#include "core/h_Base.h"
 
-#include "core/h_Format.h"
-
-class h_Core : public h_Format
+class h_Core
 {
+  private:
+    bool              m_Initialized;
+    h_Platform_Base*  m_Platform;
+    h_Interface_Base* m_Interface;
+    h_Format_Base*    m_Format;
+
+  public: // accessors (getters/setters)
+    h_Platform_Base*  getPlatform(void)  { return m_Platform; }
+    h_Interface_Base* getInterface(void) { return m_Interface; }
+    h_Format_Base*    getFormat(void)    { return m_Format; }
+
   public:
-    h_Core() : h_Format() {}
-    virtual ~h_Core() {}
+
+    h_Core()
+      {
+        m_Initialized = false;
+        m_Platform    = H_NULL;
+        m_Interface   = H_NULL;
+        m_Format      = H_NULL;
+      }
+
+    ~h_Core()
+      {
+        if (m_Platform)  delete m_Platform;
+        if (m_Interface) delete m_Interface;
+        if (m_Format)    delete m_Format;
+      }
+
   public:
-    virtual void initialize(void) { h_Format::initialize(); }
+
+    // implemented in h_Core.cpp
+    
+    void initialize(void);
+    h_Descriptor_Base* createDescriptor(void);
+    h_Instance_Base*   createInstance(h_Descriptor_Base* a_Descriptor);
+    h_Editor_Base*     createEditor(h_Instance_Base* a_Instance, h_Rect a_Rect, void* a_Paernt);
+
 };
 
-static h_Core  static_Core;
+//----------------------------------------------------------------------
+
+static h_Core static_Core;
 
 //----------------------------------------------------------------------
 #endif

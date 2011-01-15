@@ -21,16 +21,16 @@
 #define h_Instance_Vst_Included
 //----------------------------------------------------------------------
 
-class h_Instance_Vst
-{
-  public:
-    h_Instance_Vst(h_Descriptor* a_Descriptor) {}
-    virtual ~h_Instance_Vst() {}
-};
-
-//----------------------------------------------------------------------
-
-typedef h_Instance_Vst h_Instance;
+//class h_Instance_Vst
+//{
+//  public:
+//    h_Instance_Vst(h_Descriptor* a_Descriptor) {}
+//    virtual ~h_Instance_Vst() {}
+//};
+//
+////----------------------------------------------------------------------
+//
+//typedef h_Instance_Vst h_Instance;
 
 //----------------------------------------------------------------------
 #endif

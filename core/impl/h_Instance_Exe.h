@@ -21,48 +21,20 @@
 #define h_Instance_Exe_Included
 //----------------------------------------------------------------------
 
-#include "gui/h_Window.h"
-
-class h_Instance_Exe
+class h_Instance : public h_Instance_Base
 {
-  private:
-    h_Descriptor* m_Descriptor;
-    int           m_ReturnValue;
-
   public:
-    h_Instance_Exe(h_Descriptor* a_Descriptor)
-      {
-        m_Descriptor = a_Descriptor;
-        m_ReturnValue = 0;
-      }
-    virtual ~h_Instance_Exe()
+
+    h_Instance(h_Descriptor_Base* a_Descriptor)
+    : h_Instance_Base(a_Descriptor)
       {
       }
 
-//    virtual void* entrypoint(void* a_Ptr)
-//      {
-//        m_ReturnValue = 0;
-//        if (m_Descriptor->m_Flags & df_HasEditor)
-//        {
-//          h_Window* window = (h_Window*)do_OpenEditor(a_Ptr);
-//          window->eventLoop();
-//          do_CloseEditor();
-//          //TODO: timer -> do_IdleEditor
-//        }
-//        return &m_ReturnValue;
-//      }
-
-    //----------
-
-    virtual void* do_OpenEditor(void* a_Parent) { return H_NULL; }
-    virtual void  do_CloseEditor(void) {}
-    virtual void  do_IdleEditor(void) {}
+    virtual ~h_Instance()
+      {
+      }
 
 };
-
-//----------------------------------------------------------------------
-
-typedef h_Instance_Exe h_Instance;
 
 //----------------------------------------------------------------------
 #endif

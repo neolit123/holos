@@ -21,97 +21,93 @@
 #define h_Editor_Included
 //----------------------------------------------------------------------
 
+#include "lib/h_Rect.h"
 #include "gui/h_Window.h"
-#include "gui/h_Widget.h"
 
-class h_Editor : public h_WidgetListener
+//----------------------------------------------------------------------
+
+//#ifdef H_EXE
+//  #include "core/impl/h_Editor_Exe.h"
+//#endif
+//
+//#ifdef H_LADSPA
+//  #include "core/impl/h_Editor_Ladspa.h"
+//#endif
+//
+//#ifdef H_VST
+//  #include "core/impl/h_Editor_Vst.h"
+//#endif
+
+//----------------------------------------------------------------------
+
+class h_Editor : public h_Editor_Base,
+                 public h_Window//h_WidgetListener
 {
-  //private:
-  protected:
-    h_Window* m_Window;
-    h_Rect    m_Rect;
-
-  public:
-    inline h_Window* getWindow(void) { return m_Window; }
-    inline h_Rect    getRect(void)   { return m_Rect; }
+  private:
 
   public:
 
+//    h_Editor()
+//    : h_Editor_Base()
+//      {
+//      }
 
-    h_Editor(h_Instance* a_Instance)
+    h_Editor(h_Instance_Base* a_Instance, h_Rect a_Rect, void* a_Parent)
+    : h_Editor_Base(a_Instance,a_Rect/*,a_Parent*/)
+    , h_Window(this,a_Rect,a_Parent)
       {
-        //trace("h_Editor.constructor");
-        m_Window = H_NULL;
-        m_Rect   = h_Rect(256,256);
       }
 
     //----------
 
     virtual ~h_Editor()
       {
-        //trace("h_Editor.destructor");
-        if (m_Window) delete m_Window;
+      }
+
+  public:
+
+    //----------------------------------------
+    // editor
+    //----------------------------------------
+
+//    // h_Window*
+    virtual void do_Open(void* a_Ptr)
+      {
+        show();
+      }
+
+    //----------
+
+    virtual void do_Close(void)
+      {
+        hide();
+      }
+
+    //----------
+
+    // only for exe's
+    virtual void do_EventLoop(void)
+      {
+        eventLoop();
       }
 
     //----------------------------------------
-    //
+    // widget base
     //----------------------------------------
 
-    virtual void do_Open(h_Window* a_Window) {}
-    virtual void do_Close(h_Window* a_Window) {}
-    virtual void do_Idle(void) {}
+    //virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    //  {
+    //    trace("paint");
+    //  }
 
     //----------------------------------------
     // widget listener
     //----------------------------------------
 
-    //virtual void on_Change(h_Widget* a_Widget)
+    //virtual void on_Hint(char* a_Text)
     //  {
-    //    //trace("h_Editor.on_Change");
+    //    trace("h_Editor.hint: " << a_Text);
     //  }
-
-    //----------------------------------------
-    //
-    //----------------------------------------
-
-    virtual
-    void open(void* a_Parent)
-      {
-        //trace("h_Editor.open");
-        if (!m_Window)
-        {
-          m_Window = new h_Window(m_Rect,a_Parent);
-          do_Open(m_Window);
-          m_Window->show();
-        }
-      }
-
-    //----------
-
-    virtual
-    void close(void)
-      {
-        //trace("h_Editor.close");
-        if (m_Window)
-        {
-          m_Window->hide();
-          do_Close(m_Window);
-          delete m_Window;
-          m_Window = H_NULL;
-        }
-      }
-
-    //----------
-
-    virtual
-    void eventLoop(void)
-      {
-        //trace("h_Editor.eventLoop");
-        if (m_Window)
-        {
-          m_Window->eventLoop();
-        }
-      }
 
 };
 

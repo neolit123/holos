@@ -47,18 +47,18 @@ typedef h_Array<h_Widget*> h_Widgets;
 class h_WidgetBase
 {
   public:
-    virtual void do_Timer(void) {}
-    virtual void do_SetPos(int x, int y) {}
-    virtual void do_SetSize(int w, int h) {}
-    virtual void do_Realign(void) {}
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) {}
-    virtual void do_Enter(void) {}
-    virtual void do_Leave(void) {}
-    virtual void do_MouseDown(int x, int y, int b, int s) {}
-    virtual void do_MouseUp(int x, int y, int b, int s) {}
-    virtual void do_MouseMove(int x, int t, int s) {}
-    virtual void do_KeyDown(int k, int s) {}
-    virtual void do_KeyUp(int k, int s) {}
+    virtual void do_Timer(void) { trace("h_WidgetBase.do_Timer"); }
+    virtual void do_SetPos(int x, int y) { trace("h_WidgetBase.do_SetPos"); }
+    virtual void do_SetSize(int w, int h) { trace("h_WidgetBase.do_SetSize"); }
+    virtual void do_Realign(void) { trace("h_WidgetBase.do_Realign"); }
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) { trace("h_WidgetBase.do_Paint"); }
+    virtual void do_Enter(void) { trace("h_WidgetBase.do_Enter"); }
+    virtual void do_Leave(void) { trace("h_WidgetBase.do_Leave"); }
+    virtual void do_MouseDown(int x, int y, int b, int s) { trace("h_WidgetBase.do_MouseDown"); }
+    virtual void do_MouseUp(int x, int y, int b, int s) { trace("h_WidgetBase.do_MouseUp"); }
+    virtual void do_MouseMove(int x, int t, int s) { trace("h_WidgetBase.do_MouseMove"); }
+    virtual void do_KeyDown(int k, int s) { trace("h_WidgetBase.do_KeyDown"); }
+    virtual void do_KeyUp(int k, int s) { trace("h_WidgetBase.do_KeyUp"); }
 };
 
 //----------------------------------------------------------------------
@@ -66,8 +66,8 @@ class h_WidgetBase
 class h_WidgetListener
 {
   public:
-    virtual void on_Change(h_Widget* a_Widget) {}
-    virtual void on_Hint(char* a_Text) {}
+    virtual void on_Change(h_Widget* a_Widget) { trace("h_WidgetListener.on_Change"); }
+    virtual void on_Hint(char* a_Text) { trace("h_WidgetListener.on_Hint"); }
 };
 
 //typedef h_Array<h_WidgetListener*> h_WidgetListeners;
@@ -89,13 +89,14 @@ class h_WidgetListener
 class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
-  private:
-    int               m_Index;
+  //private:
+  //  int               m_Index;
   protected:
+    int               m_Index;
     int               m_Flags;
     h_Rect            m_Rect;
     h_WidgetListener* m_Listener;
-    h_Widget*         m_Parent;
+    //h_Widget*         m_Parent;
     h_Widgets         m_Children;
 
   public:
@@ -112,8 +113,7 @@ class h_Widget : public h_WidgetBase,
         m_Listener  = a_Listener;
         m_Rect      = a_Rect;
         m_Index     = -1;
-        m_Parent    = H_NULL;
-        //m_Children.clear();
+        //m_Parent    = H_NULL;
       }
 
     //----------
@@ -131,7 +131,7 @@ class h_Widget : public h_WidgetBase,
       {
         int index = m_Children.size();
         a_Widget->m_Index = index;
-        a_Widget->m_Parent = this;
+        //a_Widget->m_Parent = this;
         m_Children.append(a_Widget);
       }
 
@@ -215,7 +215,8 @@ class h_Widget : public h_WidgetBase,
         //paint self
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_Paint(a_Painter,a_Rect);
+          h_Widget* widget = m_Children[i];
+          widget->do_Paint(a_Painter,a_Rect);
         }
       }
 
@@ -237,7 +238,8 @@ class h_Widget : public h_WidgetBase,
       {
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_MouseDown(x,y,b,s);
+          h_Widget* widget = m_Children[i];
+          widget->do_MouseDown(x,y,b,s);
         }
       }
 
@@ -247,7 +249,8 @@ class h_Widget : public h_WidgetBase,
       {
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_MouseUp(x,y,b,s);
+          h_Widget* widget = m_Children[i];
+          widget->do_MouseUp(x,y,b,s);
         }
       }
 
@@ -257,7 +260,8 @@ class h_Widget : public h_WidgetBase,
       {
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_MouseMove(x,y,s);
+          h_Widget* widget = m_Children[i];
+          widget->do_MouseMove(x,y,s);
         }
       }
 
@@ -267,7 +271,8 @@ class h_Widget : public h_WidgetBase,
       {
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_KeyDown(k,s);
+          h_Widget* widget = m_Children[i];
+          widget->do_KeyDown(k,s);
         }
       }
 
@@ -277,7 +282,8 @@ class h_Widget : public h_WidgetBase,
       {
         for (int i=0; i<m_Children.size(); i++)
         {
-          do_KeyUp(k,s);
+          h_Widget* widget = m_Children[i];
+          widget->do_KeyUp(k,s);
         }
       }
 

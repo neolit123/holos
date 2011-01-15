@@ -21,40 +21,7 @@
 #define h_Format_Vst_included
 //----------------------------------------------------------------------
 
-#include "core/h_Interface.h"
 
-class h_Format_Vst : public h_Interface
-{
-  //private:
-  //  AEffect   m_AEffectt;
-
-  public:
-
-    h_Format_Vst()
-    : h_Interface()
-      {
-      }
-
-    virtual ~h_Format_Vst()
-      {
-      }
-
-    virtual void initialize(void)
-      {
-        h_Interface::initialize();
-      }
-
-    //virtual void* entrypoint(void* a_Ptr)
-    //  {
-    //  }
-
-};
-
-//----------------------------------------------------------------------
-
-typedef h_Format_Vst h_Format;
-
-#define H_MAIN "main/impl/h_Main_Vst.h"
 
 //----------------------------------------------------------------------
 #endif

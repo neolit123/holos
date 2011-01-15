@@ -21,41 +21,41 @@
 #define h_Main_Exe_included
 //----------------------------------------------------------------------
 
-// may crash if two new instances is created in separate threads,
-// at the _exact_ same time.. (or before we set he static_FirstCall..)
-
-//static bool static_FirstCall = true;
-
 int main(void)
 {
   static_Debug.initialize();
   static_Core.initialize();
-  h_Host* host = new h_Host(H_NULL);
-  static_Base.initialize(host);
 
-  // vst
-  //h_Descriptor* desc = static_Base.getDescriptor();
-  //AEffect* aeffect = (AEffect*)desc->getStruct();
-  //h_Instance* inst = static_Base.createInstance(desc);
-  //aeffect->ptr = inst;
-  //return aeffect;
-
-  h_Descriptor* desc = static_Base.getDescriptor();
-  int* result = (int*)desc->entrypoint();
-  h_Instance* inst = static_Base.createInstance(desc);
-
-  h_Editor* editor = (h_Editor*)inst->do_OpenEditor(H_NULL);
-  trace(editor);
-  editor->eventLoop();
-  inst->do_CloseEditor();
-
-  trace("...");
-
-  //delete window;
-  delete inst;
+  h_Host* host = new h_Host(H_NULL); // audioMaster
+  void* ptr = static_Core.getFormat()->entrypoint(host);
   delete host;
-  return *result;
+  return *(int*)ptr;
+
 }
 
 //----------------------------------------------------------------------
 #endif
+
+//#ifdef H_EXE
+//
+//  #define H_MAIN(_D,_I,_E)
+//    H_MAIN_INIT(_D,_I,_E)
+//    int main(void)
+//    {
+//      H_CORE.initialize();
+//      void* res = H_FORMAT->entrypoint(NULL);
+//      return *(int*)res;
+//    }
+//
+// /*
+//  #define H_MAIN(_D,_I)
+//    H_MAIN_INIT(_D,_I)
+//    int main(void)
+//    {
+//      H_CORE.initialize();
+//      void* res = H_FORMAT->entrypoint(NULL);
+//      return *(int*)res;
+//    }
+// */
+//
+//#endif // H_EXE

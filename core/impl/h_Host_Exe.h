@@ -21,14 +21,14 @@
 #define h_Host_Exe_Included
 //----------------------------------------------------------------------
 
-class h_Host_Exe
-{
-  public:
-    h_Host_Exe(void* a_Ptr) {}
-    virtual ~h_Host_Exe() {}
-};
-
-typedef h_Host_Exe h_Host;
+//class h_Host_Exe
+//{
+//  public:
+//    h_Host_Exe(void* a_Ptr) {}
+//    virtual ~h_Host_Exe() {}
+//};
+//
+//typedef h_Host_Exe h_Host;
 
 //----------------------------------------------------------------------
 #endif

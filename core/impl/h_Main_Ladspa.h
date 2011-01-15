@@ -25,3 +25,19 @@
 
 //----------------------------------------------------------------------
 #endif
+
+//#ifdef H_LADSPA
+//
+//  #define H_MAIN(_D,_I,_E)
+//    H_MAIN_INIT(_D,_I,_E)
+//    __externc __dllexport
+//    const LADSPA_Descriptor*
+//    ladspa_descriptor(unsigned long Index)
+//    {
+//      if (Index>0) return NULL;
+//      H_CORE.initialize();
+//      void* res = H_FORMAT->entrypoint(NULL);
+//      return (LADSPA_Descriptor*)res;
+//    }
+//
+//#endif // H_LADSPA
