@@ -67,6 +67,9 @@
 
 class h_Debug
 {
+  private:
+    bool m_Initialized;
+
   public: //private:
     #ifdef H_DEBUG_MEM
       h_MemTracer* m_MemTracer;
@@ -83,10 +86,25 @@ class h_Debug
       inline ostream& _trace(void) { return cout; }
     #endif
 
+    #ifdef H_DEBUG_MEM
+      //inline
+      h_MemTracer* getMemTracer(void) { return m_MemTracer; }
+    #endif
+    #ifdef H_DEBUG_LOG
+      //inline
+      h_LogFile* getLogFile(void) { return m_LogFile; }
+    #endif
+    #ifdef H_DEBUG_CON
+      //inline
+      h_Console* getConsole(void) { return m_Console; }
+    #endif
+
+
   public:
 
     h_Debug()
       {
+        m_Initialized = false;
         #ifdef H_DEBUG_MEM
           m_MemTracer = H_NULL;
         #endif
@@ -117,25 +135,36 @@ class h_Debug
 
     void initialize(void)
       {
-        #ifdef H_DEBUG_CON
-          m_Console = new h_Console(); // xbtn,ontop,resize
-        #endif
-        #ifdef H_DEBUG_LOG
-          m_LogFile = new h_LogFile(H_DEBUG_LOG);
-        #endif
-        //_dbg_trace("h_Debug.initialized");
-        #ifdef H_DEBUG_MEM
-          m_MemTracer = new h_MemTracer();
-        #endif
-        //_dbg_trace("h_Debug.initialized");
+        if (!m_Initialized)
+        {
+          #ifdef H_DEBUG_CON
+            m_Console = new h_Console(); // xbtn,ontop,resize
+          #endif
+          #ifdef H_DEBUG_LOG
+            m_LogFile = new h_LogFile(H_DEBUG_LOG);
+          #endif
+          //_dbg_trace("h_Debug.initialized");
+          #ifdef H_DEBUG_MEM
+            m_MemTracer = new h_MemTracer();
+          #endif
+          //_dbg_trace("h_Debug.initialized");
+          m_Initialized = true;
+        }
       }
+
+    #ifdef H_DEBUG_MEM
+      void* _malloc(size_t size)             { return m_MemTracer->trace_malloc(size); }
+      void* _calloc(size_t num, size_t size) { return m_MemTracer->trace_calloc(num,size); }
+      void* _realloc(void* ptr, size_t size) { return m_MemTracer->trace_realloc(ptr,size); }
+      void  _free(void* ptr)                 { return m_MemTracer->trace_free(ptr); }
+    #endif
 
 };
 
 //----------------------------------------
 
-#undef _dbg_trace
-#undef _dbg_traceout
+//#undef _dbg_trace
+//#undef _dbg_traceout
 
 //----------------------------------------------------------------------
 
@@ -159,28 +188,6 @@ static h_Debug static_Debug;
 
 #define trace(x)  TRACE(x); TRACELOG(x);
 #define dtrace(x) trace(x);
-
-/*
-
-#ifdef H_DEBUG
-  #ifdef H_DEBUG_LOG
-    #define trace(x) \
-      static_Debug._trace() << x << endl; \
-      TRACELOG(x)
-      //static_Debug.m_LogFile->_trace() << x << endl;
-  #else
-    #define TRACE(x) \
-      static_Debug._trace() << x << endl;
-  #endif
-#else
-  #define TRACE(x) {}
-#endif
-
-*/
-
-//----------
-
-//#define DTRACE(x) TRACE(x)
 
 //----------------------------------------------------------------------
 #endif

@@ -18,56 +18,54 @@
 */
 //----------------------------------------------------------------------
 #ifndef h_Color_included
-#define h_Colorincluded
+#define h_Color_included
 //----------------------------------------------------------------------
 
-struct h_Col4
-{
-  float r,g,b,a;
-};
-
-//----------------------------------------------------------------------
-
-struct h_Col32
-{
-  unsigned long c;
-
-  h_Col32()
-    {
-      c = 0;
-    }
-
-  h_Col32(unsigned long col)
-    {
-      c = col;
-    }
-
-  h_Col32(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-    {
-      c = (r<<24) + (g<<16) + (b<<8) + a;
-    }
-
-  h_Col32(float r, float g, float b, float a)
-    {
-      unsigned char cr = (r*255.0f);
-      unsigned char cg = (g*255.0f);
-      unsigned char cb = (b*255.0f);
-      unsigned char ca = (a*255.0f);
-      c = (ca<<24) + (cb<<16) + (cg<<8) + cr;
-    }
-
-  h_Col32(h_Col4 col)
-    {
-      unsigned char cr = (col.r*255.0f);
-      unsigned char cg = (col.g*255.0f);
-      unsigned char cb = (col.b*255.0f);
-      unsigned char ca = (col.a*255.0f);
-      c = (ca<<24) + (cb<<16) + (cg<<8) + cr;
-    }
-
-
-
-};
+//struct h_Col4
+//{
+//  float r,g,b,a;
+//};
+//
+////----------------------------------------------------------------------
+//
+//struct h_Col32
+//{
+//  unsigned long c;
+//
+//  h_Col32()
+//    {
+//      c = 0;
+//    }
+//
+//  h_Col32(unsigned long col)
+//    {
+//      c = col;
+//    }
+//
+//  h_Col32(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+//    {
+//      c = (r<<24) + (g<<16) + (b<<8) + a;
+//    }
+//
+//  h_Col32(float r, float g, float b, float a)
+//    {
+//      unsigned char cr = (r*255.0f);
+//      unsigned char cg = (g*255.0f);
+//      unsigned char cb = (b*255.0f);
+//      unsigned char ca = (a*255.0f);
+//      c = (ca<<24) + (cb<<16) + (cg<<8) + cr;
+//    }
+//
+//  h_Col32(h_Col4 col)
+//    {
+//      unsigned char cr = (col.r*255.0f);
+//      unsigned char cg = (col.g*255.0f);
+//      unsigned char cb = (col.b*255.0f);
+//      unsigned char ca = (col.a*255.0f);
+//      c = (ca<<24) + (cb<<16) + (cg<<8) + cr;
+//    }
+//
+//};
 
 //----------------------------------------------------------------------
 #endif

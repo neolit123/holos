@@ -23,21 +23,7 @@
 
 #include "lib/h_Defines.h"
 #include "debug/h_Debug.h"
-#include "core/h_Base.h"
 #include "core/h_Core.h"
-
-//----------
-
-#include "core/h_Flags.h"
-
-#include "core/h_Platform.h"
-#include "core/h_Interface.h"
-#include "core/h_Format.h"
-
-#include "core/h_Host.h"
-#include "core/h_Descriptor.h"
-#include "core/h_Instance.h"
-#include "core/h_Editor.h"
 
 //----------------------------------------------------------------------
 #endif

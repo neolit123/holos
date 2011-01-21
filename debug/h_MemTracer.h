@@ -34,22 +34,31 @@ struct h_MemNode
 class h_MemTracer
 {
   private:
-    h_MemNode* m_Nodes;
+    h_MemNode*  m_Nodes;
+
+    int         m_NumAllocs;
+    int         m_NumFrees;
+
+  public:
+    inline int getNumAllocs(void) { return m_NumAllocs; }
+    inline int getNumFrees(void) { return m_NumFrees; }
 
   public:
 
     h_MemTracer()
       {
+        m_NumAllocs = 0;
+        m_NumFrees = 0;
       }
 
     ~h_MemTracer()
       {
       }
 
-    void* trace_malloc(size_t size)             { return malloc(size); }
-    void* trace_calloc(size_t num, size_t size) { return calloc(num,size); }
-    void* trace_realloc(void* ptr, size_t size) { return realloc(ptr,size); }
-    void  trace_free(void* ptr)                 { free(ptr); }
+    void* trace_malloc(size_t size)             { m_NumAllocs++; return malloc(size); }
+    void* trace_calloc(size_t num, size_t size) { m_NumAllocs++; return calloc(num,size); }
+    void* trace_realloc(void* ptr, size_t size) {                return realloc(ptr,size); }
+    void  trace_free(void* ptr)                 { m_NumFrees++;  free(ptr); }
 };
 
 //----------

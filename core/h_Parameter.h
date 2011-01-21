@@ -21,32 +21,11 @@
 #define h_Parameter_included
 //----------------------------------------------------------------------
 
-//#ifdef H_EXE
-//  #include "core/impl/h_Parameter_Exe.h"
-//#endif
-//
-//#ifdef H_LADSPA
-//  #include "core/impl/h_Parameter_Ladspa.h"
-//#endif
-//
-//#ifdef H_VST
-//  #include "core/impl/h_Parameter_Vst.h"
-//#endif
-
-//----------------------------------------------------------------------
-
 class h_Parameter
 {
   public:
-
-    h_Parameter()
-      {
-      }
-
-    virtual ~h_Parameter()
-      {
-      }
-
+    //h_Parameter();
+    //virtual ~h_Parameter();
 };
 
 //----------------------------------------------------------------------

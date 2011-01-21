@@ -17,27 +17,24 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Interface_included
-#define h_Interface_included
+#ifndef h_Linux_included
+#define h_Linux_included
 //----------------------------------------------------------------------
 
-#ifdef H_LINUX
-  #include "core/impl/h_Interface_Linux.h"
-#endif
-
-#ifdef H_WIN32
-  #include "core/impl/h_Interface_Win32.h"
-#endif
+//#include <windows.h>
+//#include "lib/h_Globals.h"
 
 //----------------------------------------------------------------------
 
-//class h_Interface_Base
-//{
-//  public:
-//    h_Interface_Base() {}
-//    virtual ~h_Interface_Base() {}
-//    virtual h_Interface_Data* getData(void) { return H_NULL; }
-//};
+class h_Platform
+{
+  public:
+    Display* m_WinDisplay;
+
+  public:
+    h_Platform();
+    ~h_Platform();
+};
 
 //----------------------------------------------------------------------
 #endif

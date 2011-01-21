@@ -17,25 +17,27 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Instance_Exe_Included
-#define h_Instance_Exe_Included
+#ifndef h_Win32_included
+#define h_Win32_included
 //----------------------------------------------------------------------
 
-class h_Instance : public h_Instance_Base
+#include <windows.h>
+#include "lib/h_Globals.h"
+//#include "lib/h_Rect.h"
+
+//----------------------------------------------------------------------
+
+class h_Platform
 {
   public:
+    HINSTANCE m_WinInstance;
+    char*     m_WinClassName;
+    ATOM      m_WinClassAtom;
 
-    h_Instance(h_Descriptor_Base* a_Descriptor)
-    : h_Instance_Base(a_Descriptor)
-      {
-      }
-
-    virtual ~h_Instance()
-      {
-      }
-
+  public:
+    h_Platform();
+    ~h_Platform();
 };
 
 //----------------------------------------------------------------------
 #endif
-

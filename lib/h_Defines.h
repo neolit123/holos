@@ -42,7 +42,8 @@
 
 // general
 // -----------------------------------------------------------------------------
-#define H_MAX_PATHSIZE  512
+#define H_MAX_PATHSIZE    512
+#define H_MAX_STRINGSIZE  256
 
 //'H_' + 0x0000
 #define H_MAGIC 0x485f0000

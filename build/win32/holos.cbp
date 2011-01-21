@@ -30,6 +30,30 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="vst debug">
+				<Option output="..\..\bin\holos_win_debug" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_VST" />
+					<Add option="-DH_DEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="vst release">
+				<Option output="..\..\bin\holos_win" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -74,14 +98,19 @@
 		<Unit filename="..\..\core\h_Core.h" />
 		<Unit filename="..\..\core\h_Descriptor.h" />
 		<Unit filename="..\..\core\h_Editor.h" />
+		<Unit filename="..\..\core\h_Exe.h" />
 		<Unit filename="..\..\core\h_Flags.h" />
 		<Unit filename="..\..\core\h_Format.h" />
 		<Unit filename="..\..\core\h_Host.h" />
 		<Unit filename="..\..\core\h_Instance.h" />
 		<Unit filename="..\..\core\h_Interface.h" />
+		<Unit filename="..\..\core\h_Ladspa.h" />
+		<Unit filename="..\..\core\h_Linux.h" />
 		<Unit filename="..\..\core\h_Main.h" />
 		<Unit filename="..\..\core\h_Parameter.h" />
 		<Unit filename="..\..\core\h_Platform.h" />
+		<Unit filename="..\..\core\h_Vst.h" />
+		<Unit filename="..\..\core\h_Win32.h" />
 		<Unit filename="..\..\core\impl\h_Descriptor_Exe.h" />
 		<Unit filename="..\..\core\impl\h_Descriptor_Ladspa.h" />
 		<Unit filename="..\..\core\impl\h_Descriptor_Vst.h" />
@@ -109,11 +138,14 @@
 		<Unit filename="..\..\extern\daubechies.h" />
 		<Unit filename="..\..\extern\fileselect.h" />
 		<Unit filename="..\..\extern\isaac.h" />
+		<Unit filename="..\..\extern\ladspa\ladspa.h" />
 		<Unit filename="..\..\extern\mayer_fft.h" />
 		<Unit filename="..\..\extern\mtrand.h" />
 		<Unit filename="..\..\extern\picopng.h" />
-		<Unit filename="..\..\extern\readme.txt" />
 		<Unit filename="..\..\extern\stb_truetype.h" />
+		<Unit filename="..\..\extern\vst\aeffect.h" />
+		<Unit filename="..\..\extern\vst\aeffectx.h" />
+		<Unit filename="..\..\extern\vst\vstfxstore.h" />
 		<Unit filename="..\..\gfx\h_BitmapUtils.h" />
 		<Unit filename="..\..\gfx\h_Color.h" />
 		<Unit filename="..\..\gfx\h_PngDecoder.h" />
@@ -150,6 +182,14 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="..\..\holos.h" />
+		<Unit filename="..\..\holos_impl.h" />
+		<Unit filename="..\..\impl\h_Core_impl.h" />
+		<Unit filename="..\..\impl\h_Debug_impl.h" />
+		<Unit filename="..\..\impl\h_Exe_impl.h" />
+		<Unit filename="..\..\impl\h_Ladspa_impl.h" />
+		<Unit filename="..\..\impl\h_Linux_impl.h" />
+		<Unit filename="..\..\impl\h_Vst_impl.h" />
+		<Unit filename="..\..\impl\h_Win32_impl.h" />
 		<Unit filename="..\..\lib\h_Array.h" />
 		<Unit filename="..\..\lib\h_BasePath.h" />
 		<Unit filename="..\..\lib\h_Buffer.h" />

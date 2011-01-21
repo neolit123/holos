@@ -17,27 +17,42 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Main_Ladspa_included
-#define h_Main_Ladspa_included
+#ifndef h_Vst_included
+#define h_Vst_included
 //----------------------------------------------------------------------
 
+class h_Host : public h_Host_Base
+{
+  public:
+    h_Host();
+    ~h_Host();
+    //virtual void do_ChangeParameter(h_Parameter* a_Parameter) {}
+};
 
+//----------------------------------------------------------------------
+
+class h_Instance : public h_Instance_Base
+{
+  public:
+    h_Instance(h_Descriptor* a_Descriptor);
+    //: h_Instance_Base(h_Descriptor* a_Descriptor);
+    virtual ~h_Instance();
+};
+
+//----------------------------------------------------------------------
+
+class h_Format
+{
+  private:
+    h_Platform* m_Platform;
+
+  public:
+    h_Format();
+    ~h_Format();
+    h_Descriptor* getDescriptor(void);
+    h_Instance*   createInstance(h_Descriptor* a_Descriptor);
+    int           entrypoint(void* a_Ptr);
+};
 
 //----------------------------------------------------------------------
 #endif
-
-//#ifdef H_LADSPA
-//
-//  #define H_MAIN(_D,_I,_E)
-//    H_MAIN_INIT(_D,_I,_E)
-//    __externc __dllexport
-//    const LADSPA_Descriptor*
-//    ladspa_descriptor(unsigned long Index)
-//    {
-//      if (Index>0) return NULL;
-//      H_CORE.initialize();
-//      void* res = H_FORMAT->entrypoint(NULL);
-//      return (LADSPA_Descriptor*)res;
-//    }
-//
-//#endif // H_LADSPA

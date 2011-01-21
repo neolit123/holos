@@ -17,37 +17,32 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Descriptor_Included
-#define h_Descriptor_Included
+#ifndef h_Descriptor_included
+#define h_Descriptor_included
 //----------------------------------------------------------------------
 
-//#ifdef H_EXE
-//  #include "core/impl/h_Descriptor_Exe.h"
-//#endif
-//
-//#ifdef H_LADSPA
-//  #include "core/impl/h_Descriptor_Ladspa.h"
-//#endif
-//
-//#ifdef H_VST
-//  #include "core/impl/h_Descriptor_Vst.h"
-//#endif
+#define df_None         0
+#define df_HasEditor    1
+#define df_IsSynth      2
+#define df_SendMidi     4
+#define df_ReceiveMidi  8
 
-//----------------------------------------------------------------------
-
-class h_Descriptor : public h_Descriptor_Base
+struct h_Descriptor
 {
-  public:
+  const char* m_Name;
+  const char* m_Author;
+  const char* m_Product;
+  int         m_Flags;
+};
 
-    h_Descriptor()
-    : h_Descriptor_Base()
-      {
-      }
+//----------------------------------------
 
-    virtual ~h_Descriptor()
-      {
-      }
-
+h_Descriptor static_Descriptor =
+{
+  "plugin",
+  "holos",
+  "(powered by holos)",
+  df_None
 };
 
 //----------------------------------------------------------------------
