@@ -21,6 +21,25 @@
 #define h_Instance_included
 //----------------------------------------------------------------------
 
+// instance states
+#define is_None     0
+#define is_Open     1
+#define is_Close    2
+#define is_Suspend  3
+#define is_Resume   4
+#define is_Rate     5
+#define is_Block    6
+
+// instance transport
+#define ft_None         0   // indicates that play, cycle or record state has changed
+#define ft_Changed      1   // indicates that play, cycle or record state has changed
+#define ft_Playing      2   // set if Host sequencer is currently playing
+#define ft_CycleActive  4   // set if Host sequencer is in cycle mode
+#define ft_Recording    8   // set if Host sequencer is in record mode
+#define ft_AutoWriting  64  // set if automation write mode active (record parameter changes)
+#define ft_AutoReading  128 // set if automation read mode active (play parameter changes)
+
+
 #include "core/h_Parameter.h"
 
 class h_Instance_Base

@@ -28,7 +28,8 @@ class h_Host_Base
   public:
     h_Host_Base() {}
     virtual ~h_Host_Base() {}
-    virtual void do_ChangeParameter(h_Parameter* a_Parameter) {}
+    //virtual int  getVersion(void) { rerurn 0;}
+    //virtual void paramChanged(h_Parameter* a_Parameter) {}
 };
 
 //----------------------------------------------------------------------

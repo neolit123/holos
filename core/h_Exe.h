@@ -21,10 +21,20 @@
 #define h_Exe_included
 //----------------------------------------------------------------------
 
+class h_Host : public h_Host_Base
+{
+  public:
+    h_Host() {}
+    ~h_Host() {}
+
+};
+
+//----------------------------------------------------------------------
+
 class h_Instance : public h_Instance_Base
 {
   public:
-    h_Instance(h_Descriptor* a_Descriptor);
+    h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     //: h_Instance_Base(h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
 };
@@ -40,7 +50,7 @@ class h_Format
     h_Format();
     ~h_Format();
     h_Descriptor* getDescriptor(void);
-    h_Instance*   createInstance(h_Descriptor* a_Descriptor);
+    h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
     int           entrypoint(void* a_Ptr);
 };
 

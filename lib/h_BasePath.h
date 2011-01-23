@@ -13,7 +13,7 @@
   {
     #if defined H_LIB || defined H_EXE
       char filepath[H_MAX_PATHSIZE] = "";
-      GetModuleFileName((HINSTANCE__*)static_WinInstance,filepath,H_MAX_PATHSIZE-1);
+      GetModuleFileName(/*(HINSTANCE__*)*/static_WinInstance,filepath,H_MAX_PATHSIZE-1);
       filepath[H_MAX_PATHSIZE-1] = '\0'; // just in case??
       const char* slash = h_Strrchr(filepath,'\\');
       if (slash)

@@ -82,6 +82,7 @@ class h_Debug
     #endif
 
   public:
+
     #ifdef H_DEBUG
       inline ostream& _trace(void) { return cout; }
     #endif
@@ -102,61 +103,15 @@ class h_Debug
 
   public:
 
-    h_Debug()
-      {
-        m_Initialized = false;
-        #ifdef H_DEBUG_MEM
-          m_MemTracer = H_NULL;
-        #endif
-        #ifdef H_DEBUG_LOG
-          m_LogFile = H_NULL;
-        #endif
-        #ifdef H_DEBUG_CON
-          m_Console = H_NULL;
-        #endif
-      }
-
-    ~h_Debug()
-      {
-        #ifdef H_DEBUG_MEM
-          if (m_MemTracer)
-          {
-            // dump eventual leaks...
-            delete m_MemTracer;
-          }
-        #endif
-        #ifdef H_DEBUG_LOG
-          if (m_LogFile) delete m_LogFile;
-        #endif
-        #ifdef H_DEBUG_CON
-          if (m_Console) delete m_Console;
-        #endif
-      }
-
-    void initialize(void)
-      {
-        if (!m_Initialized)
-        {
-          #ifdef H_DEBUG_CON
-            m_Console = new h_Console(); // xbtn,ontop,resize
-          #endif
-          #ifdef H_DEBUG_LOG
-            m_LogFile = new h_LogFile(H_DEBUG_LOG);
-          #endif
-          //_dbg_trace("h_Debug.initialized");
-          #ifdef H_DEBUG_MEM
-            m_MemTracer = new h_MemTracer();
-          #endif
-          //_dbg_trace("h_Debug.initialized");
-          m_Initialized = true;
-        }
-      }
+    h_Debug();
+    ~h_Debug();
+    void initialize(void);
 
     #ifdef H_DEBUG_MEM
-      void* _malloc(size_t size)             { return m_MemTracer->trace_malloc(size); }
-      void* _calloc(size_t num, size_t size) { return m_MemTracer->trace_calloc(num,size); }
-      void* _realloc(void* ptr, size_t size) { return m_MemTracer->trace_realloc(ptr,size); }
-      void  _free(void* ptr)                 { return m_MemTracer->trace_free(ptr); }
+      void* _malloc(size_t size);
+      void* _calloc(size_t num, size_t size);
+      void* _realloc(void* ptr, size_t size);
+      void  _free(void* ptr);
     #endif
 
 };
@@ -170,7 +125,7 @@ class h_Debug
 
 static h_Debug static_Debug;
 
-//----------
+//----------------------------------------------------------------------
 
 #ifdef H_DEBUG_LOG
   #define TRACELOG(x) static_Debug.m_LogFile->_trace() << x << endl

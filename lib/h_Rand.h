@@ -34,7 +34,7 @@
 
 */
 
-#include "h_Defines.h"
+#include "lib/h_Defines.h"
 
 #ifdef H_HOT_INLINE_RAND
   #define __h_rand_inline __hotinline
@@ -42,7 +42,7 @@
   #define __h_rand_inline inline
 #endif
 
-#ifndef H_NO_RAND      // if not defined: use axonlib's h_Rand() methods
+#ifndef H_NO_RAND      // if not defined: use holos' h_Rand() methods
 
 #ifndef H_USE_BETTER_RAND // if not defined: use simpler h_Rand()
 
@@ -351,5 +351,75 @@ float h_RandSigned(void)
 
 #endif // H_NO_RAND
 
+//----------------------------------------------------------------------
+// Alvo
+//----------------------------------------------------------------------
+
+#include "lib/h_Cpu.h"
+
+/*
+  h_RandAlvo
+  slightly better prng based on:
+  http://www.number.com.pt/Alvo.html
+*/
+
+#define H_RANDSF_MAX  2147483647L
+#define H_ALVORND_T   double
+
+class h_RandAlvo
+{
+  private:
+    H_ALVORND_T x,a;
+  public:
+    h_RandAlvo()
+      {
+        h_Cpu c;
+        x = ((H_ALVORND_T)((unsigned int)c.rdtsc()))*0.000000001f;
+        a = x*0.99f;
+      }
+
+    ~h_RandAlvo()
+      {
+      }
+
+    __h_rand_inline H_ALVORND_T rand(const H_ALVORND_T range = 1.f)
+      {
+        a += x;
+        x = a*x + 0.5f;
+        x -= (unsigned int)x;
+        a *= 0.5f;
+        return x*range;
+      }
+
+    __h_rand_inline void seed(unsigned int s)
+      {
+        if (s == 0)
+        {
+          x = 100.f;
+          a = x*0.99f;
+          return;
+        }
+        x = ((H_ALVORND_T)(s *= 16807))*0.000000001f;
+        a = x*0.99f;
+      }
+
+    __h_rand_inline H_ALVORND_T randSigned(const H_ALVORND_T range = 1.f)
+      {
+        return (2.f*rand() - 1.f)*range;
+      }
+
+    __h_rand_inline unsigned int randInt(const unsigned int top = H_RANDSF_MAX)
+      {
+        return (unsigned long) (rand()*top);
+      }
+
+    __h_rand_inline unsigned int randBit(const unsigned int bits = 16)
+      {
+        return (unsigned int) (rand()*H_RANDSF_MAX) >> (31 - bits);
+      }
+
+};
+
+//------------------------------------------------------------------------------
 #endif // h_Rand_included
 
