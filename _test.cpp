@@ -1,3 +1,17 @@
+#include "stdio.h"
+#include "lib/h_Rand.h"
+#include "lib/h_Math.h"
+
+int main(void)
+{
+  h_Rand r;
+  float j = r.rand();
+  printf("%f\n", j);
+  printf("%f\n", h_Sqrt(j));
+  return 0;
+}
+
+/*
 #define H_FORMAT_EXE
 #define H_DEBUG
 #define H_DEBUG_LOG "_test.log"
@@ -32,3 +46,4 @@ int main(void)
 
   return 0;
 }
+*/
