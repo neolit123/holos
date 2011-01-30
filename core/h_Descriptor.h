@@ -21,6 +21,26 @@
 #define h_Descriptor_included
 //----------------------------------------------------------------------
 
+#include "lib/h_Rect.h"
+
+struct h_ParamDescr
+{
+  const char*   m_Name;
+  const char*   m_Label;
+  int           m_Type;
+  int           m_Flags;
+  float         m_Value;
+  float         m_Min;
+  float         m_Max;
+  float         m_Step;
+};
+
+struct h_ProgDescr
+{
+  const char*   m_Name;
+  float*        m_Values; // ptr to m_NumParams values (floats)
+};
+
 // descriptor flags
 #define df_None         0
 #define df_HasEditor    1
@@ -30,10 +50,18 @@
 
 struct h_Descriptor
 {
-  const char* m_Name;
-  const char* m_Author;
-  const char* m_Product;
-  int         m_Flags;
+  const char*   m_Name;
+  const char*   m_Author;
+  const char*   m_Product;
+  unsigned long m_UniqueId;
+  int           m_Flags;
+  int           m_NumInputs;
+  int           m_NumOutputs;
+  int           m_NumParams;
+  int           m_NumProgs;
+  h_ParamDescr* m_Params;
+  h_ProgDescr*  m_Progs;
+  h_Rect        m_EditorRect;
 };
 
 //----------------------------------------
@@ -43,7 +71,15 @@ h_Descriptor static_Descriptor =
   "plugin",
   "holos",
   "(powered by holos)",
-  df_None
+  H_MAGIC,
+  df_None,
+  2,
+  2,
+  0,
+  0,
+  H_NULL,
+  H_NULL,
+  h_Rect(256,256)
 };
 
 //----------------------------------------------------------------------

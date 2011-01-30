@@ -28,10 +28,10 @@ class h_Format;
 
 class h_Core
 {
-public:
+  public:
     h_Platform* m_Platform;
     h_Format*   m_Format;
-public:
+  public:
     h_Core();
     ~h_Core();
     void initialize(void);

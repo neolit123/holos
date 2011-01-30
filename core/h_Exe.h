@@ -37,6 +37,22 @@ class h_Instance : public h_Instance_Base
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     //: h_Instance_Base(h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
+    //
+    //void  appendParameter(h_Parameter* a_Parameter);
+    //void  deleteParameters(void);
+    void  initParameters(void);
+    void  prepareParameters(void);
+    //void  notifyParameter(h_Parameter* aParameter);
+    //void  notifyResize(int aWidth, int aHeight);
+    //void  updateTime(void);
+    //void  sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
+    //
+    inline int    getPlayState(void)                    { return 0;/*m_PlayState;*/ }
+    inline double getSamplePos(void)                    { return 0;/*m_SamplePos;*/ }
+    inline double getSampleRate(void)                   { return 0;/*if (m_SampleRate==0) updateTime(); return m_SampleRate;*/ }
+    inline double getBeatPos(void)                      { return 0;/*return m_BeatPos;*/ }
+    inline double getTempo(void)                        { return 0;/*return m_Tempo;*/ }
+    inline int    getCurrentProgram(void)               { return 0;/*return m_CurrentProgram;*/ }
 };
 
 //----------------------------------------------------------------------

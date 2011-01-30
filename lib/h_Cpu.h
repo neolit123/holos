@@ -64,7 +64,7 @@ class h_Cpu
 {
   private:
     unsigned char isCalled;
-    char          cpustringbuf[256];
+    char          cpustringbuf[H_MAX_STRINGSIZE];
 
   public:
     unsigned int  caps;

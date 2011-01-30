@@ -41,7 +41,7 @@ using namespace std;
 class h_LogFile
 {
   private:
-    char    m_LogFileName[256];
+    char    m_LogFileName[H_MAX_PATHSIZE];
     fstream m_LogFile; // static?
 
   public:

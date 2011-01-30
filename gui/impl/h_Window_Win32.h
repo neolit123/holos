@@ -121,11 +121,14 @@ class h_Window_Win32 : public h_Widget,
     h_Window_Win32(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
     : h_Widget(a_Listener,a_Rect)
       {
+
+        trace( "win class name: " << static_Core.m_Platform->m_WinClassName );
+
         //m_WinParent     = (HWND)a_Parent;
         m_WinCursor     = LoadCursor(NULL,IDC_ARROW);
         m_WinPrevCursor    = 0;
         m_WinClickedButton = bu_None;
-        h_Interface_Data* data = static_Core.getInterface()->getData();
+        //h_Interface_Data* data = static_Core.getInterface()->getData();
         RECT rc = {a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2()}; // left, top, right, bottom
         if (a_Parent) // --- embedded ---
         {
@@ -133,7 +136,8 @@ class h_Window_Win32 : public h_Widget,
           AdjustWindowRectEx(&rc,WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           m_WinHandle = CreateWindowEx(
             WS_EX_TOOLWINDOW,
-            data->m_WinClassName,
+            //data->m_WinClassName,
+            static_Core.m_Platform->m_WinClassName,
             0,
             WS_POPUP,
             rc.left,
@@ -142,7 +146,8 @@ class h_Window_Win32 : public h_Widget,
             rc.bottom-rc.top+1,
             0,
             0,
-            data->m_WinInstance,
+            //data->m_WinInstance,
+            static_Core.m_Platform->m_WinInstance,
             0
           );
           reparent(a_Parent);
@@ -155,8 +160,8 @@ class h_Window_Win32 : public h_Widget,
           const unsigned int adjy = ((GetSystemMetrics(SM_CYSCREEN)-a_Rect.h)>>1) + rc.top;
           m_WinHandle = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
-            data->m_WinClassName,    // lpClassName
-            data->m_WinClassName,       // lpWindowName
+            static_Core.m_Platform->m_WinClassName,    // lpClassName
+            static_Core.m_Platform->m_WinClassName,       // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
             adjx,                    // center x
             adjy,                    // center y
@@ -164,7 +169,7 @@ class h_Window_Win32 : public h_Widget,
             rc.bottom-rc.top+1,       // wHeight,
             0,                        // hWndParent
             0,                        // hMenu
-            data->m_WinInstance,               // hInstance
+            static_Core.m_Platform->m_WinInstance,               // hInstance
             0                         // lpParam
           );
           SetFocus(m_WinHandle);
@@ -472,6 +477,8 @@ class h_Window_Win32 : public h_Widget,
             break;
 
           case WM_PAINT:
+
+            trace("wm_paint");
 
             beginPaint();
             left   = m_WinPS.rcPaint.left;

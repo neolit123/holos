@@ -24,6 +24,7 @@
 #include "extern/vst/aeffect.h"
 #include "extern/vst/aeffectx.h"
 //#include "extern/vst/vstfxstore.h"
+#include "lib/h_Rect.h"
 
 //----------------------------------------------------------------------
 //
@@ -53,6 +54,9 @@ class h_Host : public h_Host_Base
 //	VstEvent* events[2];	// event pointer array, variable size
 //};
 
+// TODO: replace this qith a h_Queue,
+// (possibly) making it a little bit more thread-safe?
+
 //#define H_MAX_AUDIO_CHANS 64
 #define H_MAX_MIDI_SEND 1024
 
@@ -62,6 +66,7 @@ struct h_VstEvents
   VstIntPtr reserved;
   VstEvent* events[H_MAX_MIDI_SEND];
 };
+
 
 //------------------------------
 
@@ -85,27 +90,23 @@ class h_Instance : public h_Instance_Base
     double              m_SamplePos;
     double              m_BeatPos;
     double              m_Tempo;
-    //ERect         m_Rect;
-    //VstEvent        m_MidiEvents[H_MAX_MIDI_SEND];
-    //axContext     m_Context;
-    //char          m_EffectName[kVstMaxEffectNameLen];
-    //char          m_VendorString[kVstMaxVendorStrLen];
-    //char          m_ProductString[kVstMaxProductStrLen];
-    //int           m_VendorVersion;
+    h_Rect              m_EditorRect;
+    bool                m_EditorIsOpen;
+    ERect               m_ERect;
+  protected:
+    h_Parameters        m_Parameters;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
+  public:
+    void          appendParameter(h_Parameter* a_Parameter);
+    void          deleteParameters(void);
+    void          initParameters(void);
+    void          prepareParameters(void);
     void          notifyParameter(h_Parameter* aParameter);
     void          notifyResize(int aWidth, int aHeight);
     void          updateTime(void);
     void          sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
-  private:
-    // AEffect flags
-    inline void   _clear_aeFlags(void)                   { m_AEffect->flags = 0; }
-    inline void   _clear_aeFlag(int aFlag)               { m_AEffect->flags &= ~aFlag; }
-    inline bool   _get_aeFlag(int aFlag)                 { return (m_AEffect->flags|aFlag); }
-    inline void   _set_aeFlag(int aFlag)                 { m_AEffect->flags |= aFlag; }
-    inline void   _set_aeFlag(int aFlag, bool aState)    { if (aState) _set_aeFlag(aFlag); else _clear_aeFlag(aFlag); }
   public:
     inline int    getPlayState(void)                    { return m_PlayState; }
     inline double getSamplePos(void)                    { return m_SamplePos; }
@@ -113,22 +114,30 @@ class h_Instance : public h_Instance_Base
     inline double getBeatPos(void)                      { return m_BeatPos; }
     inline double getTempo(void)                        { return m_Tempo; }
     inline int    getCurrentProgram(void)               { return m_CurrentProgram; }
-    // AEffect fields (variables)
-    inline void   setUniqueID(int aID)                  { m_AEffect->uniqueID = aID; }         // Must be called to set the plug-ins unique ID!
-    inline void   setNumInputs(int aNum)                { m_AEffect->numInputs = aNum; }       // set the number of inputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available inputs.
-    inline void   setNumOutputs(int aNum)               { m_AEffect->numOutputs = aNum; }      // set the number of outputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available ouputs.
-    inline void   setInitialDelay(int aDelay)           { m_AEffect->initialDelay = aDelay; }  // use to report the plug-in's latency (Group Delay)
-    inline void   setVersion(int aVer)                  { m_AEffect->version = aVer; }
-    inline void   setNumPrograms(int aNum)              { m_AEffect->numPrograms = aNum; }
-    inline void   setNumParams(int aNum)                { m_AEffect->numParams = aNum; }
-    //----------
-    inline void   canProcessReplacing(bool aState=true) { _set_aeFlag(effFlagsCanReplacing,aState); }        // tells that processReplacing() could be used. Mandatory in VST 2.4!
-    inline void   canDoubleReplacing(bool aState=true)  { _set_aeFlag(effFlagsCanDoubleReplacing,aState); }  // tells that processDoubleReplacing() is implemented.
-    inline void   programsAreChunks(bool aState=false)  { _set_aeFlag(effFlagsProgramChunks,aState); }       // program data is handled in formatless chunks (using getChunk-setChunks)
-    inline void   isSynth(bool aState=false)            { _set_aeFlag(effFlagsIsSynth,aState); }
-    inline void   hasEditor(bool aState=false)          { _set_aeFlag(effFlagsHasEditor,aState); }
-    inline void   noSoundInStop(bool aState=true)       { _set_aeFlag(effFlagsNoSoundInStop,aState); }
+    //
+    inline h_Rect getEditorRect(void)                   { return m_EditorRect; }
   private:
+    inline void   _clear_aeFlags(void)                  { m_AEffect->flags = 0; }
+    inline void   _clear_aeFlag(int aFlag)              { m_AEffect->flags &= ~aFlag; }
+    inline bool   _get_aeFlag(int aFlag)                { return (m_AEffect->flags|aFlag); }
+    inline void   _set_aeFlag(int aFlag)                { m_AEffect->flags |= aFlag; }
+    inline void   _set_aeFlag(int aFlag, bool aState)   { if (aState) _set_aeFlag(aFlag); else _clear_aeFlag(aFlag); }
+  //
+    inline void   _setUniqueID(int aID)                  { m_AEffect->uniqueID = aID; }         // Must be called to set the plug-ins unique ID!
+    inline void   _setNumInputs(int aNum)                { m_AEffect->numInputs = aNum; }       // set the number of inputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available inputs.
+    inline void   _setNumOutputs(int aNum)               { m_AEffect->numOutputs = aNum; }      // set the number of outputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available ouputs.
+    inline void   _setInitialDelay(int aDelay)           { m_AEffect->initialDelay = aDelay; }  // use to report the plug-in's latency (Group Delay)
+    inline void   _setVersion(int aVer)                  { m_AEffect->version = aVer; }
+    inline void   _setNumPrograms(int aNum)              { m_AEffect->numPrograms = aNum; }
+    inline void   _setNumParams(int aNum)                { m_AEffect->numParams = aNum; }
+  //
+    inline void   _canProcessReplacing(bool aState=true) { _set_aeFlag(effFlagsCanReplacing,aState); }        // tells that processReplacing() could be used. Mandatory in VST 2.4!
+    inline void   _canDoubleReplacing(bool aState=true)  { _set_aeFlag(effFlagsCanDoubleReplacing,aState); }  // tells that processDoubleReplacing() is implemented.
+    inline void   _programsAreChunks(bool aState=false)  { _set_aeFlag(effFlagsProgramChunks,aState); }       // program data is handled in formatless chunks (using getChunk-setChunks)
+    inline void   _isSynth(bool aState=false)            { _set_aeFlag(effFlagsIsSynth,aState); }
+    inline void   _hasEditor(bool aState=false)          { _set_aeFlag(effFlagsHasEditor,aState); }
+    inline void   _noSoundInStop(bool aState=true)       { _set_aeFlag(effFlagsNoSoundInStop,aState); }
+  //
     void          _sendMidiClear(void);
     void          _sendMidiAll(void);
     VstIntPtr     vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt);

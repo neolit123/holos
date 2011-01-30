@@ -21,12 +21,79 @@
 #define h_Parameter_included
 //----------------------------------------------------------------------
 
+#include "lib/h_Array.h"
+#include "lib/h_String.h"
+
+//----------
+
+// parameter flags
+#define pf_None     0
+#define pf_Automate 1 // effCanBeAutomated
+
+#define PF_DEFAULT pf_Automate
+
+// parameter types
+#define pt_None     0
+#define pt_Float    1
+#define pt_Int      2
+#define pt_FloatPow 3
+
+//----------
+
 class h_Parameter
 {
+  private:
+    int       m_Connection;      // which widget (if any) this is connected to
+    int       m_Index;           // index into the parameter list
+    float     m_Default;
+  protected:
+    h_String  m_Name;
+    h_String  m_Label;
+    float     m_Value;   // 0..1
+    int       m_Flags;
+  //public:
+  //  int       m_Id;
+  //  void*     m_Ptr;
+
   public:
-    //h_Parameter();
-    //virtual ~h_Parameter();
+
+    h_Parameter(h_String a_Name, h_String a_Label, float a_Value, int a_Flags)
+      {
+        m_Connection = -1;
+        m_Index = -1;
+        m_Name = a_Name;
+        m_Label = a_Label;
+        m_Value = a_Value;
+        m_Default = m_Value;
+        m_Flags = a_Flags;
+        //m_Id = 0;
+        //m_Ptr = H_NULL;
+      }
+
+    virtual ~h_Parameter()
+      {
+      }
+
+    virtual void  setRealValue(float a_Value) { m_Value=a_Value; }    // transformed
+    virtual float getRealValue(void)          { return m_Value; }     // transformed
+    virtual void  setIndex(int a_Index)       { m_Index=a_Index; }
+    virtual int   getIndex(void)              { return m_Index; }
+    //
+    virtual void  do_Reset(void)              { m_Value=m_Default;}
+    virtual void  do_SetValue(float a_Value)  { m_Value=a_Value; }    // 0..1
+    virtual float do_GetValue(void)           { return m_Value; }     // 0..1
+    virtual void  do_GetName(char* buf)       { h_Strcpy(buf,m_Name.ptr()); }
+    virtual void  do_GetLabel(char* buf)      { h_Strcpy(buf,m_Label.ptr()); }
+    virtual void  do_GetDisplay(char* buf)    { h_Ftoa(buf,getRealValue(),5); }
 };
+
+//----------
+
+typedef h_Array<h_Parameter*> h_Parameters;
 
 //----------------------------------------------------------------------
 #endif
+
+
+
+

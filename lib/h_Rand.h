@@ -28,9 +28,9 @@
 */
 
 
-#include "h_Defines.h"
-#include "h_Cpu.h"
-#include "h_Math.h"
+#include "lib/h_Defines.h"
+#include "lib/h_Cpu.h"
+#include "lib/h_Math.h"
 
 #ifdef _H_RAND_USE_INLINE_
   #define _H_RAND_INLINE_ inline
@@ -50,39 +50,39 @@ class h_Rand
   public:
     h_Rand(const unsigned int x)
     { _h_rnd = x; }
-    
+
     h_Rand()
     {
       h_Cpu c;
       _h_rnd = (unsigned int)c.rdtsc();
     }
-    
+
     ~h_Rand() {}
-  
+
     /// set seed
     _H_RAND_INLINE_ void seed (const unsigned int seed)
     { _h_rnd = seed; }
-    
+
     /// get random float between 0, 1
     _H_RAND_INLINE_ float rand(void)
     { return (float)((_h_rnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f; }
-    
+
     /// get random float between 0, x
     _H_RAND_INLINE_ float rand(const float range)
     { return rand() * range; }
-    
+
     /// get random float between -1, 1
     _H_RAND_INLINE_ float randSigned(void)
     { return (float)(_h_rnd *= 16807) * 4.6566129e-010f; }
-    
+
     /// get random float between -x, x
     _H_RAND_INLINE_ float randSigned(const float range)
     { return randSigned() * range; }
-    
+
     /// get random integer number between 0, x
     _H_RAND_INLINE_ unsigned int randInt(const unsigned int range=32767)
     { return (unsigned int)(rand() * range); }
-    
+
     /// get random integer from bit range (0, 31)
     _H_RAND_INLINE_ unsigned int randBit(const unsigned int range=16)
     { return ((_h_rnd *= 16807) & 0x7FFFFFFF) >> (31 - range); }
@@ -93,7 +93,7 @@ class h_Rand
 /*
   h_RandAlvo
   better prng based on:
-  http://www.number.com.pt/Alvo.html  
+  http://www.number.com.pt/Alvo.html
 */
 
 #define H_RANDSF_MH_  2147483647L
@@ -110,9 +110,9 @@ class h_RandAlvo
       x = ((H_ALVORND_T)((unsigned int)c.rdtsc()))*0.000000001f;
       a = x*0.99f;
     }
-    
+
     ~h_RandAlvo() {}
-    
+
     _H_RAND_INLINE_ H_ALVORND_T rand(const H_ALVORND_T range = 1.f)
     {
       a += x;
@@ -121,7 +121,7 @@ class h_RandAlvo
       a *= 0.5f;
       return x*range;
     }
-    
+
     _H_RAND_INLINE_ void seed(unsigned int s)
     {
       if (s == 0)
@@ -133,22 +133,22 @@ class h_RandAlvo
       x = ((H_ALVORND_T)(s *= 16807))*0.000000001f;
       a = x*0.99f;
     }
-    
+
     _H_RAND_INLINE_ H_ALVORND_T randSigned(const H_ALVORND_T range = 1.f)
     {
       return (2.f*rand() - 1.f)*range;
     }
-    
+
     _H_RAND_INLINE_ unsigned int randInt(const unsigned int top = H_RANDSF_MH_)
     {
       return (unsigned long) (rand()*top);
     }
-    
+
     _H_RAND_INLINE_ unsigned int randBit(const unsigned int bits = 16)
     {
       return (unsigned int) (rand()*H_RANDSF_MH_) >> (31 - bits);
     }
-    
+
 };
 
 /*
@@ -164,7 +164,7 @@ class h_RandAlvo
 #define _H_RANDSINF \
   if (x >= H_RANDSINF_MH_ ) x = 0.f; \
   y = h_Sin((x+=1)*y);
-  
+
   /*
   __asm__ \
   ( \
@@ -184,7 +184,7 @@ class h_RandSinf
 {
   private:
     float x, y;
-  
+
   public:
     h_RandSinf(void)
     {
@@ -193,7 +193,7 @@ class h_RandSinf
       x = (float)(_x >> 16);
       y = 1.f;
     }
-      
+
     h_RandSinf(const unsigned int _x)  { x = (float)_x; }
     h_RandSinf(const float _x)         { x = _x;        }
 

@@ -31,9 +31,12 @@ class h_Platform
 {
   public:
     HINSTANCE m_WinInstance;
-    char*     m_WinClassName;
+    char      m_WinClassName[H_MAX_STRINGSIZE];
     ATOM      m_WinClassAtom;
-
+    HCURSOR   m_WinCursor;
+    HICON     m_WinIcon;
+    WNDCLASS  m_WinClass;
+    int       m_Depth;
   public:
     h_Platform();
     ~h_Platform();

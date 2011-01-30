@@ -21,6 +21,10 @@
 #define h_Instance_included
 //----------------------------------------------------------------------
 
+#include "core/h_Parameter.h"
+
+//----------------------------------------
+
 // instance states
 #define is_None     0
 #define is_Open     1
@@ -29,6 +33,8 @@
 #define is_Resume   4
 #define is_Rate     5
 #define is_Block    6
+
+//----------
 
 // instance transport
 #define ft_None         0   // indicates that play, cycle or record state has changed
@@ -39,8 +45,7 @@
 #define ft_AutoWriting  64  // set if automation write mode active (record parameter changes)
 #define ft_AutoReading  128 // set if automation read mode active (play parameter changes)
 
-
-#include "core/h_Parameter.h"
+//----------------------------------------
 
 class h_Instance_Base
 {
@@ -58,7 +63,7 @@ class h_Instance_Base
     virtual void do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
     virtual void do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
 
-    virtual void do_OpenEditor(void) {}
+    virtual void do_OpenEditor(void* ptr) {}
     virtual void do_CloseEditor(void) {}
     virtual void do_IdleEditor(void) {}
 

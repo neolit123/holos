@@ -74,9 +74,9 @@ class h_Console
 //              bool resize=true)
       {
 
-        bool xbtn = H_DEBUG_CON_CANQUIT;
-        bool ontop = H_DEBUG_CON_NOTOP;
-        bool resize = H_DEBUG_CON_NORESIZE;
+        bool xbtn   = H_DEBUG_CON_CANQUIT;
+        bool ontop  = !H_DEBUG_CON_NOTOP;
+        bool resize = !H_DEBUG_CON_NORESIZE;
 
         m_Initialized = false;
         m_File = H_NULL;
