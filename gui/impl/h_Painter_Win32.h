@@ -67,12 +67,14 @@ class h_Painter_Win32 //: public h_Painter_Base
     HWND    m_WinHandle;
     int     m_Xpos,m_Ypos;
     // pen
-    h_Color m_PenColor;
+    //h_Color m_PenColor;
+    h_Color m_DrawColor;
 		HPEN    m_Pen, m_OldPen;      // set when clearPen, use with resetPen()
     HPEN    m_NullPen;            // empty pen (shapes without borders)
     //int     m_CurrentPen;
     // brush
-    h_Color m_BrushColor;
+    //h_Color m_BrushColor;
+    h_Color m_FillColor;
 		HBRUSH  m_Brush, m_OldBrush;
     HBRUSH  m_NullBrush;
     //int     m_CurrentBrush;
@@ -110,8 +112,10 @@ class h_Painter_Win32 //: public h_Painter_Base
           m_DC = CreateCompatibleDC(tempdc);
         }
 
-        m_PenColor   = H_RGB(192,192,192); //H_RGB(AX_GREY_LIGHT);
-        m_BrushColor = H_RGB(128,128,128);//getColor(AX_GREY);
+        //m_PenColor   = H_RGB(192,192,192); //H_RGB(AX_GREY_LIGHT);
+        //m_BrushColor = H_RGB(128,128,128);//getColor(AX_GREY);
+        m_DrawColor   = H_RGB(192,192,192); //H_RGB(AX_GREY_LIGHT);
+        m_FillColor = H_RGB(128,128,128);//getColor(AX_GREY);
         m_TextColor  = H_RGB(255,255,255); //getColor(AX_WHITE);
         //m_CurrentPen = 0;
         //m_CurrentBrush = 0;
@@ -204,17 +208,17 @@ class h_Painter_Win32 //: public h_Painter_Base
 
     //----------
 
-    virtual void setPenColor(h_Color a_Color)
+    virtual void setDrawColor(h_Color a_Color)
       {
-        m_PenColor = a_Color;
+        m_DrawColor = a_Color;
         SetDCPenColor(m_DC, a_Color);
       }
 
     //----------
 
-    virtual void setBrushColor(h_Color aColor)
+    virtual void setFillColor(h_Color aColor)
       {
-        m_BrushColor = aColor;
+        m_FillColor = aColor;
         SetDCBrushColor(m_DC, aColor);
       }
 
@@ -286,7 +290,7 @@ class h_Painter_Win32 //: public h_Painter_Base
     virtual void setPenWidth(int aWidth)
       {
         //mPenWidth = aWidth;
-        _setPen(m_PenColor,aWidth);
+        _setPen(m_DrawColor,aWidth);
       };
 
     virtual void setPenStyle(int aStyle)
@@ -356,7 +360,7 @@ class h_Painter_Win32 //: public h_Painter_Base
     virtual void drawPoint(int aX, int aY)
       {
         //SetPixel(mDC,aX,aY,mPens[mCurrentPen].mColor.get());
-        SetPixel(m_DC,aX,aY,m_PenColor);
+        SetPixel(m_DC,aX,aY,m_DrawColor);
       }
 
     //----------

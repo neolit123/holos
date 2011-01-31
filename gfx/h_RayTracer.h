@@ -21,81 +21,19 @@
 #define h_RayTracer_included
 //----------------------------------------------------------------------
 
-// some of these could be expanded into proper /lib classes
+//class rt_Vec;
+//class rt_Ray;
+//
+//class rt_Object;
+//class rt_Light;
+//class rt_Camera;
+//class rt_Material;
+//class rt_Scene;
+//
+//class rt_Sphere   : public rt_Object;
+//class rt_Plane    : public rt_Object;
+//class rt_Triangle : public rt_Object;
 
-struct h_Col3
-{
-  float r,g,b;
-  h_Col3(float _r,float _g,float _b) { r=_r;g=_g;b=_b; }
-};
-
-struct h_Vec3
-{
-  float x,y,z;
-};
-
-//----------
-
-struct rt_Ray
-{
-  h_Vec3  m_Origin;
-  h_Vec3  m_Direction;
-  //int     m_Medium;
-  //float   m_Ior;
-};
-
-struct rt_Object
-{
-  int     m_Type;
-  h_Vec3  m_Position;
-  h_Vec3  m_Rotation;
-};
-
-struct rt_Light
-{
-  int     m_Type;
-  h_Vec3  m_Position;
-  h_Vec3   m_Rotation;
-};
-
-struct rt_Material
-{
-  int     m_Type;
-  float   m_Ambient;
-  float   m_Diffuse;
-  float   m_Specular;
-  h_Col3  m_AmbientColor;
-  h_Col3  m_DiffuseColor;
-  h_Col3  m_SpecularColor;
-};
-
-struct rt_Hit
-{
-  h_Vec3      m_Position;
-  rt_Object*  m_Object;
-  rt_Ray*     m_Ray;
-};
-
-
-//----------
-
-class h_RayTracer
-{
-  public:
-
-    h_RayTracer()
-      {
-      }
-
-    ~h_RayTracer()
-      {
-      }
-
-    h_Col3 raytrace(rt_Ray a_Ray)
-      {
-        return h_Col3(0,0,0);
-      }
-};
 
 //----------------------------------------------------------------------
 #endif

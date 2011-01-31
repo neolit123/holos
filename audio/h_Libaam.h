@@ -89,7 +89,7 @@ class h_Libaam
 
     int load(h_String aFileName)
       {
-        char temp[256];
+        char temp[H_MAX_STRINGSIZE];
         h_Strcpy(temp,aFileName.ptr());
         #ifdef H_LINUX
           h_Strcat(temp,".so");

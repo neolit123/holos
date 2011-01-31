@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------
 
 #include "lib/h_Globals.h"
+#include "lib/h_Utils.h"
 
 #ifdef H_LIB
 
@@ -41,15 +42,41 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 
 //----------------------------------------------------------------------
 
+#ifndef H_NOGUI
+// implemented in h_Window_Win32.h
+LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+#endif
+
+//----------
+
 h_Platform::h_Platform()
   {
     m_WinInstance = static_WinInstance;
+    //
+    m_Depth = 24; //TODO: find real value...
+    h_CreateUniqueName(m_WinClassName,(char*)"holos_win_",this);
+    #ifndef H_NOGUI
+    m_WinIcon = LoadIcon(m_WinInstance, "axicon");
+    m_WinCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
+    h_Memset(&m_WinClass,0,sizeof(m_WinClass));
+    m_WinClass.style         = CS_HREDRAW | CS_VREDRAW;
+    m_WinClass.lpfnWndProc   = &h_eventproc_win32;
+    m_WinClass.hInstance     = m_WinInstance;
+    m_WinClass.lpszClassName = m_WinClassName;
+    m_WinClass.hCursor       = m_WinCursor;
+    m_WinClass.hIcon         = m_WinIcon;
+    m_WinClassAtom = RegisterClass(&m_WinClass);
+    #endif
+
   }
 
 //----------
 
 h_Platform::~h_Platform()
   {
+    #ifndef H_NOGUI
+    UnregisterClass(m_WinClassName,m_WinInstance);
+    #endif
   }
 
 //----------------------------------------------------------------------

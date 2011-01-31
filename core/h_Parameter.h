@@ -74,8 +74,8 @@ class h_Parameter
       {
       }
 
-    virtual void  setRealValue(float a_Value) { m_Value=a_Value; }    // transformed
-    virtual float getRealValue(void)          { return m_Value; }     // transformed
+    virtual void  setValue(float a_Value)     { m_Value=a_Value; }    // transformed
+    virtual float getValue(void)              { return m_Value; }     // transformed
     virtual void  setIndex(int a_Index)       { m_Index=a_Index; }
     virtual int   getIndex(void)              { return m_Index; }
     //
@@ -84,7 +84,7 @@ class h_Parameter
     virtual float do_GetValue(void)           { return m_Value; }     // 0..1
     virtual void  do_GetName(char* buf)       { h_Strcpy(buf,m_Name.ptr()); }
     virtual void  do_GetLabel(char* buf)      { h_Strcpy(buf,m_Label.ptr()); }
-    virtual void  do_GetDisplay(char* buf)    { h_Ftoa(buf,getRealValue(),5); }
+    virtual void  do_GetDisplay(char* buf)    { h_Ftoa(buf,getValue(),5); }
 };
 
 //----------

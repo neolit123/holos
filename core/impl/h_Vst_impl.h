@@ -3,6 +3,9 @@
 #ifdef h_Vst_included
 //----------------------------------------------------------------------
 
+//#define libtrace(x) trace(x)
+#define libtrace(x)   {}
+
 #include "extern/vst/aeffect.h"
 #include "extern/vst/aeffectx.h"
 //#include "extern/vst/vstfxstore.h"
@@ -32,11 +35,13 @@ h_Host::~h_Host()
   {
   }
 
+//
 //----------------------------------------------------------------------
 //
 // instance
 //
 //----------------------------------------------------------------------
+//
 
 h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
 //: h_Instance_Base(a_Descriptor)
@@ -44,68 +49,86 @@ h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     m_Host = a_Host;
     m_Descriptor = a_Descriptor;
     m_AudioMaster = a_Host->getAudioMaster();
-    //m_AEffect = a_Host->getAEffect();
+    m_AEffect = a_Host->getAEffect();
+    h_Memset(&m_MidiEventList,0,sizeof(h_VstEvents));
+    m_PlayState = 0;
+    m_SamplePos = 0;
+    m_SampleRate = 0;
+    m_BeatPos = 0;
+    m_Tempo = 0;
+    m_BlockSize = 0;
+    m_CurrentProgram = 0;
+    m_EditorRect = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
+    m_EditorIsOpen = false;
+    initParameters();
+
   }
 
 //----------
 
 h_Instance::~h_Instance()
   {
-    // host is created in main()
-    if (m_Host) delete m_Host;          // !!!!!
+    #ifndef H_NOAUTODELETE
+      deleteParameters();
+    #endif
+    if (m_AEffect) h_Free(m_AEffect); // !!!!!  created in entrypoint()
+    if (m_Host) delete m_Host;        // !!!!!  created in entrypoint()
   }
 
 //----------------------------------------
-//
+// public methods
 //----------------------------------------
 
-//// prepareParameters + transferParameters
-//
-//virtual void setupParameters(void)
-//  {
-//    prepareParameters();
-//    transferParameters();
-//  }
-//
-////----------
-//
-//// tells the vst host how many parameters we have
-//// needs to be done in the constructor!
-//// and initializes parameter-index
-//// needed for parameter -> widget mapping if we have an editor
-//
-//virtual void prepareParameters(void)
-//  {
-//    int num = mParameters.size();
-//    setNumParams(num); // vst
-//    for (int i=0; i<num; i++)
-//    {
-//      axParameter* par = mParameters[i];
-//      par->setIndex(i);
-//      //doSetParameter(par);
-//    }
-//  }
-//
-////----------
-//
-//// calls doSetParameter for all parameters
-//// so that you can fetch them, and setup initial values
-//// for your plugin
-//
-//virtual void transferParameters(void)
-//  {
-//    int num = mParameters.size();
-//    //setNumParams(num); // vst
-//    for (int i=0; i<num; i++)
-//    {
-//      axParameter* par = mParameters[i];
-//      //par->setIndex(i);
-//      doSetParameter(par);
-//    }
-//  }
-//
-////----------
-//
+void h_Instance::appendParameter(h_Parameter* a_Parameter)
+  {
+    int index = m_Parameters.size();
+    a_Parameter->setIndex(index);
+    m_Parameters.append(a_Parameter);
+  }
+
+//----------
+
+void h_Instance::deleteParameters(void)
+  {
+    for (int i=0; i<m_Parameters.size(); i++) delete m_Parameters[i];
+  }
+
+//----------
+
+// create parameters from descriptor
+
+void h_Instance::initParameters(void)
+  {
+    int numpar = m_Descriptor->m_NumParams;
+    for (int i=0; i<numpar; i++)
+    {
+      h_String name = m_Descriptor->m_Params[i].m_Name;
+      h_String label = m_Descriptor->m_Params[i].m_Label;
+      float value = m_Descriptor->m_Params[i].m_Value;
+      int flags = m_Descriptor->m_Params[i].m_Flags;
+      // todo: param type flag
+      h_Parameter* par = new h_Parameter(name,label,value,flags);
+      appendParameter(par);
+
+    }
+  }
+
+//----------
+
+// call do_HandleParameter for all
+
+void h_Instance::prepareParameters(void)
+  {
+    int num = m_Parameters.size();
+    for (int i=0; i<num; i++)
+    {
+      h_Parameter* par = m_Parameters[i];
+      do_HandleParameter(par);
+    }
+  }
+
+//----------
+
 //virtual void setupPrograms()
 //  {
 //    int num = mPrograms.size();
@@ -120,14 +143,14 @@ h_Instance::~h_Instance()
 
 //----------
 
-// called when parameter has changed
+// called when parameter has changed (from editor)
 // (we must notify the host)
 
 void h_Instance::notifyParameter(h_Parameter* aParameter)
   {
-    //int index = aParameter->getIndex();
-    //float value = aParameter->doGetValue();//getValue();
-    //host_Automate(index,value); // setParameterAutomated();
+    int index = aParameter->getIndex();
+    float value = aParameter->do_GetValue();//getValue();
+    host_Automate(index,value); // setParameterAutomated();
   }
 
 //----------
@@ -164,9 +187,7 @@ void h_Instance::notifyResize(int aWidth, int aHeight)
 
 void h_Instance::updateTime(void)
   {
-    //trace("updateTimeInfo");
     m_TimeInfo   = host_GetTime( kVstPpqPosValid + kVstTempoValid );
-    //trace("..ok. mTimeInfo =  " << hex << mTimeInfo );
     m_PlayState  = m_TimeInfo->flags & 0xff;
     m_SamplePos  = m_TimeInfo->samplePos;
     m_SampleRate = m_TimeInfo->sampleRate;
@@ -201,7 +222,7 @@ void h_Instance::sendMidi(int offset, unsigned char msg1, unsigned char msg2, un
   }
 
 //----------------------------------------
-// midi
+// internal (midi)
 //----------------------------------------
 
 // these are called from process()
@@ -224,7 +245,7 @@ void h_Instance::_sendMidiAll(void)
     {
       h_VstEvents* events = &m_MidiEventList;
       host_ProcessEvents( (VstEvents*)events );
-      _sendMidiClear();
+      //_sendMidiClear();
     }
   }
 
@@ -246,7 +267,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // called when plug-in is initialized
 
       case effOpen: // 00
-        dtrace("vst dispatcher: effOpen");
+        libtrace("vst dispatcher: effOpen");
         do_HandleState(is_Open);
         break;
 
@@ -255,7 +276,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // called when plug-in will be released
 
       case effClose: // 01
-        dtrace("vst dispatcher: effClose");
+        libtrace("vst dispatcher: effClose");
         do_HandleState(is_Close);
         //inst->vst_dispatcher(opCode,index,value,ptr,opt);
         //delete inst;
@@ -268,7 +289,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // set the current program
 
       case effSetProgram: // 02
-        dtrace("vst dispatcher: effSetProgram");
+        libtrace("vst dispatcher: effSetProgram");
         //do_PreProgram(m_CurrentProgram);
         ////#ifndef AX_NOAUTOSAVE_PROGRAMS
         ////saveProgram( getCurrentProgram() );
@@ -294,7 +315,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // return the index to the current program
 
       case effGetProgram: // 03
-        dtrace("vst dispatcher: effGetProgram");
+        libtrace("vst dispatcher: effGetProgram");
         result = m_CurrentProgram;
         break;
 
@@ -304,7 +325,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // Limited to kVstMaxProgNameLen.
 
       case effSetProgramName: // 04
-        dtrace("vst dispatcher: effSetProgramName");
+        libtrace("vst dispatcher: effSetProgramName");
         //if (m_Programs.size() > 0)
         //{
         //  m_Programs[m_CurrentProgram]->setName( (char*)ptr );
@@ -317,7 +338,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // Limited to kVstMaxProgNameLen.
 
       case effGetProgramName: // 05
-        dtrace("vst dispatcher: effGetProgramName");
+        libtrace("vst dispatcher: effGetProgramName");
         //if (m_Programs.size() > 0)
         //{
         //  strncpy( (char*)ptr, m_Programs[m_CurrentProgram]->getName().ptr(), kVstMaxProgNameLen );
@@ -331,8 +352,9 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // Limited to kVstMaxParamStrLen.
 
       case effGetParamLabel: // 06
-        dtrace("vst dispatcher: effGetParamLabel");
-        //m_Parameters[index]->doGetLabel((char*)ptr);
+        libtrace("vst dispatcher: effGetParamLabel");
+        m_Parameters[index]->do_GetLabel((char*)ptr);
+        //h_Strcpy((char*)ptr,"label");
         break;
 
       //----------
@@ -342,8 +364,9 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // Limited to kVstMaxParamStrLen.
 
       case effGetParamDisplay: // 07
-        dtrace("vst dispatcher: effGetParamDisplay");
-        //m_Parameters[index]->doGetDisplay((char*)ptr);
+        libtrace("vst dispatcher: effGetParamDisplay");
+        m_Parameters[index]->do_GetDisplay((char*)ptr);
+        //h_Strcpy((char*)ptr,"display");
         break;
 
       //----------
@@ -353,14 +376,15 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // Limited to kVstMaxParamStrLen.
 
       case effGetParamName: // 08
-        dtrace("vst dispatcher: effGetParamName");
-        //m_Parameters[index]->doGetName((char*)ptr);
+        libtrace("vst dispatcher: effGetParamName");
+        m_Parameters[index]->do_GetName((char*)ptr);
+        //h_Strcpy((char*)ptr,"name");
         break;
 
       //----------
 
       //case effGetVu:  // 09 // deprecated
-      //  dtrace("vst dispatcher: effGetVu");
+      //  libtrace("vst dispatcher: effGetVu");
       //  break;
 
       //----------
@@ -368,7 +392,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // called when the sample rate changes (always in a suspend state)
 
       case effSetSampleRate: // 10
-        dtrace("vst dispatcher: effSetSampleRate");
+        libtrace("vst dispatcher: effSetSampleRate");
         m_SampleRate = opt;
         do_HandleState(is_Rate);
         break;
@@ -380,7 +404,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // this block size, but NOT bigger.
 
       case effSetBlockSize: // 11
-        dtrace("vst dispatcher: effSetBlockSize");
+        libtrace("vst dispatcher: effSetBlockSize");
         m_BlockSize = (VstInt32)value;
         do_HandleState(is_Block);
         break;
@@ -391,7 +415,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // resume:  called when plug-in is switched to on
 
       case effMainsChanged: // 12
-        dtrace("vst dispatcher: effMainsChanged");
+        libtrace("vst dispatcher: effMainsChanged");
         if (!value) do_HandleState(is_Suspend);
         else do_HandleState(is_Resume);
         break;
@@ -399,81 +423,90 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //----------
 
       case effEditGetRect: // 13
-        dtrace("vst dispatcher: effEditGetRect");
-        //if (m_FormatFlags&ff_HasEditor)
-        //{
-        //  rect.left     = m_EditorRect.x;
-        //  rect.top      = m_EditorRect.y;
-        //  rect.right    = m_EditorRect.x2()+1;
-        //  rect.bottom   = m_EditorRect.y2()+1;
-        //  //trace("effEditGetRect: " << rect.left << "," << rect.top << " : " << rect.right << "," << rect.bottom);
-        //  *(ERect**)ptr = &m_Rect;
-        //  result = 1;
-        //}
+        libtrace("vst dispatcher: effEditGetRect");
+        if (m_Descriptor->m_Flags&df_HasEditor)
+        {
+          //ERect rect;
+          m_ERect.left     = m_EditorRect.x;
+          m_ERect.top      = m_EditorRect.y;
+          m_ERect.right    = m_EditorRect.x2()+1;
+          m_ERect.bottom   = m_EditorRect.y2()+1;
+          //trace("effEditGetRect: " << rect.left << "," << rect.top << " : " << rect.right << "," << rect.bottom);
+          *(ERect**)ptr = &m_ERect;
+          result = 1;
+        }
         break;
 
       //----------
 
       case effEditOpen: // 14
-        dtrace("vst dispatcher: effEditOpen");
-        //Window win = (Window)ptr;
-        //if ((mFormatFlags&ff_HasEditor) && !mEditorOpen)
-        //{
-        //  m_EditorWindow = do_OpenEditor();
-        //  m_EditorOpen = true;
-        //  result = 1;
-        //}
+        libtrace("vst dispatcher: effEditOpen");
+        if (m_Descriptor->m_Flags&df_HasEditor)
+        {
+          if (!m_EditorIsOpen)
+          {
+            do_OpenEditor(ptr);
+            m_EditorIsOpen = true;
+            result = 1;
+          }
+        }
         break;
 
       //----------
 
       case effEditClose: // 15
-        dtrace("vst dispatcher: effEditClose");
-        //if ((mFormatFlags&ff_HasEditor) && mEditorOpen)
-        //{
-        //  mEditorOpen = false;
-        //  do_CloseEditor();
-        //}
+        libtrace("vst dispatcher: effEditClose");
+        if (m_Descriptor->m_Flags&df_HasEditor)
+        {
+          if (m_EditorIsOpen)
+          {
+            do_CloseEditor();
+            m_EditorIsOpen = false;
+          }
+        }
         break;
 
       //----------
 
       //case effEditDraw:  // 16 // deprecated
-      //  dtrace("vst dispatcher: effEditDraw");
+      //  libtrace("vst dispatcher: effEditDraw");
       //  break;
 
       //case effEditMouse:  // 17 // deprecated
-      //  dtrace("vst dispatcher: effEditMouse");
+      //  libtrace("vst dispatcher: effEditMouse");
       //  break;
 
       //case effEditKey:  // 18 // deprecated
-      //  dtrace("vst dispatcher: effEditKey");
+      //  libtrace("vst dispatcher: effEditKey");
       //  break;
 
       //----------
 
       case effEditIdle: // 19
-        dtrace("vst dispatcher: effEditIdle");
-        //if ((mFormatFlags&ff_HasEditor) && mEditorOpen)
-        //{
-        //  doIdleEditor();
-        //}
+        libtrace("vst dispatcher: effEditIdle");
+        if (m_Descriptor->m_Flags&df_HasEditor)
+        {
+          if (!m_EditorIsOpen)
+          {
+            do_IdleEditor();
+          }
+        }
         break;
 
       //----------
 
       //case effEditTop:  // 20 // deprecated
-      //  dtrace("vst dispatcher: effEditTop");
+      //  libtrace("vst dispatcher: effEditTop");
       //  break;
 
       //case effEditSleep:  // 21 // deprecated
-      //  dtrace("vst dispatcher: effEditSleep");
+      //  libtrace("vst dispatcher: effEditSleep");
       //  break;
 
       //----------
 
       case DECLARE_VST_DEPRECATED (effIdentify): // 22
-        dtrace("vst dispatcher: effIdentify");
+        libtrace("vst dispatcher: effIdentify");
         result = CCONST('N','v','E','f');
         break;
 
@@ -493,7 +526,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //v = getChunk((void**)ptr, index ? true : false);
 
       case effGetChunk: // 23
-        dtrace("vst dispatcher: effGetChunk");
+        libtrace("vst dispatcher: effGetChunk");
         break;
 
       //----------
@@ -508,33 +541,27 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //v = setChunk(ptr, (VstInt32)value, index ? true : false);
 
       case effSetChunk: // 24
-        dtrace("vst dispatcher: effSetChunk");
+        libtrace("vst dispatcher: effSetChunk");
         break;
 
       //---------- aeffectx.h (vst 2)
 
       case effProcessEvents: // 25
-        //dtrace("vst dispatcher: effProcessEvents"); // called before each processblock (too much, like processblock)
+        //libtrace("vst dispatcher: effProcessEvents"); // called before each processblock (too much, like processblock)
         {
-          ////v = processEvents ((VstEvents*)ptr);
-          ////doProcessEvents();
-          ////    //TODO: sort?
-          ////    // if so, stuff all events into a buffer
-          ////    // a) check last item offset, of later, append after previous
-          ////    // if before, search from start, and insert (move later)
-          ////    // b) sort
-          ////    // c) pre-scan VstEvents array
-          //VstEvents* ev = (VstEvents*)ptr;
-          ////sendMidiClear();
-          //int num = ev->numEvents;
-          //for (int i=0; i<num; i++)
-          //{
-          //  VstMidiEvent* event = (VstMidiEvent*)ev->events[i];
-          //  if (event->type==kVstMidiType)
-          //  {
-          //    doProcessMidi( event->deltaFrames, event->midiData[0], event->midiData[1], event->midiData[2] );
-          //  } //=miditype
-          //} //numevents
+          if (m_Descriptor->m_Flags&df_ReceiveMidi)
+          {
+            VstEvents* ev = (VstEvents*)ptr;
+            int num = ev->numEvents;
+            for (int i=0; i<num; i++)
+            {
+              VstMidiEvent* event = (VstMidiEvent*)ev->events[i];
+              if (event->type==kVstMidiType)
+              {
+                do_HandleMidi( event->deltaFrames, event->midiData[0], event->midiData[1], event->midiData[2] );
+              } //=miditype
+            } //numevents
+          }
           // sort?
         }
         result = 1;
@@ -543,26 +570,26 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //----------
 
       case effCanBeAutomated: // 26
-        dtrace("vst dispatcher: effCanBeAutomated");
+        libtrace("vst dispatcher: effCanBeAutomated");
         //if ( mParameters[index]->getFlags() & pf_Automate ) v = 1;
         break;
 
       //----------
 
       case effString2Parameter: // 27
-        dtrace("vst dispatcher: effString2Parameter");
+        libtrace("vst dispatcher: effString2Parameter");
         break;
 
       //----------
 
       //case effGetNumProgramCategories: // 28 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //----------
 
       case effGetProgramNameIndexed: // 29
-        dtrace("vst dispatcher: effGetProgramNameIndexed");
+        libtrace("vst dispatcher: effGetProgramNameIndexed");
         //if (index<mPrograms.size())
         //{
         //  strncpy( (char*)ptr, mPrograms[index]->getName().ptr(), kVstMaxProgNameLen );
@@ -573,15 +600,15 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //----------
 
       //case effCopyProgram: // 30 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //case effConnectInput: // 31 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //case effConnectOutput: // 32 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //----------
@@ -613,7 +640,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // };
 
       case effGetInputProperties: // 33
-        dtrace("vst dispatcher: effGetInputProperties");
+        libtrace("vst dispatcher: effGetInputProperties");
         {
           VstPinProperties* pin = (VstPinProperties*)ptr;
           char name[16];
@@ -631,7 +658,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //----------
 
       case effGetOutputProperties: // 34
-        dtrace("vst dispatcher: effGetOutputProperties");
+        libtrace("vst dispatcher: effGetOutputProperties");
         {
           VstPinProperties* pin = (VstPinProperties*)ptr;
           char name[16];
@@ -662,7 +689,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       // kPlugCategGenerator,		    ///< ToneGenerator, ...
 
       case effGetPlugCategory: // 35
-        dtrace("vst dispatcher: effGetPlugCategory");
+        libtrace("vst dispatcher: effGetPlugCategory");
         //if (get_aeFlag(effFlagsIsSynth)) result = kPlugCategSynth;
         //else result = kPlugCategEffect;
         break;
@@ -670,68 +697,68 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //----------
 
       //case effGetCurrentPosition: // 36 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //case effGetDestinationBuffer: // 37 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //----------
 
       case effOfflineNotify: // 38
-        dtrace("vst dispatcher: effOfflineNotify");
+        libtrace("vst dispatcher: effOfflineNotify");
         break;
 
       case effOfflinePrepare: // 39
-        dtrace("vst dispatcher: effOfflinePrepare");
+        libtrace("vst dispatcher: effOfflinePrepare");
         break;
 
       case effOfflineRun: // 40
-        dtrace("vst dispatcher: effOfflineRun");
+        libtrace("vst dispatcher: effOfflineRun");
         break;
 
       case effProcessVarIo: // 41
-        dtrace("vst dispatcher: effProcessVarIo");
+        libtrace("vst dispatcher: effProcessVarIo");
         break;
 
       case effSetSpeakerArrangement: // 42
-        dtrace("vst dispatcher: effSetSpeakerArrangement");
+        libtrace("vst dispatcher: effSetSpeakerArrangement");
         break;
 
       //case effSetBlockSizeAndSampleRate: // 43 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       case effSetBypass: // 44
-        dtrace("vst dispatcher: effSetBypass");
+        libtrace("vst dispatcher: effSetBypass");
         break;
 
       case effGetEffectName: // 45
-        dtrace("vst dispatcher: effGetEffectName");
-        //strcpy((char*)ptr,mEffectName);
-        //v = 1;
+        libtrace("vst dispatcher: effGetEffectName");
+        h_Strcpy((char*)ptr,m_Descriptor->m_Name);
+        result = 1;
         break;
 
       //case effGetErrorText: // 46 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       case effGetVendorString: // 47
-        dtrace("vst dispatcher: effGetVendorString");
-        //strcpy((char*)ptr,mVendorString);
-        //v = 1;
+        libtrace("vst dispatcher: effGetVendorString");
+        h_Strcpy((char*)ptr,m_Descriptor->m_Author);
+        result = 1;
         break;
 
       case effGetProductString: // 48
-        dtrace("vst dispatcher: effGetProductString");
-        //strcpy((char*)ptr,mProductString);
+        libtrace("vst dispatcher: effGetProductString");
+        h_Strcpy((char*)ptr,m_Descriptor->m_Product);
         //v = 1;
         break;
 
       case effGetVendorVersion: // 49
-        dtrace("vst dispatcher: effGetVendorVersion");
-        //v = mVendorVersion;
+        libtrace("vst dispatcher: effGetVendorVersion");
+        result = m_Descriptor->m_Version;;
         break;
 
       //----------
@@ -747,153 +774,168 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       //    }
 
       case effVendorSpecific: // 50
-        dtrace("vst dispatcher: effVendorSpecific");
+        libtrace("vst dispatcher: effVendorSpecific");
         break;
 
       //----------
 
       case effCanDo: // 51
-        dtrace("vst dispatcher: effCanDo");
+        libtrace("vst dispatcher: effCanDo");
         {
           //trace("axFormatVst.dispatcher :: effCanDo");
           //v = canDo ((char*)ptr);
           char* p = (char*)ptr;
-          //trace("effCanDo: '" << p << "'");
-          if (!h_Strcmp(p,"sendVstEvents"))        result=1; // plug-in will send Vst events to Host
-          if (!h_Strcmp(p,"sendVstMidiEvent"))     result=1; // plug-in will send MIDI events to Host
-          if (!h_Strcmp(p,"receiveVstEvents"))     result=1; // plug-in can receive MIDI events from Host
-          if (!h_Strcmp(p,"receiveVstMidiEvent"))  result=1; // plug-in can receive MIDI events from Host
-          if (!h_Strcmp(p,"receiveVstTimeInfo"))   result=1; // plug-in can receive Time info from Host
-          //if (h_Strcmp(ptr,"offline"))              return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
-          //if (h_Strcmp(ptr,"midiProgramNames"))     return 0; // plug-in supports function #getMidiProgramName ()
-          //if (h_Strcmp(ptr,"bypass"))               return 0; // plug-in supports function #setBypass ()
-          if (!h_Strcmp(p,"hasCockosExtensions"))  result=0xbeef0000;
-          trace("effCanDo: '" << p << "' (return: " << hex << result << dec << ")");
+          libtrace("effCanDo: '" << p << "'");
+
+          bool _send = (m_Descriptor->m_Flags&df_SendMidi);
+          if (_send)
+          {
+            if (!h_Strcmp(p,"sendVstEvents")) return 1;
+            if (!h_Strcmp(p,"sendVstMidiEvents")) return 1;
+          }
+          bool _receive = (m_Descriptor->m_Flags&df_ReceiveMidi);
+          if (_receive)
+          {
+            if (!h_Strcmp(p,"receiveVstEvents")) return 1;
+            if (!h_Strcmp(p,"receiveVstMidiEvents")) return 1;
+          }
+
+          // plug-in can receive Time info from Host
+          if (!h_Strcmp(p,"receiveVstTimeInfo")) return 1;
+
+
+          //if (h_Strcmp(ptr,"offline")) return 0; // plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+          //if (h_Strcmp(ptr,"midiProgramNames")) return 0; // plug-in supports function #getMidiProgramName ()
+          //if (h_Strcmp(ptr,"bypass")) return 0; // plug-in supports function #setBypass ()
+
+          if (!h_Strcmp(p,"hasCockosExtensions"))  return 0xbeef0000;
+
+          return 0;
         }
         break;
 
       //----------
 
       case effGetTailSize: // 52
-        dtrace("vst dispatcher: effGetTailSize");
+        libtrace("vst dispatcher: effGetTailSize");
         break;
 
       //case effIdle: // 53 // deprecated [energyXt2 calls this]
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //case effGetIcon: // 54 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       //case effSetViewPosition: // 55 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       case effGetParameterProperties: // 56
-        dtrace("vst dispatcher: effGetParameterProperties");
+        libtrace("vst dispatcher: effGetParameterProperties");
         break;
 
       //case effKeysRequired: // 57 // deprecated
-      //  dtrace("vst dispatcher: eff");
+      //  libtrace("vst dispatcher: eff");
       //  break;
 
       case effGetVstVersion: // 58
-        dtrace("vst dispatcher: effGetVstVersion");
+        libtrace("vst dispatcher: effGetVstVersion");
         break;
 
       //---------- VST_2_1_EXTENSIONS
 
       case effEditKeyDown: // 59
-        dtrace("vst dispatcher: effEditKeyDown");
+        libtrace("vst dispatcher: effEditKeyDown");
         break;
 
       case effEditKeyUp: // 60
-        dtrace("vst dispatcher: effEditKeyUp");
+        libtrace("vst dispatcher: effEditKeyUp");
         break;
 
       case effSetEditKnobMode: // 61
-        dtrace("vst dispatcher: effSetEditKnobMode");
+        libtrace("vst dispatcher: effSetEditKnobMode");
         break;
 
       case effGetMidiProgramName: // 62
-        dtrace("vst dispatcher: effGetMidiProgramName");
+        libtrace("vst dispatcher: effGetMidiProgramName");
         break;
 
       case effGetCurrentMidiProgram: // 63
-        dtrace("vst dispatcher: effGetCurrentMidiProgram");
+        libtrace("vst dispatcher: effGetCurrentMidiProgram");
         break;
 
       case effGetMidiProgramCategory: // 64
-        dtrace("vst dispatcher: effGetMidiprogramCategory");
+        libtrace("vst dispatcher: effGetMidiprogramCategory");
         break;
 
       case effHasMidiProgramsChanged: // 65
-        dtrace("vst dispatcher: effHasMidiProgramsChanged");
+        libtrace("vst dispatcher: effHasMidiProgramsChanged");
         break;
 
       case effGetMidiKeyName: // 66
-        dtrace("vst dispatcher: effGetMidiKeyName");
+        libtrace("vst dispatcher: effGetMidiKeyName");
         break;
 
       case effBeginSetProgram: // 67
-        dtrace("vst dispatcher: effBeginSetProgram");
+        libtrace("vst dispatcher: effBeginSetProgram");
         break;
 
       case effEndSetProgram: // 68
-        dtrace("vst dispatcher: effEndSetProgram");
+        libtrace("vst dispatcher: effEndSetProgram");
         break;
 
       //---------- VST_2_3_EXTENSIONS
 
       case effGetSpeakerArrangement: // 69
-        dtrace("vst dispatcher: effGetSpeakerArrangement");
+        libtrace("vst dispatcher: effGetSpeakerArrangement");
         break;
 
       case effShellGetNextPlugin: // 70
-        dtrace("vst dispatcher: effShellGetNextPlugin");
+        libtrace("vst dispatcher: effShellGetNextPlugin");
         break;
 
       case effStartProcess: // 71
-        dtrace("vst dispatcher: effStartProcess");
+        libtrace("vst dispatcher: effStartProcess");
         break;
 
       case effStopProcess: // 72
-        dtrace("vst dispatcher: effStopProcess");
+        libtrace("vst dispatcher: effStopProcess");
         break;
 
       case effSetTotalSampleToProcess: // 73
-        dtrace("vst dispatcher: effSetTotalSampleToProcess");
+        libtrace("vst dispatcher: effSetTotalSampleToProcess");
         break;
 
       case effSetPanLaw: // 74
-        dtrace("vst dispatcher: effSetPanLaw");
+        libtrace("vst dispatcher: effSetPanLaw");
         break;
 
       case effBeginLoadBank: // 75
-        dtrace("vst dispatcher: effBeginLoadBank");
+        libtrace("vst dispatcher: effBeginLoadBank");
         break;
 
       case effBeginLoadProgram: // 76
-        dtrace("vst dispatcher: effBeginLoadProgram");
+        libtrace("vst dispatcher: effBeginLoadProgram");
         break;
 
       //---------- VST_2_4_EXTENSIONS
 
       case effSetProcessPrecision: // 77
-        dtrace("vst dispatcher: effSetProcessPrecision");
+        libtrace("vst dispatcher: effSetProcessPrecision");
         break;
 
       case effGetNumMidiInputChannels: // 78
-        dtrace("vst dispatcher: effGetNumMidiInputChannels");
+        libtrace("vst dispatcher: effGetNumMidiInputChannels");
         break;
 
       case effGetNumMidiOutputChannels: // 79
-        dtrace("vst dispatcher: effGetNumMidiOutputChannels");
+        libtrace("vst dispatcher: effGetNumMidiOutputChannels");
         break;
 
       //default:
-      //  dtrace("unhandled vst dispatcher: " << opcode << " : " << vst_opcodes[opcode]);
+      //  libtrace("unhandled vst dispatcher: " << opcode << " : " << vst_opcodes[opcode]);
       //  break;
 
     } // switch
@@ -908,8 +950,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
 float h_Instance::vst_getParameter(VstInt32 index)
   {
-    //return m_Parameters[aIndex]->doGetValue();
-    return 0;
+    return m_Parameters[index]->do_GetValue();
   }
 
 //----------
@@ -922,12 +963,14 @@ float h_Instance::vst_getParameter(VstInt32 index)
 //0.0 to 1.0. How data is presented to the user is merely in the user-interface handling. This is a
 //convention, but still worth regarding. Maybe the VST-Host's automation system depends on this range.
 
-// called when a parameter changed
+// called (from host) when a parameter changed
 
 void h_Instance::vst_setParameter(VstInt32 index, float value)
   {
-    //axParameter* par = mParameters[aIndex];
-    //par->doSetValue(aValue,true);
+    h_Parameter* par = m_Parameters[index];
+    par->do_SetValue(value);
+    do_HandleParameter(par);
+    // notify editor
   }
 
 //----------
@@ -989,7 +1032,6 @@ void h_Instance::vst_processReplacing(float** aInputs, float** aOutputs, int aLe
 
 void h_Instance::vst_processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
   {
-    //sendMidiClear();
     #ifdef H_AUTOSYNC
       updateTime();
       if (m_PlayState&1) do_HandleTransport(m_PlayState);
@@ -1011,8 +1053,11 @@ void h_Instance::vst_processReplacing(float** inputs, float** outputs, VstInt32 
       } //sampleflrames
     } //process_block
     do_PostProcess(inputs,outputs,sampleFrames);
-    _sendMidiAll();
-
+    if (m_Descriptor->m_Flags&df_SendMidi)
+    {
+      _sendMidiAll();
+      _sendMidiClear();
+    }
   }
 
 #endif // H_MULTICHANNEL
@@ -1299,6 +1344,7 @@ bool h_Instance::host_EndEdit(VstInt32 index)
 
 h_Format::h_Format()
   {
+    m_Initialized = false;
   }
 
 //----------
@@ -1323,40 +1369,44 @@ h_Instance* h_Format::createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor)
 
 //----------------------------------------
 
-//AEffect* h_Format::entrypoint(void* a_Ptr)
+// this is called for each instance of the vst plugins
+
 AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
   {
-    // note:
-    // the instance (or something) has to remember the host ptr,
-    // and delete it when we're finished with it..
+    AEffect*      effect  = (AEffect*)h_Malloc( sizeof(AEffect) );
+    h_Host*       host    = new h_Host(audioMaster,effect);
+    h_Descriptor* desc    = getDescriptor();
+    h_Instance*   inst    = createInstance(host,desc);
 
-    h_Host*       host = new h_Host(audioMaster,&m_AEffect);
-    h_Descriptor* desc = getDescriptor();
-    h_Instance*   inst = createInstance(host,desc);
+    // instance must remember the above effect and host objects,
+    // (read them in its constructor)
+    // and delete them in its destructor..
 
-    h_Strcpy(m_RealName,desc->m_Name);
-    #ifdef H_DEBUG
-      h_Strcat(m_RealName,(char*)"_debug");
-    #endif
+    //h_Strcpy(m_RealName,desc->m_Name);
+    //#ifdef H_DEBUG
+    //  h_Strcat(m_RealName,(char*)"_debug");
+    //#endif
 
-    h_Memset(&m_AEffect,0,sizeof(AEffect));
-    m_AEffect.magic                   = kEffectMagic;
-    m_AEffect.object                  = inst;                   //
-    m_AEffect.user                    = this;                   // ???
-    m_AEffect.dispatcher              = vst_dispatcher_callback;
-    m_AEffect.setParameter            = vst_setParameter_callback;
-    m_AEffect.getParameter            = vst_getParameter_callback;
-    m_AEffect.processReplacing        = vst_processReplacing_callback;
-    m_AEffect.processDoubleReplacing  = vst_processDoubleReplacing_callback;
-    m_AEffect.flags                   = effFlagsCanReplacing;
-    m_AEffect.version                 = 0;
-    m_AEffect.uniqueID                = H_MAGIC + 0x0000;
-    m_AEffect.numPrograms             = 0;
-    m_AEffect.numParams               = 0;
-    m_AEffect.numInputs               = 2;
-    m_AEffect.numOutputs              = 2;
-    m_AEffect.initialDelay            = 0;
-    return &m_AEffect;
+    h_Memset(effect,0,sizeof(effect));
+    effect->magic                   = kEffectMagic;
+    effect->object                  = inst;                   //
+    effect->user                    = this;                   // ???
+    effect->dispatcher              = vst_dispatcher_callback;
+    effect->setParameter            = vst_setParameter_callback;
+    effect->getParameter            = vst_getParameter_callback;
+    effect->processReplacing        = vst_processReplacing_callback;
+    effect->processDoubleReplacing  = vst_processDoubleReplacing_callback;
+    effect->flags                   = effFlagsCanReplacing;
+    effect->version                 = 0;
+    effect->uniqueID                = desc->m_UniqueId;//H_MAGIC + 0x0000;
+    effect->numPrograms             = desc->m_NumProgs;
+    effect->numParams               = desc->m_NumParams;
+    effect->numInputs               = desc->m_NumInputs;
+    effect->numOutputs              = desc->m_NumOutputs;
+    effect->initialDelay            = 0;
+    if (desc->m_Flags & df_HasEditor) effect->flags |= effFlagsHasEditor;
+    if (desc->m_Flags & df_IsSynth)   effect->flags |= effFlagsIsSynth;
+    return effect;
   }
 
 //----------------------------------------------------------------------
@@ -1371,6 +1421,7 @@ VstIntPtr h_Format::vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt
     if (opCode==effClose)
     {
       inst->vst_dispatcher(opCode,index,value,ptr,opt);
+      //delete inst->getAEffect();
       delete inst;
       return 1;
     }
@@ -1439,9 +1490,7 @@ AEffect*  main_plugin(audioMasterCallback audioMaster) _H_ASM_MAIN_SYMBOL
 AEffect* main(audioMasterCallback audioMaster)
 {
   static_Debug.initialize();
-  //trace("static_Debug initialized");
   static_Core.initialize();
-  //trace("static_Core initialized");
   if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0;
   return static_Core.m_Format->entrypoint(audioMaster);
 }

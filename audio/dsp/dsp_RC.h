@@ -26,6 +26,8 @@
   \brief RC filter
 */
 
+#include "lib/h_Math.h"
+
 class dsp_RC
 {
   private:
@@ -41,7 +43,7 @@ class dsp_RC
         mValue  = 0;
         mTarget = 0;
         mWeight = 0;
-        mSRate = 0; // !!!
+        mSRate  = 0; // !!!
       }
 
     void setup(float aValue=0, float aTarget=0, float aWeight=0)
@@ -87,13 +89,15 @@ class dsp_RC
 
     //-----
 
-    virtual float process(void)
+    //virtual
+    float process(void)
     {
       mValue += ((mTarget-mValue)*mWeight);
       return mValue;
     }
 
-    virtual float process(float in)
+    //virtual
+    float process(float in)
     {
       mValue += ((in-mValue)*mWeight);
       return mValue;

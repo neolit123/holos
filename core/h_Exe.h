@@ -33,6 +33,11 @@ class h_Host : public h_Host_Base
 
 class h_Instance : public h_Instance_Base
 {
+  private:
+    h_Host*       m_Host; // we need to delete this in destructor
+    h_Descriptor* m_Descriptor;
+    h_Rect        m_EditorRect;
+    bool          m_EditorIsOpen;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     //: h_Instance_Base(h_Descriptor* a_Descriptor);
@@ -53,6 +58,8 @@ class h_Instance : public h_Instance_Base
     inline double getBeatPos(void)                      { return 0;/*return m_BeatPos;*/ }
     inline double getTempo(void)                        { return 0;/*return m_Tempo;*/ }
     inline int    getCurrentProgram(void)               { return 0;/*return m_CurrentProgram;*/ }
+    //
+    inline h_Rect getEditorRect(void)                   { return m_EditorRect; }
 };
 
 //----------------------------------------------------------------------

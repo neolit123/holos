@@ -28,6 +28,8 @@ class h_Format;
 
 class h_Core
 {
+  private:
+    bool  m_Initialized;
   public:
     h_Platform* m_Platform;
     h_Format*   m_Format;

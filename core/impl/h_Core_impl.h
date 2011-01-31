@@ -5,6 +5,7 @@
 
 h_Core::h_Core()
   {
+    m_Initialized = false;
     m_Platform  = H_NULL;
     m_Format = H_NULL;
   }
@@ -21,8 +22,12 @@ h_Core::~h_Core()
 
 void h_Core::initialize(void)
   {
-    m_Platform  = new h_Platform();
-    m_Format = new h_Format();
+    if (!m_Initialized)
+    {
+      m_Platform  = new h_Platform();
+      m_Format = new h_Format();
+      m_Initialized = true;
+    }
   }
 
 //----------------------------------------------------------------------

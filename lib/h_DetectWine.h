@@ -35,13 +35,13 @@ BOOL h_DetectWine(void)
     {
       ret = GetProcAddress(hLib, "wine_get_version") != NULL ||
             GetProcAddress(hLib, "wine_nt_to_unix_file_name") != NULL;
-      BOOL unload = FreeLibrary(hLib);
-      if (!unload)
-        printf("[h_DetectWine.h] wine detect: # cannot release ntdll.dll\n");
+      /*BOOL unload =*/ FreeLibrary(hLib);
+      //if (!unload)
+      //  printf("[h_DetectWine.h] wine detect: # cannot release ntdll.dll\n");
     }
-    else
-      printf("[h_DetectWine.h] wine detect: # cannot load ntdll.dll\n");
-    printf("[h_DetectWine.h] wine detect: %d\n", ret);
+    //else
+    //  printf("[h_DetectWine.h] wine detect: # cannot load ntdll.dll\n");
+    //printf("[h_DetectWine.h] wine detect: %d\n", ret);
     return ret;
   }
 

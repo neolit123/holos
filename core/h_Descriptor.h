@@ -53,6 +53,7 @@ struct h_Descriptor
   const char*   m_Name;
   const char*   m_Author;
   const char*   m_Product;
+  unsigned long m_Version;
   unsigned long m_UniqueId;
   int           m_Flags;
   int           m_NumInputs;
@@ -71,6 +72,7 @@ h_Descriptor static_Descriptor =
   "plugin",
   "holos",
   "(powered by holos)",
+  0,
   H_MAGIC,
   df_None,
   2,

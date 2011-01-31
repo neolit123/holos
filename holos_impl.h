@@ -5,13 +5,13 @@
 
 //#ifdef H_INCLUDE_SRC
 
-  #include "impl/h_Debug_impl.h"
-  #include "impl/h_Core_impl.h"
+  #include "debug/impl/h_Debug_impl.h"
+  #include "core/impl/h_Core_impl.h"
 
   //----------
 
-  #include "impl/h_Linux_impl.h"
-  #include "impl/h_Win32_impl.h"
+  #include "core/impl/h_Linux_impl.h"
+  #include "core/impl/h_Win32_impl.h"
 
   //----------
 
@@ -29,9 +29,9 @@
 
   //----------
 
-  #include "impl/h_Exe_impl.h"
-  #include "impl/h_Ladspa_impl.h"
-  #include "impl/h_Vst_impl.h"
+  #include "core/impl/h_Exe_impl.h"
+  #include "core/impl/h_Ladspa_impl.h"
+  #include "core/impl/h_Vst_impl.h"
 
 //#endif
 

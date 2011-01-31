@@ -121,9 +121,7 @@ class h_Window_Win32 : public h_Widget,
     h_Window_Win32(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
     : h_Widget(a_Listener,a_Rect)
       {
-
-        trace( "win class name: " << static_Core.m_Platform->m_WinClassName );
-
+        //trace( "win class name: " << static_Core.m_Platform->m_WinClassName );
         //m_WinParent     = (HWND)a_Parent;
         m_WinCursor     = LoadCursor(NULL,IDC_ARROW);
         m_WinPrevCursor    = 0;
@@ -446,7 +444,7 @@ class h_Window_Win32 : public h_Widget,
         LRESULT result = 0;
         h_Rect rc;
         int x,y,b,w,h;
-        int left,top,right,bottom;
+        //int left,top,right,bottom;
 
         switch (message)
         {
@@ -478,14 +476,11 @@ class h_Window_Win32 : public h_Widget,
 
           case WM_PAINT:
 
-            trace("wm_paint");
-
             beginPaint();
-            left   = m_WinPS.rcPaint.left;
-            top    = m_WinPS.rcPaint.top;
-            right  = m_WinPS.rcPaint.right;
-            bottom = m_WinPS.rcPaint.bottom;
-
+            //left   = m_WinPS.rcPaint.left;
+            //top    = m_WinPS.rcPaint.top;
+            //right  = m_WinPS.rcPaint.right;
+            //bottom = m_WinPS.rcPaint.bottom;
             rc = h_Rect(  m_WinPS.rcPaint.left,
                           m_WinPS.rcPaint.top,
                           m_WinPS.rcPaint.right -  m_WinPS.rcPaint.left + 2,

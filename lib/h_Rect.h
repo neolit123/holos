@@ -140,7 +140,7 @@ struct h_Rect
 
 //----------------------------------------------------------------------
 
-#define NULL_RECT h_Rect(0,0,0,0)
+#define H_NULL_RECT h_Rect(0,0,0,0)
 
 #include "lib/h_Array.h"
 typedef h_Array<h_Rect> h_Rects;

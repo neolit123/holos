@@ -24,6 +24,7 @@
 #include "extern/vst/aeffect.h"
 #include "extern/vst/aeffectx.h"
 //#include "extern/vst/vstfxstore.h"
+
 #include "lib/h_Rect.h"
 
 //----------------------------------------------------------------------
@@ -75,7 +76,7 @@ class h_Instance : public h_Instance_Base
   friend class h_Format;
   //protected:
   private:
-    h_Host*             m_Host; // we need to delete this in destructor
+    h_Host*             m_Host;
     h_Descriptor*       m_Descriptor;
     audioMasterCallback m_AudioMaster;
     AEffect*            m_AEffect;
@@ -93,7 +94,8 @@ class h_Instance : public h_Instance_Base
     h_Rect              m_EditorRect;
     bool                m_EditorIsOpen;
     ERect               m_ERect;
-  protected:
+  //protected:
+  private:
     h_Parameters        m_Parameters;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
@@ -114,7 +116,6 @@ class h_Instance : public h_Instance_Base
     inline double getBeatPos(void)                      { return m_BeatPos; }
     inline double getTempo(void)                        { return m_Tempo; }
     inline int    getCurrentProgram(void)               { return m_CurrentProgram; }
-    //
     inline h_Rect getEditorRect(void)                   { return m_EditorRect; }
   private:
     inline void   _clear_aeFlags(void)                  { m_AEffect->flags = 0; }
@@ -166,12 +167,9 @@ class h_Instance : public h_Instance_Base
 class h_Format
 {
   private:
-    //audioMasterCallback m_AudioMaster;
+    bool                m_Initialized;
     h_Platform*         m_Platform;
-    AEffect             m_AEffect;
-    char                m_RealName[H_MAX_STRINGSIZE];
-  //public:
-  //  inline AEffect* getAEffect(void) { return &m_AEffect; }
+    //char                m_RealName[H_MAX_STRINGSIZE];
   public:
     h_Format();
     ~h_Format();
