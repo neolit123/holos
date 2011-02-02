@@ -62,7 +62,6 @@ class my_Editor : public h_Editor//,
     my_Editor(h_Instance* a_Instance)
     : h_Editor(a_Instance)
       {
-        trace("my_Editor");
         //back = new wdg_Background(this,H_DARK_RED);
       }
     virtual ~my_Editor()
@@ -72,13 +71,11 @@ class my_Editor : public h_Editor//,
     virtual void do_Open(h_Window* a_Window)
       {
         //a_Window->setRoot(back);
-        trace("do_Open");
         //a_Window->show();
       }
     // widget listener
     virtual void on_Change(h_Widget* a_Widget)
       {
-        trace("change");
       }
     virtual void on_Hint(char* a_Text)
       {
@@ -87,7 +84,6 @@ class my_Editor : public h_Editor//,
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        trace("do_Paint");
       }
 
 };
@@ -108,7 +104,6 @@ class my_Instance : public h_Instance
       }
     virtual void* do_OpenEditor(void* a_Parent)
       {
-        trace("my_instance.do_OpenEditor");
         m_Editor = new my_Editor(this);
         m_Editor->open(a_Parent);
         return (void*)m_Editor;

@@ -130,6 +130,7 @@ class h_Window_Win32 : public h_Widget,
         RECT rc = {a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2()}; // left, top, right, bottom
         if (a_Parent) // --- embedded ---
         {
+          trace("embedded");
           m_WinEmbedded = true;
           AdjustWindowRectEx(&rc,WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           m_WinHandle = CreateWindowEx(
@@ -525,6 +526,7 @@ class h_Window_Win32 : public h_Widget,
               case WM_LBUTTONDOWN: b = bu_Left;   break;
               case WM_MBUTTONDOWN: b = bu_Middle; break;
               case WM_RBUTTONDOWN: b = bu_Right;  break;
+              default:             b = bu_None;   //break;
             }
             m_WinClickedButton = b;
             //if (m_Root) m_Root->do_MouseDown(x,y,b,remapKey(wParam));
@@ -543,6 +545,7 @@ class h_Window_Win32 : public h_Widget,
               case WM_LBUTTONUP: b = bu_Left;   break;
               case WM_MBUTTONUP: b = bu_Middle; break;
               case WM_RBUTTONUP: b = bu_Right;  break;
+              default:           b = bu_None;   //break;
             }
             m_WinClickedButton = bu_None;
             //if (m_Root) m_Root->do_MouseUp(x,y,b,remapKey(wParam));

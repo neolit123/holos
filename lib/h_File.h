@@ -24,13 +24,13 @@
 class h_File
 {
   public:
-    h_File() {}
     h_File(char* filename, int mode) {}
     ~h_File() {}
-    bool open(char* filename, int mode) { return false; }
+    bool open() { return false; }
     void close(void) {}
-    int read(char* buffer, int num) { return 0; }
-    int write(char* buffer, int num) { return 0; }
+    int  size(char) { return 0;; }
+    int  read(char* buffer, int num) { return 0; }
+    int  write(char* buffer, int num) { return 0; }
 };
 
 //// read file from base path

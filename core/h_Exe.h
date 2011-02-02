@@ -24,8 +24,8 @@
 class h_Host : public h_Host_Base
 {
   public:
-    h_Host() {}
-    ~h_Host() {}
+    h_Host();
+    ~h_Host();
 
 };
 

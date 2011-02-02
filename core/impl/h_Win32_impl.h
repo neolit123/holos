@@ -53,7 +53,7 @@ h_Platform::h_Platform()
   {
     m_WinInstance = static_WinInstance;
     //
-    m_Depth = 24; //TODO: find real value...
+    m_WinDepth = 24; //TODO: find real value...
     h_CreateUniqueName(m_WinClassName,(char*)"holos_win_",this);
     #ifndef H_NOGUI
     m_WinIcon = LoadIcon(m_WinInstance, "axicon");

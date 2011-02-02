@@ -82,20 +82,20 @@ class h_List
 
     //----------
 
-    //// delete all nodes...
-    //void deleteNodes(void)
-    //  {
-    //    h_ListNode* node = m_ListHead;
-    //    h_ListNode* next;
-    //    while (node)
-    //    {
-    //      next = node->next();
-    //      delete node;
-    //      node = next;
-    //    }
-    //    m_ListHead = NULL;
-    //    m_ListTail = NULL;
-    //  }
+    // delete all nodes...
+    void deleteNodes(void)
+      {
+        h_ListNode* node = m_ListHead;
+        h_ListNode* next;
+        while (node)
+        {
+          next = node->next();
+          delete node;
+          node = next;
+        }
+        m_ListHead = NULL;
+        m_ListTail = NULL;
+      }
 
     //----------
 

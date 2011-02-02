@@ -51,7 +51,7 @@ class h_Instance_Base
 {
   public:
 
-    //h_Instance_Base(h_Descriptor* a_Descriptor) {}
+    //h_Instance_Base(h_Host* a_Host, h_Descriptor* a_Descriptor) {}
     //virtual ~h_Instance_Base() {}
 
     virtual void  do_HandleState(int a_State) {}

@@ -22,7 +22,7 @@ class my_Window : public h_Window,
       }
 
     // widget listener
-    virtual void on_Change(h_Widget* a_Widget) { trace("on_Change"); }
+    virtual void on_Change(h_Widget* a_Widget) { /*trace("on_Change");*/ }
     //virtual void on_SetHint(char* a_Text) {}
 
 };

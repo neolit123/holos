@@ -1,0 +1,43 @@
+#!/bin/bash
+# ==============================================================================
+# linux - holos - compileall - bash
+# ==============================================================================
+
+if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ] || [ "$8" == "-v" ];
+then
+  v="yes"
+fi
+
+# ----------
+
+if [ "$v" == "yes" ];
+then
+  echo ""
+  echo "holos 'compileall' script for linux"
+  echo "-------------------------------------------------------------------------"
+  echo "syntax: "
+  echo " ./compileall [path (no '/' at end)] [compile flags (see ./compile)]"
+fi
+
+if [ -d "$1/" ];
+then
+  echo ""
+else
+  echo ""
+  echo "## ERR: path not found - '$1/'"
+  exit
+fi
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for _f in ${1}/*.cpp
+do
+  ./compile "$_f" $2 $3 $4 $5 $6 $7 $8 $9
+done
+IFS=$SAVEIFS
+
+if [ "$v" == "yes" ];
+then
+  echo ""
+  echo "** all done!"
+fi

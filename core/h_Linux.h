@@ -24,13 +24,24 @@
 //#include <windows.h>
 //#include "lib/h_Globals.h"
 
+#ifndef H_NOGUI
+  #include <X11/Xlib.h>
+#endif
+
+
 //----------------------------------------------------------------------
 
 class h_Platform
 {
   public:
-    Display* m_WinDisplay;
-
+    #ifndef H_NOGUI
+    Display*  m_WinDisplay;
+    Window    m_WinRoot;
+    int       m_WinScreen;
+    Visual*   m_WinVisual;
+    int       m_WinDepth;
+    Colormap  m_WinColormap;
+    #endif
   public:
     h_Platform();
     ~h_Platform();

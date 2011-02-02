@@ -36,7 +36,7 @@ class h_Platform
     HCURSOR   m_WinCursor;
     HICON     m_WinIcon;
     WNDCLASS  m_WinClass;
-    int       m_Depth;
+    int       m_WinDepth;
   public:
     h_Platform();
     ~h_Platform();

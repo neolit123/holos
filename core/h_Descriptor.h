@@ -33,6 +33,8 @@ struct h_ParamDescr
   float         m_Min;
   float         m_Max;
   float         m_Step;
+  float         m_Pow;
+  const char**  m_Strings;
 };
 
 struct h_ProgDescr
@@ -47,6 +49,7 @@ struct h_ProgDescr
 #define df_IsSynth      2
 #define df_SendMidi     4
 #define df_ReceiveMidi  8
+#define df_AutoSync     16
 
 struct h_Descriptor
 {

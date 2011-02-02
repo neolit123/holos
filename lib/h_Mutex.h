@@ -23,15 +23,15 @@
 
 #include "lib/h_Defines.h"
 
-class h_MutexBase
-{
-  public:
-    h_MutexBase()               {}
-    virtual ~h_MutexBase()      {}
-    virtual void lock(void)     {}
-    virtual bool tryLock(void)  {return false;}
-    virtual void unlock(void)   {}
-};
+//class h_MutexBase
+//{
+//  public:
+//    h_MutexBase()               {}
+//    virtual ~h_MutexBase()      {}
+//    virtual void lock(void)     {}
+//    virtual bool tryLock(void)  {return false;}
+//    virtual void unlock(void)   {}
+//};
 
 //----------------------------------------------------------------------
 #ifdef H_LINUX
@@ -40,16 +40,16 @@ class h_MutexBase
 // -lpthread
 #include <pthread.h>
 
-class h_MutexImpl : public h_MutexBase
+class h_Mutex//Impl : public h_MutexBase
 {
   private:
     pthread_mutex_t mMutex;// = PTHREAD_MUTEX_INITIALIZER;
   public:
-    h_MutexImpl() : h_MutexBase() { pthread_mutex_init(&mMutex,NULL); }
-    virtual ~h_MutexImpl()        { pthread_mutex_destroy(&mMutex); }
-    virtual void lock(void)       { pthread_mutex_lock(&mMutex); }
-    virtual bool tryLock(void)    { return (pthread_mutex_trylock(&mMutex)==0); }
-    virtual void unlock(void)     { pthread_mutex_unlock(&mMutex); }
+    h_Mutex/*Impl() : h_MutexBase*/() { pthread_mutex_init(&mMutex,NULL); }
+    /*virtual*/ ~h_Mutex/*Impl*/()    { pthread_mutex_destroy(&mMutex); }
+    /*virtual*/ void lock(void)       { pthread_mutex_lock(&mMutex); }
+    /*virtual*/ bool tryLock(void)    { return (pthread_mutex_trylock(&mMutex)==0); }
+    /*virtual*/ void unlock(void)     { pthread_mutex_unlock(&mMutex); }
 };
 
 #endif
@@ -59,22 +59,22 @@ class h_MutexImpl : public h_MutexBase
 
 #include <windows.h>
 
-class h_MutexImpl : public h_MutexBase
+class h_Mutex//Impl : public h_MutexBase
 {
   private:
     CRITICAL_SECTION  CriticalSection;
   public:
-    h_MutexImpl() : h_MutexBase() { InitializeCriticalSection(&CriticalSection); }
-    virtual ~h_MutexImpl()        { DeleteCriticalSection(&CriticalSection); }
-    virtual void lock(void)       { EnterCriticalSection(&CriticalSection); }
-    virtual bool tryLock(void)    { return TryEnterCriticalSection( &CriticalSection ); }
-    virtual void unlock(void)     { LeaveCriticalSection(&CriticalSection); }
+    h_Mutex/*Impl() : h_MutexBase*/() { InitializeCriticalSection(&CriticalSection); }
+    /*virtual*/ ~h_Mutex/*Impl*/()    { DeleteCriticalSection(&CriticalSection); }
+    /*virtual*/ void lock(void)       { EnterCriticalSection(&CriticalSection); }
+    /*virtual*/ bool tryLock(void)    { return TryEnterCriticalSection( &CriticalSection ); }
+    /*virtual*/ void unlock(void)     { LeaveCriticalSection(&CriticalSection); }
 };
 
 #endif
 //----------------------------------------------------------------------
 
-typedef h_MutexImpl h_Mutex;
+//typedef h_MutexImpl h_Mutex;
 
 //----------------------------------------------------------------------
 #endif

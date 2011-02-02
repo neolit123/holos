@@ -77,6 +77,10 @@
 		<Unit filename="..\..\audio\h_Libaam.h" />
 		<Unit filename="..\..\audio\h_VoiceManager.h" />
 		<Unit filename="..\build.cpp" />
+		<Unit filename="..\ccernn\fx_filter.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="..\ports\port_mverb.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -110,9 +114,18 @@
 		<Unit filename="..\..\core\h_Vst.h" />
 		<Unit filename="..\..\core\h_Win32.h" />
 		<Unit filename="..\..\core\impl\h_Core_impl.h" />
+		<Unit filename="..\..\core\impl\h_Exe_Format_impl.h" />
+		<Unit filename="..\..\core\impl\h_Exe_Host_impl.h" />
+		<Unit filename="..\..\core\impl\h_Exe_Instance_impl.h" />
 		<Unit filename="..\..\core\impl\h_Exe_impl.h" />
+		<Unit filename="..\..\core\impl\h_Ladspa_Format_impl.h" />
+		<Unit filename="..\..\core\impl\h_Ladspa_Host_impl.h" />
+		<Unit filename="..\..\core\impl\h_Ladspa_Instance_impl.h" />
 		<Unit filename="..\..\core\impl\h_Ladspa_impl.h" />
 		<Unit filename="..\..\core\impl\h_Linux_impl.h" />
+		<Unit filename="..\..\core\impl\h_Vst_Format_impl.h" />
+		<Unit filename="..\..\core\impl\h_Vst_Host_impl.h" />
+		<Unit filename="..\..\core\impl\h_Vst_Instance_impl.h" />
 		<Unit filename="..\..\core\impl\h_Vst_impl.h" />
 		<Unit filename="..\..\core\impl\h_Win32_impl.h" />
 		<Unit filename="..\..\debug\h_Assert.h" />
@@ -163,6 +176,7 @@
 		<Unit filename="..\..\gui\wdg\wdg_Sizer.h" />
 		<Unit filename="..\..\gui\wdg\wdg_Slider.h" />
 		<Unit filename="..\..\h.h" />
+		<Unit filename="..\..\holos.changes" />
 		<Unit filename="..\..\holos.h" />
 		<Unit filename="..\..\holos_impl.h" />
 		<Unit filename="..\..\lib\h_Array.h" />

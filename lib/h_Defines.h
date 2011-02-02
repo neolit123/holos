@@ -59,6 +59,9 @@
 
 #ifdef linux
   #define H_LINUX
+  #ifdef H_DEBUG_CON
+    #undef H_DEBUG_CON
+  #endif
 #endif
 
 #ifdef WIN32

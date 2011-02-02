@@ -35,6 +35,25 @@
 #define wf_Align      ( 1 << 10 )
 #define wf_Capture    ( 1 << 11 )
 
+// widget alignment
+#define wa_None         0
+#define wa_Client       1
+#define wa_Left         2
+#define wa_Right        3
+#define wa_Top          4
+#define wa_Bottom       5
+#define wa_LeftTop      6
+#define wa_RightTop     7
+#define wa_LeftBottom   8
+#define wa_RightBottom  9
+#define wa_TopLeft      10
+#define wa_TopRight     11
+#define wa_BottomLeft   12
+#define wa_BottomRight  13
+//#define wa_Stacked      14
+#define wa_StackedHoriz 15
+#define wa_StackedVert  16
+
 //----------
 
 class h_Widget;
@@ -52,8 +71,8 @@ class h_WidgetBase
     virtual void do_SetSize(int w, int h) { trace("h_WidgetBase.do_SetSize"); }
     virtual void do_Realign(void) { trace("h_WidgetBase.do_Realign"); }
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) { trace("h_WidgetBase.do_Paint"); }
-    virtual void do_Enter(void) { trace("h_WidgetBase.do_Enter"); }
-    virtual void do_Leave(void) { trace("h_WidgetBase.do_Leave"); }
+    virtual void do_Enter(h_Widget* a_Widget) { trace("h_WidgetBase.do_Enter"); }
+    virtual void do_Leave(h_Widget* a_Widget) { trace("h_WidgetBase.do_Leave"); }
     virtual void do_MouseDown(int x, int y, int b, int s) { trace("h_WidgetBase.do_MouseDown"); }
     virtual void do_MouseUp(int x, int y, int b, int s) { trace("h_WidgetBase.do_MouseUp"); }
     virtual void do_MouseMove(int x, int t, int s) { trace("h_WidgetBase.do_MouseMove"); }
@@ -66,8 +85,14 @@ class h_WidgetBase
 class h_WidgetListener
 {
   public:
-    virtual void on_Change(h_Widget* a_Widget) { trace("h_WidgetListener.on_Change"); }
-    virtual void on_Hint(char* a_Text) { trace("h_WidgetListener.on_Hint"); }
+    virtual void on_Change(h_Widget* a_Widget) {}
+    virtual void on_Redraw(h_Widget* a_Widget) {}
+    virtual void on_Cursor(int a_Cursor) {}
+    virtual void on_Hint(char* a_Text) {}
+    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
+    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
+
+
 };
 
 //typedef h_Array<h_WidgetListener*> h_WidgetListeners;
@@ -89,31 +114,79 @@ class h_WidgetListener
 class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
-  //private:
-  //  int               m_Index;
+  private:
+    int       m_MinWidth, m_MinHeight;
+    int       m_MaxWidth, m_MaxHeight;
+    int       m_MarginX,  m_MarginY;    // container inner space (between outer border & widgets)
+    int       m_PaddingX, m_PaddingY;   // space between wal_Stacked widgets
+    int       m_StackedX, m_StackedY;
+    h_Rect    m_Client;
+    h_Rect    m_Content;               // rect encapsulating all sub-widgets (updated in doRealign)
+    h_Rect    m_Orig;
+    int       m_Alignment;
+    h_Widget* m_CapturedWidget;
+    h_Widget* m_HoverWidget;
+
+
   protected:
-    int               m_Index;
-    int               m_Flags;
-    h_Rect            m_Rect;
     h_WidgetListener* m_Listener;
     //h_Widget*         m_Parent;
     h_Widgets         m_Children;
+    int               m_Index;
+    int               m_Flags;
+    h_Rect            m_Rect;
 
   public:
-    inline int    getFlags(void)        { return m_Flags; }
-    inline int    hasFlag(int a_Flag)   { return (m_Flags&a_Flag); }
-    inline void   setFlag(int a_Flag)   { m_Flags|=a_Flag; }
-    inline void   clearFlag(int a_Flag) { m_Flags&=~a_Flag; }
+    inline int        getFlags(void)        { return m_Flags; }
+    inline int        hasFlag(int a_Flag)   { return (m_Flags&a_Flag); }
+    inline void       setFlag(int a_Flag)   { m_Flags|=a_Flag; }
+    inline void       clearFlag(int a_Flag) { m_Flags&=~a_Flag; }
+
+    inline h_Rect     getRect(void)         { return m_Rect; }
+    inline h_Rect     getContent(void)      { return m_Content; }
+    inline int        getNumChildren(void)  { return m_Children.size(); }
+    inline h_Widget*  getChild(int a_Index) { return m_Children[a_Index]; }
 
   public:
 
-    h_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect)
+    h_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Alignment=wa_None)
       {
-        m_Flags     = wf_None;
         m_Listener  = a_Listener;
-        m_Rect      = a_Rect;
-        m_Index     = -1;
         //m_Parent    = H_NULL;
+        m_Index     = -1;
+        m_Flags     = wf_Active|wf_Visible|wf_Capture|wf_Align;
+        m_Rect      = a_Rect;
+        m_Orig      = m_Rect;
+        m_Alignment = a_Alignment;
+        m_Content   = H_NULL_RECT;
+
+        m_MinWidth       = 0;
+        m_MinHeight      = 0;
+        m_MaxWidth       = 999999;
+        m_MaxHeight      = 999999;
+        m_MarginX        = 0;
+        m_MarginY        = 0;
+        m_PaddingX       = 0;
+        m_PaddingY       = 0;
+
+        //m_Value          = 0;
+        //m_Connection     = -1;
+        //m_Parameter      = NULL;
+
+        //m_Skin           = NULL;
+        //m_SkinMode       = 0;
+
+        m_CapturedWidget = NULL;
+        m_HoverWidget    = this;
+        //m_ModalWidget    = NULL;
+        //m_ModalIndex     = -1;
+        m_Client         = m_Rect;
+        m_StackedX       = 0;
+        m_StackedY       = 0;
+
+        //m_Id             = 0;
+        //m_Ptr            = NULL;
+
       }
 
     //----------
@@ -126,8 +199,10 @@ class h_Widget : public h_WidgetBase,
       }
 
     //----------------------------------------
+    // children
+    //----------------------------------------
 
-    virtual void appendWidget(h_Widget* a_Widget)
+    void appendWidget(h_Widget* a_Widget)
       {
         int index = m_Children.size();
         a_Widget->m_Index = index;
@@ -137,9 +212,42 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void deleteWidgets(void)
+    void removeWidget(int a_Index)
+      {
+        m_Children.remove(a_Index);
+      }
+
+    //----------
+
+    void deleteWidgets(void)
       {
         for (int i=0; i<m_Children.size(); i++) delete m_Children[i];
+        //m_Children.clear();
+      }
+
+    //----------------------------------------
+    // layout
+    //----------------------------------------
+
+    inline bool intersects(h_Rect a_Rect)        { return m_Rect.intersects(a_Rect); }
+    inline bool contains(int a_Xpos, int a_Ypos) { return m_Rect.contains(a_Xpos,a_Ypos); }
+
+    void setBorders(int a_MarginX, int a_MarginY, int a_PaddingX=0, int a_PaddingY=0)
+      {
+        m_MarginX  = a_MarginX;
+        m_MarginY  = a_MarginY;
+        m_PaddingX = a_PaddingX;
+        m_PaddingY = a_PaddingY;
+      }
+
+    //----------
+
+    void setLimits(int a_MinW, int a_MinH, int a_MaxW=999999, int a_MaxH=999999)
+      {
+        m_MinWidth   = a_MinW;
+        m_MinHeight  = a_MinH;
+        m_MaxWidth   = a_MaxW;
+        m_MaxHeight  = a_MaxH;
       }
 
     //----------
@@ -148,6 +256,8 @@ class h_Widget : public h_WidgetBase,
     //  {
     //    m_Listeners.append(a_Listener);
     //  }
+
+    //----------
 
     //virtual void removeListener(h_WidgetListener* a_Listener)
     //  {
@@ -170,6 +280,37 @@ class h_Widget : public h_WidgetBase,
 //        for (int i=0; i<m_Children.size(); i++) { setPainter(a_Painter); }
 //      }
 
+    //----------
+
+    // find first widget that contains x,y
+    // or 'self' is no sub-widgets found or hit
+    //
+    // start searching from end of list, so that widgets that are painted last
+    // (topmost) are found first.
+
+    h_Widget* findWidget(int a_Xpos, int a_Ypos)
+      {
+        h_Widget* widget = this;
+        int num = m_Children.size();
+        if (num>0)
+        {
+          for (int i=num-1; i>=0; i--)
+          {
+            h_Widget* w = m_Children[i];
+            if (w->getFlags()&wf_Active)
+            {
+              if (w->contains(a_Xpos,a_Ypos))
+              {
+                widget = w->findWidget(a_Xpos,a_Ypos);
+                if (widget!=w) return widget;
+                else return w;
+              } //contains
+            } //active
+          } //for num
+        } //num>0
+        return widget;
+      }
+
     //----------------------------------------
     // widget base/handler
     //----------------------------------------
@@ -188,103 +329,517 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void do_SetPos(int x, int y)
+    virtual void do_SetPos(int a_Xpos, int a_Ypos)
       {
-        m_Rect.x = x;
-        m_Rect.y = y;
+        int deltax = a_Xpos - m_Rect.x;
+        int deltay = a_Ypos - m_Rect.y;
+        for (int i=0; i<m_Children.size(); i++)
+        {
+          h_Widget* wdg = m_Children[i];
+          int wx = wdg->getRect().x;
+          int wy = wdg->getRect().y;
+          wdg->do_SetPos( wx+deltax, wy+deltay );
+        }
+        m_Rect.setPos(a_Xpos,a_Ypos);
       }
 
     //----------
 
-    virtual void do_SetSize(int w, int h)
+    virtual void do_SetSize(int a_Width, int a_Height)
       {
-        m_Rect.w = w;
-        m_Rect.h = h;
+        if (a_Width  < m_MinWidth)  a_Width  = m_MinWidth;
+        if (a_Width  > m_MaxWidth)  a_Width  = m_MaxWidth;
+        if (a_Height < m_MinHeight) a_Height = m_MinHeight;
+        if (a_Height > m_MaxHeight) a_Height = m_MaxHeight;
+        m_Rect.setSize(a_Width,a_Height);
+        //doRealign();
       }
 
     //----------
+
+    // move sub-widgets only
+
+    virtual void do_Scroll(int dX, int dY)
+      {
+        for( int i=0;i<m_Children.size(); i++ )
+        {
+          h_Widget* wdg = m_Children[i];
+          int wx = wdg->getRect().x;
+          int wy = wdg->getRect().y;
+          wdg->do_SetPos( wx + dX, wy + dY );
+        }
+      }
+
+    //----------
+
+    // realign sub-widgets according to their alignment setting.
+    // also, it keeps track of a mContent rectangle, that encapsulates all the sub-widgets
+
+    //TODO. update stackx,stacky when we update the available client area
+    //      so we can interleave them...
+
+    /*
+
+    M = margin
+    P = padding (between widgets when stacked)
+
+     ________________________________________ _ _          _ ____
+    |          ^                                                  |
+    |          M                                                  |
+    |      ____v___       ________       ____ _            _      |
+    |     |        |     |        |     |                   |     |
+    |<-M->|        |<-P->|        |<-P->|                   |<-M->|
+    |     |________|     |________|     |______ _       _ __|     |
+    |          ^                                                  :
+    |          P
+    |      ____v____      ___ _
+    |     |         |    |
+    |     :         .
+    |
+
+    TODO:
+    - skip widget if not enough space for it?
+      (null or negative space left)
+    - break up this (too large) function into smaller pieces
+      to make it easier to follow and see any overview...
+
+    */
 
     virtual void do_Realign(void)
       {
+        if (m_Flags&wf_Align)
+        {
+          h_Rect parent = m_Rect;
+          parent.add( m_MarginX, m_MarginY, -(m_MarginX*2), -(m_MarginY*2) );
+          h_Rect client = parent;
+
+          //mContent.set(0,0,0,0);//mMarginX*2,mMarginY*2);
+          m_Content.set( m_Rect.x, m_Rect.y,0,0);
+
+          int stackx   = client.x;
+          int stacky   = client.y;
+          int largestw = 0;
+          int largesth = 0;
+
+          for( int i=0; i<m_Children.size(); i++ )
+          {
+            h_Widget* wdg = m_Children[i];
+            int ww = wdg->getRect().w;  // current widget width
+            int wh = wdg->getRect().h;  // height
+            switch (wdg->m_Alignment)
+            {
+
+              //  _____
+              // |  _  |
+              // | |_| |
+              // |_____|
+              //
+
+              case wa_None:
+                wdg->do_SetPos(wdg->m_Orig.x+parent.x, wdg->m_Orig.y+parent.y);
+                break;
+
+              //   _____
+              //  |     |
+              //  |     |
+              //  |_____|
+              //
+
+              case wa_Client:
+                wdg->do_SetPos(  client.x, client.y );
+                wdg->do_SetSize( client.w, client.h );
+                break;
+
+//----------
+
+              //  _____
+              // |  |
+              // |  |
+              // |__|__
+              //
+
+              case wa_Left:
+
+                wdg->do_SetPos( client.x, client.y );
+                wdg->do_SetSize( ww, client.h );
+                client.x += (ww+m_PaddingX);
+                client.w -= (ww+m_PaddingX);
+                stackx    = client.x;
+                stacky    = client.y;
+                largesth  = 0;
+
+                break;
+
+              //  ______
+              //     |  |
+              //     |  |
+              //  __ |__|
+              //
+
+              case wa_Right:
+
+                wdg->do_SetPos( client.x2()-ww+1, client.y );
+                wdg->do_SetSize( ww, client.h );
+                client.w -= (ww + m_PaddingX);
+                break;
+
+              //  ______
+              // |______|
+              // |      |
+              //
+
+              case wa_Top:
+
+                wdg->do_SetPos( client.x, client.y );
+                wdg->do_SetSize( client.w, wh );
+                client.y += (wh+m_PaddingY);
+                client.h -= (wh+m_PaddingY);
+                stackx    = client.x;
+                stacky    = client.y;
+                largestw  = 0;
+                break;
+
+              //
+              // |      |
+              // |______|
+              // |______|
+              //
+
+              case wa_Bottom:
+
+                wdg->do_SetPos( client.x, client.y2()-wh+1 );
+                wdg->do_SetSize( client.w, wh );
+                client.h -= (wh+m_PaddingY);
+                break;
+
+//----------
+
+              //  __________
+              // |    |
+              // |____|
+              // |    :
+              //      .
+
+              case wa_LeftTop:
+                wdg->do_SetPos( client.x, client.y );
+                client.x += (ww + m_PaddingX);
+                client.w -= (ww + m_PaddingX);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //  __________
+              //      |     |
+              //      |_____|
+              //      :     |
+              //      .
+
+              case wa_RightTop:
+
+                wdg->do_SetPos( client.x2()-ww+1, client.y );
+                client.w -= (ww + m_PaddingX);
+                break;
+
+              //   __________
+              //  |    .     |
+              //  |____:     |
+              //  |    |     |
+              //  |____|_____|
+              //
+
+              case wa_LeftBottom:
+
+                wdg->do_SetPos( client.x, client.y2()-wh+1 );
+                client.x += (ww + m_PaddingX);
+                client.w -= (ww + m_PaddingX);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //  __________
+              //      .     |
+              //      :_____|
+              //      |     |
+              //  ____|_____|
+              //
+
+              case wa_RightBottom:
+
+                wdg->do_SetPos( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doSetSize( ww, client.h );
+                client.w -= (ww + m_PaddingX);
+                break;
+
+//----------
+
+              //  __________
+              // |    |
+              // |____|.....
+              // |
+              //
+
+              case wa_TopLeft:
+                wdg->do_SetPos( client.x, client.y );
+                client.y += (wh + m_PaddingY);
+                client.h -= (wh + m_PaddingY);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //  __________
+              //        |   |
+              //   .....|___|
+              //            |
+              //
+
+              case wa_TopRight:
+
+                wdg->do_SetPos( client.x2()-ww+1, client.y );
+                //wdg->doSetSize( ww, client.h );
+                client.y += (wh + m_PaddingY);
+                client.h -= (wh + m_PaddingY);
+                stackx = client.x;
+                stacky = client.y;
+                break;
+
+              //   __________
+              //  |          |
+              //  |___ ...   |
+              //  |   |      |
+              //  |___| _____|
+              //
+
+              case wa_BottomLeft:
+
+                wdg->do_SetPos( client.x, client.y2()-wh+1 );
+                //client.y += (wh + mPaddingY);
+                client.h -= (wh + m_PaddingY);
+                break;
+
+              //  __________
+              //      .     |
+              //      :_____|
+              //      |     |
+              //  ____|_____|
+              //
+
+              case wa_BottomRight:
+
+                wdg->do_SetPos( client.x2()-ww+1, client.y2()-wh+1 );
+                //wdg->doSetSize( ww, client.h );
+                client.h -= (wh + m_PaddingY);
+                break;
+
+//----------
+
+              //  __________________
+              // |    |    |   |
+              // |____|____|___|...... .
+              // |
+              //
+
+              case wa_StackedHoriz:
+
+                {
+                  int remain = client.x2() - stackx + 1;
+                  if (remain >= ww)
+                  {
+                    // enough space
+                    wdg->do_SetPos(stackx,stacky);
+                    stackx += (ww+m_PaddingX);
+                    if (wh>largesth) largesth = wh;
+                    int prevy = client.y;
+                    int curry = stacky + (largesth+m_PaddingY);
+                    int diff  = curry-prevy;
+                    client.y  = curry;
+                    if (diff>0) client.h -= diff;
+                  }
+                  else
+                  {
+                    // not enougb space
+                    stackx    = client.x;
+                    stacky   += (largesth+m_PaddingY);
+                    largesth  = wh;
+                    wdg->do_SetPos(stackx,stacky);
+                    client.y += (largesth+m_PaddingY);
+                    client.h -= (largesth+m_PaddingY);
+                    stackx += (ww+m_PaddingX);
+                  }
+                }
+                break;
+
+              //  ________
+              // |___|
+              // |___|
+              // |___|
+              // |   |
+              // |   :
+              //     .
+
+              case wa_StackedVert:
+
+                {
+                  int remain = client.y2() - stacky + 1;
+                  if (remain >= wh)
+                  {
+                    // enough space
+                    wdg->do_SetPos(stackx,stacky);
+                    stacky += (wh+m_PaddingY);
+                    if (ww>largestw) largestw = ww;
+                    int prevx = client.x;
+                    int currx = stackx + (largestw+m_PaddingX);
+                    int diff  = currx-prevx;
+                    client.x  = currx;
+                    if (diff>0) client.w -= diff;
+                  }
+                  else
+                  {
+                    // not enougb space
+                    stackx   += (largestw+m_PaddingX);
+                    stacky    = client.y;
+                    largestw  = ww;
+                    wdg->do_SetPos(stackx,stacky);
+                    client.x += (largestw+m_PaddingX);
+                    client.w -= (largestw+m_PaddingX);
+                    stacky   += (wh+m_PaddingY);
+                  }
+                }
+                break;
+
+              //
+              //
+              //
+              //
+              //
+
+            } // switch alignment
+            m_Content.combine( wdg->getRect() ); // keep track of outer boundary
+            wdg->do_Realign();
+          } // for all widgets
+          //mContent.add(-mMarginX,-mMarginY,mMarginX*2,mMarginY*2);
+        } // if align
       }
 
     //----------
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        //paint self
-        for (int i=0; i<m_Children.size(); i++)
+        //if (mFlags&wf_Visible)
+        if (m_Flags&wf_Visible) // self
         {
-          h_Widget* widget = m_Children[i];
-          widget->do_Paint(a_Painter,a_Rect);
+          if (m_Rect.intersects(a_Rect)) // self
+          {
+            //if (mFlags&wf_Clip)
+            if (m_Flags&wf_Clipping) // self
+            {
+              a_Painter->setClipRect(m_Rect.x,m_Rect.y,m_Rect.x2(),m_Rect.y2());
+            }
+            for (int i=0; i<m_Children.size(); i++)
+            {
+              h_Widget* wdg = m_Children[i];
+              if (wdg->m_Flags&wf_Visible)
+              {
+                if (/*wdg->intersects(aRect) &&*/ wdg->intersects(m_Rect))
+                  wdg->do_Paint(a_Painter,a_Rect);
+              }
+            } //for
+            //if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
+            if (m_Flags&wf_Clipping) a_Painter->clearClipRect(); // resetClipRect();
+          } //intersect
+        } //visible
+      }
+
+    //----------
+
+    virtual void do_Enter(h_Widget* a_Widget)
+      {
+      }
+
+    //----------
+
+    virtual void do_Leave(h_Widget* a_Widget)
+      {
+      }
+
+    //----------
+
+    virtual void do_MouseDown(int a_Xpos, int a_Ypos, int a_Button, int a_State)
+      {
+        //if (mModalWidget) mModalWidget->doMouseDown(aXpos,aYpos,aButton);
+        //else
+        if (m_CapturedWidget) m_CapturedWidget->do_MouseDown(a_Xpos,a_Ypos,a_Button,a_State);
+        else
+        {
+          if (m_Flags&wf_Active)
+          {
+            h_Widget* hover = findWidget(a_Xpos,a_Ypos);
+            if (hover!=this)
+            {
+              if (m_Flags&wf_Capture) m_CapturedWidget = hover;
+              hover->do_MouseDown(a_Xpos,a_Ypos,a_Button,a_State);
+            } // !hover
+          } // active
+        } // !capture
+      }
+
+    //----------
+
+    virtual void do_MouseUp(int a_Xpos, int a_Ypos, int a_Button, int a_State)
+      {
+        //if (mModalWidget) mModalWidget->doMouseUp(aXpos,aYpos,aButton);
+        //else
+        if (m_CapturedWidget)
+        {
+          m_CapturedWidget->do_MouseUp(a_Xpos,a_Ypos,a_Button,a_State);
+          m_CapturedWidget = NULL;
+        } //capture
+        else
+        {
+          if (m_Flags&wf_Active)
+          {
+            h_Widget* hover = findWidget(a_Xpos,a_Ypos);
+            if (hover!=this) hover->do_MouseUp(a_Xpos,a_Ypos,a_Button,a_State);
+          } //active
         }
       }
 
     //----------
 
-    virtual void do_Enter(void)
+    virtual void do_MouseMove(int a_Xpos, int a_Ypos, int a_State)
       {
-      }
-
-    //----------
-
-    virtual void do_Leave(void)
-      {
-      }
-
-    //----------
-
-    virtual void do_MouseDown(int x, int y, int b, int s)
-      {
-        for (int i=0; i<m_Children.size(); i++)
+        //if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
+        //else
+        if (m_CapturedWidget) m_CapturedWidget->do_MouseMove(a_Xpos,a_Ypos,a_State);
+        else
         {
-          h_Widget* widget = m_Children[i];
-          widget->do_MouseDown(x,y,b,s);
+          h_Widget* hover = findWidget(a_Xpos,a_Ypos);
+          if (hover!=m_HoverWidget)
+          {
+            m_HoverWidget->do_Leave(m_CapturedWidget);
+            m_HoverWidget = hover;
+            m_HoverWidget->do_Enter(m_CapturedWidget);
+          }
+          if (hover!=this) hover->do_MouseMove(a_Xpos,a_Ypos,a_State);
         }
       }
 
     //----------
 
-    virtual void do_MouseUp(int x, int y, int b, int s)
+    virtual void do_KeyDown(int a_Key, int a_State)
       {
-        for (int i=0; i<m_Children.size(); i++)
-        {
-          h_Widget* widget = m_Children[i];
-          widget->do_MouseUp(x,y,b,s);
-        }
+        //if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
+        //else
+        if (m_CapturedWidget) m_CapturedWidget->do_KeyDown(a_Key,a_State);
+
       }
 
     //----------
 
-    virtual void do_MouseMove(int x, int y, int s)
+    virtual void do_KeyUp(int a_Key, int a_State)
       {
-        for (int i=0; i<m_Children.size(); i++)
-        {
-          h_Widget* widget = m_Children[i];
-          widget->do_MouseMove(x,y,s);
-        }
-      }
-
-    //----------
-
-    virtual void do_KeyDown(int k, int s)
-      {
-        for (int i=0; i<m_Children.size(); i++)
-        {
-          h_Widget* widget = m_Children[i];
-          widget->do_KeyDown(k,s);
-        }
-      }
-
-    //----------
-
-    virtual void do_KeyUp(int k, int s)
-      {
-        for (int i=0; i<m_Children.size(); i++)
-        {
-          h_Widget* widget = m_Children[i];
-          widget->do_KeyUp(k,s);
-        }
+        //if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
+        //else
+        if (m_CapturedWidget) m_CapturedWidget->do_KeyUp(a_Key,a_State);
       }
 
     //----------------------------------------
@@ -298,10 +853,43 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
+    virtual void on_Redraw(h_Widget* a_Widget)
+      {
+        m_Listener->on_Redraw(a_Widget);
+      }
+
+    //----------
+
+    virtual void on_Cursor(int a_Cursor/*=DEF_PENWIDTH*/)
+      {
+        m_Listener->on_Cursor(a_Cursor);
+      }
+
+    //----------
+
     virtual void on_Hint(char* a_Text)
       {
         if (m_Listener) m_Listener->on_Hint(a_Text);
       }
+
+    //----------
+
+    // called from wdgSizer
+    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode)
+      {
+        int w = m_Rect.w + a_DeltaX;
+        int h = m_Rect.h + a_DeltaY;
+        h_Widget::do_SetSize(w,h);
+        m_Listener->on_Size(a_Widget,a_DeltaX,a_DeltaY,a_Mode);
+      }
+
+    //----------
+
+    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget)
+      {
+        m_Listener->on_Modal(a_Modal,a_Widget);
+      }
+
 
 };
 

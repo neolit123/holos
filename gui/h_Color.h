@@ -21,14 +21,33 @@
 #define h_Color_included
 //----------------------------------------------------------------------
 
+typedef unsigned long h_Color;
+
+//----------------------------------------------------------------------
+
 #ifdef H_WIN32
-  typedef unsigned long h_Color;
-  #define H_RGB(r,g,b)  RGB(r,g,b)
+
+  #define H_RGB(r,g,b) RGB(r,g,b)
+
 #endif
 
-//TODO
+//----------------------------------------------------------------------
+
 #ifdef H_LINUX
-  #define H_RGB(r,g,b)  0
+
+  h_Color h_xcolor(unsigned char r, unsigned char g, unsigned char b)
+      {
+        XColor xcol;
+        xcol.red   = r << 8;
+        xcol.green = g << 8;
+        xcol.blue  = b << 8;
+        xcol.flags = (DoRed or DoGreen or DoBlue);
+        XAllocColor( static_Core.m_Platform->m_WinDisplay, static_Core.m_Platform->m_WinColormap,&xcol);
+        return h_Color(xcol.pixel);
+      }
+
+  #define H_RGB(r,g,b) h_xcolor(r,g,b)
+
 #endif
 
 //----------------------------------------------------------------------

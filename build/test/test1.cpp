@@ -3,10 +3,7 @@
 //#define H_DEBUG_CON_CANQUIT
 //#define H_DEBUG_CON_NOTOP
 //#define H_DEBUG_CON_NORESIZE
-
-
-
-#define H_AUTOSYNC
+//#define H_AUTOSYNC
 
 #include "holos.h"
 
@@ -14,17 +11,22 @@
 //#include "lib/h_Rand.h"
 //#include "lib/h_Expression.h"
 
-#include "lib/h_Library.h"
-#include "gui/h_Window.h"
+#ifndef H_NOGUI
+  #include "gui/h_Window.h"
+#endif
+
+//#include "core/par/par_Float.h"
 
 //----------------------------------------------------------------------
+
+#ifndef H_NOGUI
 
 class my_Widget : public h_Widget
 {
   public:
 
-    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect)
-    : h_Widget(a_Listener,a_Rect)
+    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
+    : h_Widget(a_Listener,a_Rect,a_Align)
       {
       }
     virtual ~my_Widget()
@@ -32,22 +34,25 @@ class my_Widget : public h_Widget
       }
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        //trace("paint");
         a_Painter->setFillColor( H_RGB(128,128,128) );
-        a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+        a_Painter->fillRect(m_Rect.x, m_Rect.y, m_Rect.x2(), m_Rect.y2());
         a_Painter->setTextColor( H_RGB(255,255,255) );
-        a_Painter->drawText(10,10,"hello world!");
+        a_Painter->drawText(10,10,(char*)"hello world!");
       }
 
 };
+
+#endif // H_NOGUI
 
 //----------------------------------------------------------------------
 
 h_ParamDescr my_Params[] =
 {
-  {"param1","",pt_None,PF_DEFAULT, 0,   /*0,1,0*/},
-  {"param2","",pt_None,PF_DEFAULT, 0.5, /*0,1,0*/},
-  {"param3","",pt_None,PF_DEFAULT, 1.0, /*0,1,0*/}
+  {"param1","",pt_None,    PF_DEFAULT, 0,   /*0,1,0*/},
+  {"param2","",pt_None,    PF_DEFAULT, 0.5,   /*0,1,0*/},
+  {"param3","",pt_None,    PF_DEFAULT, 1,   /*0,1,0*/}
+//  {"param2","",pt_Float,   PF_DEFAULT, 0.5, 0,1,0 },
+//  {"param3","",pt_FloatPow,PF_DEFAULT, 1.0, 0,1,0, 2}
 };
 
 //----------------------------------------------------------------------
@@ -85,90 +90,75 @@ class my_Instance : public h_Instance,
     : h_Instance(a_Host,a_Descriptor)
       {
         m_Window = H_NULL;
-        //m_EditorRect = a_Descriptor->m_EditorRect;
+        m_Widget = H_NULL;
       }
 
-    virtual ~my_Instance()
-      {
-        //if (m_Window) delete m_Window;
-      }
+    //virtual ~my_Instance()
+    //  {
+    //  }
 
     //----------
 
     virtual void do_HandleState(int a_State)
       {
-        const char* text = "?";
         switch(a_State)
         {
-          case is_None:    text = "is_None";    break;
-          case is_Open:    text = "is_Open";    break;
-          case is_Close:   text = "is_Close";   break;
-          case is_Suspend: text = "is_Suspend"; break;
           case is_Resume:
             prepareParameters();
-            text = "is_Resume";
             break;
-          case is_Rate:    text = "is_Rate";    break;
-          case is_Block:   text = "is_Block";   break;
         }
-        trace("do_HandleState: " << a_State << " = " << text);
       }
 
     //----------
 
-    virtual void do_HandleTransport(int a_State)
-      {
-        char text[H_MAX_STRINGSIZE] = "";
-        if (a_State & ft_None)        h_Strcat(text,"ft_None ");
-        if (a_State & ft_Changed)     h_Strcat(text,"ft_Changed ");
-        if (a_State & ft_Playing)     h_Strcat(text,"ft_Playing ");
-        if (a_State & ft_CycleActive) h_Strcat(text,"ft_CycleActive ");
-        if (a_State & ft_Recording)   h_Strcat(text,"ft_Recording ");
-        if (a_State & ft_AutoWriting) h_Strcat(text,"ft_AutoWriting ");
-        if (a_State & ft_AutoReading) h_Strcat(text,"ft_AutoReading ");
-        trace("do_HandleTransport: " << a_State << " = " << text);
-      }
+    //virtual void do_HandleParameter(h_Parameter* a_Parameter)
+    //  {
+    //  }
 
-    //----------
+    //virtual void do_HandleMidi(int a_Offset, unsigned char a_Msg1, unsigned char a_Msg2, unsigned char a_Msg3)
+    //  {
+    //  }
 
-    virtual void do_HandleParameter(h_Parameter* a_Parameter)
-      {
-        char name[H_MAX_STRINGSIZE] = "";
-        a_Parameter->do_GetName(name);
-        trace("do_HandleParameter: " << a_Parameter->getIndex() << " (" << name << ") =" << a_Parameter->getValue());
-      }
+    //virtual bool do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length)
+    //  {
+    //    return false;
+    //  }
 
-    //----------
+    //virtual void do_ProcessSample(float** a_Inputs, float** a_Outputs)
+    //  {
+    //  }
 
-    virtual void do_HandleMidi(int a_Offset, unsigned char a_Msg1, unsigned char a_Msg2, unsigned char a_Msg3)
-      {
-        trace("do_HandleMidi: " << a_Offset << ", " << (int)a_Msg1 << "," << (int)a_Msg2 << "," << (int)a_Msg3);
-      }
+    //virtual void do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length)
+    //  {
+    //  }
 
-    //----------
-
-    virtual bool do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length) { return false; }
-    virtual void do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
-    virtual void do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
+  #ifndef H_NOGUI
 
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
         m_Window = new h_Window(this,rect,ptr);
-        m_Widget = new my_Widget(this,h_Rect(100,100));
+        m_Widget = new my_Widget(this,h_Rect(100,100),wa_Client);
         m_Window->appendWidget(m_Widget);
+        m_Window->do_Realign();
         m_Window->show();
         return (void*)m_Window;
       }
+
+    //----------
 
     virtual void do_CloseEditor(void)
       {
         m_Window->hide();
         delete m_Window;
-        //delete m_Widget;
+        m_Window = H_NULL;
       }
 
-    //virtual void do_IdleEditor(void) {}
+    //virtual void do_IdleEditor(void)
+    //  {
+    //  }
+
+  #endif // H_NOGUI
 
 };
 

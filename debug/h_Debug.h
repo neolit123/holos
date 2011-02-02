@@ -40,9 +40,17 @@
 
 //----------------------------------------------------------------------
 
-#include "debug/h_MemTracer.h"
-#include "debug/h_LogFile.h"
-#include "debug/h_Console.h"
+#ifdef H_DEBUG_MEM
+  #include "debug/h_MemTracer.h"
+#endif
+
+#ifdef H_DEBUG_LOG
+  #include "debug/h_LogFile.h"
+#endif
+
+#ifdef H_DEBUG_CON
+  #include "debug/h_Console.h"
+#endif
 
 //----------------------------------------------------------------------
 //

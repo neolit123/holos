@@ -1,6 +1,10 @@
-#include "Holos.h"
 
-#include <math.h> // sinf
+#define H_NOGUI
+
+#include <math.h>     // sinf
+
+#include <memory.h>   // memset
+#include "holos.h"
 #include "extern/mverb/MVerb.h"
 
 //----------------------------------------------------------------------
@@ -25,6 +29,7 @@ h_Descriptor my_Descriptor =
   "mverb",
   "martin eastwood",
   "holos port",
+  0,
   H_MAGIC + 0xf000,
   df_None,
   2,    // inputs

@@ -105,6 +105,7 @@ void h_CreateUniqueName(char* a_Buffer, char* a_Prefix, void* a_Ptr)
     static char h_int2hex[17] = "0123456789abcdef";       // +'\0' = 17
     while (*a_Prefix != '\0') *a_Buffer++ = *a_Prefix++;  // memset + update pointers
     unsigned long iptr = (unsigned long)a_Ptr;            // todo: 64-bit (long long?)
+    // todo: h_BitReverse
     while (iptr>0)
     {
       int j = iptr & 0x0f;          // 0..f

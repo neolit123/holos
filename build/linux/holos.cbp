@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="holos" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="linux exe debug">
+				<Option output="../../bin/holos_debug" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_EXE" />
+				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="linux exe release">
+				<Option output="../../bin/holos" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_EXE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="win32 exe debug">
+				<Option output="../../bin/holos_debug.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="1" />
+				<Option compiler="ming32" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_EXE" />
+				</Compiler>
+				<Linker>
+					<Add library="gdi32" />
+					<Add library="msimg32" />
+				</Linker>
+			</Target>
+			<Target title="win32 exe release">
+				<Option output="../../bin/holos.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="1" />
+				<Option compiler="ming32" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_EXE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="gdi32" />
+					<Add library="msimg32" />
+				</Linker>
+			</Target>
+			<Target title="linux vst debug">
+				<Option output="../../bin/holos_debug.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="linux vst release">
+				<Option output="../../bin/holos.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="win32 vst debug">
+				<Option output="../../bin/holos_debug.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="3" />
+				<Option compiler="ming32" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add library="gdi32" />
+					<Add library="msimg32" />
+				</Linker>
+			</Target>
+			<Target title="win32 vst release">
+				<Option output="../../bin/holos.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="3" />
+				<Option compiler="ming32" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="gdi32" />
+					<Add library="msimg32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../../../holos" />
+		</Compiler>
+		<Unit filename="../../audio/dsp/dsp_DCF.h" />
+		<Unit filename="../../audio/dsp/dsp_Env.h" />
+		<Unit filename="../../audio/dsp/dsp_Interpolate.h" />
+		<Unit filename="../../audio/dsp/dsp_OnePole.h" />
+		<Unit filename="../../audio/dsp/dsp_Osc.h" />
+		<Unit filename="../../audio/dsp/dsp_RBJ.h" />
+		<Unit filename="../../audio/dsp/dsp_RC.h" />
+		<Unit filename="../../audio/dsp/dsp_RMS.h" />
+		<Unit filename="../../audio/dsp/dsp_SVF.h" />
+		<Unit filename="../../audio/h_AudioGraph.h" />
+		<Unit filename="../../audio/h_DspModule.h" />
+		<Unit filename="../../audio/h_Libaam.h" />
+		<Unit filename="../../audio/h_VoiceManager.h" />
+		<Unit filename="../build.cpp" />
+		<Unit filename="../ccernn/fx_filter.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../ports/port_mverb.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/build_all.h" />
+		<Unit filename="../test/test1.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/test_gui1.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/test_gui2.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/testbuild.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/testlinux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/h_Core.h" />
+		<Unit filename="../../core/h_Descriptor.h" />
+		<Unit filename="../../core/h_Editor.h" />
+		<Unit filename="../../core/h_Exe.h" />
+		<Unit filename="../../core/h_Host.h" />
+		<Unit filename="../../core/h_Instance.h" />
+		<Unit filename="../../core/h_Ladspa.h" />
+		<Unit filename="../../core/h_Linux.h" />
+		<Unit filename="../../core/h_Parameter.h" />
+		<Unit filename="../../core/h_Vst.h" />
+		<Unit filename="../../core/h_Win32.h" />
+		<Unit filename="../../core/impl/h_Core_impl.h" />
+		<Unit filename="../../core/impl/h_Exe_Format_impl.h" />
+		<Unit filename="../../core/impl/h_Exe_Host_impl.h" />
+		<Unit filename="../../core/impl/h_Exe_Instance_impl.h" />
+		<Unit filename="../../core/impl/h_Exe_impl.h" />
+		<Unit filename="../../core/impl/h_Ladspa_Format_impl.h" />
+		<Unit filename="../../core/impl/h_Ladspa_Host_impl.h" />
+		<Unit filename="../../core/impl/h_Ladspa_Instance_impl.h" />
+		<Unit filename="../../core/impl/h_Ladspa_impl.h" />
+		<Unit filename="../../core/impl/h_Linux_impl.h" />
+		<Unit filename="../../core/impl/h_Vst_Format_impl.h" />
+		<Unit filename="../../core/impl/h_Vst_Host_impl.h" />
+		<Unit filename="../../core/impl/h_Vst_Instance_impl.h" />
+		<Unit filename="../../core/impl/h_Vst_impl.h" />
+		<Unit filename="../../core/impl/h_Win32_impl.h" />
+		<Unit filename="../../debug/h_Assert.h" />
+		<Unit filename="../../debug/h_Console.h" />
+		<Unit filename="../../debug/h_Debug.h" />
+		<Unit filename="../../debug/h_LogFile.h" />
+		<Unit filename="../../debug/h_MemTracer.h" />
+		<Unit filename="../../debug/impl/h_Debug_impl.h" />
+		<Unit filename="../../docs/LICENSE.txt" />
+		<Unit filename="../../gfx/h_BitmapUtils.h" />
+		<Unit filename="../../gfx/h_Color.h" />
+		<Unit filename="../../gfx/h_PngDecoder.h" />
+		<Unit filename="../../gfx/h_PolyFiller.h" />
+		<Unit filename="../../gfx/h_RayTracer.h" />
+		<Unit filename="../../gui/h_Bitmap.h" />
+		<Unit filename="../../gui/h_Color.h" />
+		<Unit filename="../../gui/h_Container.h" />
+		<Unit filename="../../gui/h_Painter.h" />
+		<Unit filename="../../gui/h_Renderer.h" />
+		<Unit filename="../../gui/h_Skin.h" />
+		<Unit filename="../../gui/h_Surface.h" />
+		<Unit filename="../../gui/h_Texture.h" />
+		<Unit filename="../../gui/h_Widget.h" />
+		<Unit filename="../../gui/h_Window.h" />
+		<Unit filename="../../gui/impl/h_Bitmap_Linux.h" />
+		<Unit filename="../../gui/impl/h_Bitmap_Win32.h" />
+		<Unit filename="../../gui/impl/h_Painter_Linux.h" />
+		<Unit filename="../../gui/impl/h_Painter_Win32.h" />
+		<Unit filename="../../gui/impl/h_Surface_Linux.h" />
+		<Unit filename="../../gui/impl/h_Surface_Win32.h" />
+		<Unit filename="../../gui/impl/h_Window_Linux.h" />
+		<Unit filename="../../gui/impl/h_Window_Win32.h" />
+		<Unit filename="../../gui/wdg/wdg_Background.h" />
+		<Unit filename="../../gui/wdg/wdg_Button.h" />
+		<Unit filename="../../gui/wdg/wdg_Color.h" />
+		<Unit filename="../../gui/wdg/wdg_ComboBox.h" />
+		<Unit filename="../../gui/wdg/wdg_Knob.h" />
+		<Unit filename="../../gui/wdg/wdg_Label.h" />
+		<Unit filename="../../gui/wdg/wdg_MultiPanel.h" />
+		<Unit filename="../../gui/wdg/wdg_Panel.h" />
+		<Unit filename="../../gui/wdg/wdg_ScrollBar.h" />
+		<Unit filename="../../gui/wdg/wdg_ScrollBox.h" />
+		<Unit filename="../../gui/wdg/wdg_Sizer.h" />
+		<Unit filename="../../gui/wdg/wdg_Slider.h" />
+		<Unit filename="../../h.h" />
+		<Unit filename="../../holos.h" />
+		<Unit filename="../../holos_impl.h" />
+		<Unit filename="../../lib/h_Array.h" />
+		<Unit filename="../../lib/h_BasePath.h" />
+		<Unit filename="../../lib/h_Cpu.h" />
+		<Unit filename="../../lib/h_DMC.h" />
+		<Unit filename="../../lib/h_Defines.h" />
+		<Unit filename="../../lib/h_DetectWine.h" />
+		<Unit filename="../../lib/h_Events.h" />
+		<Unit filename="../../lib/h_File.h" />
+		<Unit filename="../../lib/h_Globals.h" />
+		<Unit filename="../../lib/h_Integer.h" />
+		<Unit filename="../../lib/h_List.h" />
+		<Unit filename="../../lib/h_Math.h" />
+		<Unit filename="../../lib/h_Memory.h" />
+		<Unit filename="../../lib/h_Mutex.h" />
+		<Unit filename="../../lib/h_Pattern.h" />
+		<Unit filename="../../lib/h_Point.h" />
+		<Unit filename="../../lib/h_Queue.h" />
+		<Unit filename="../../lib/h_Rand.h" />
+		<Unit filename="../../lib/h_Rect.h" />
+		<Unit filename="../../lib/h_Stack.h" />
+		<Unit filename="../../lib/h_Stdlib.h" />
+		<Unit filename="../../lib/h_Stream.h" />
+		<Unit filename="../../lib/h_String.h" />
+		<Unit filename="../../lib/h_Thread.h" />
+		<Unit filename="../../lib/h_Types.h" />
+		<Unit filename="../../lib/h_Utils.h" />
+		<Unit filename="../../script/h_Compiler.h" />
+		<Unit filename="../../script/h_Script.h" />
+		<Unit filename="../../script/h_VirtualMachine.h" />
+		<Unit filename="../../tools/bin2h.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -49,23 +49,27 @@ class h_Parameter
   protected:
     h_String  m_Name;
     h_String  m_Label;
-    float     m_Value;   // 0..1
     int       m_Flags;
+    float     m_Value;   // 0..1
+    float     m_Pow;
+    char*     m_Strings;
   //public:
   //  int       m_Id;
   //  void*     m_Ptr;
 
   public:
 
-    h_Parameter(h_String a_Name, h_String a_Label, float a_Value, int a_Flags)
+    h_Parameter(h_String a_Name, h_String a_Label, int a_Flags, float a_Value=0 )
       {
         m_Connection = -1;
         m_Index = -1;
         m_Name = a_Name;
         m_Label = a_Label;
-        m_Value = a_Value;
-        m_Default = m_Value;
         m_Flags = a_Flags;
+        m_Value = a_Value;
+        m_Pow = 1;
+        m_Strings = H_NULL;
+        m_Default = m_Value;
         //m_Id = 0;
         //m_Ptr = H_NULL;
       }

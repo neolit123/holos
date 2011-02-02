@@ -1,0 +1,417 @@
+#!/bin/bash
+# ==============================================================================
+# linux - holos - compile - bash
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+#                               user settings
+# ------------------------------------------------------------------------------
+# holos path (where Holos.h recides)
+hpath="../"
+
+# vst path
+vstpath="../../vstsdk24"
+
+# ladspa path
+ladspapath="../../ladspa_sdk/src"
+
+# g++ command
+gpp="g++"
+
+# mingw command
+# rename if you are going to use a 64bit mingw
+mingw="i586-mingw32msvc-g++"
+
+# windres command
+windres="i586-mingw32msvc-windres"
+
+# set windows PE resource file (leave blank for no resources)
+# holos provides an example 'source/rc_default.rc' that adds an icon
+# 'source/rc_hlogo.ico' and some text details like author, program name etc.
+resfile="rc_default.rc"
+
+# warning flags
+warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
+
+# optimization
+# you can add --whole-program --combine here for newer GCC
+opt="-O3"
+
+# linker options
+linker="-fstack-check -fdata-sections -ffunction-sections -Wl,-gc-sections -s"
+
+# ------------------------- end of user settings -------------------------------
+
+# ----------------------------------------
+# help screen
+# ----------------------------------------
+function show_help
+{
+  echo ""
+  echo "-------------------------------------------------------------------------------"
+  echo "* holos compile script for linux"
+  echo ""
+  echo "usage:"
+  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [options] [...]"
+  echo ""  
+  echo "-linux : target linux (default)"
+  echo "-win32 : target windows using mingw"
+  echo "-exe : create an executable (default)"
+  echo "-ladspa : create a ladspa library"
+  echo "-vst : create a vst library"
+  echo "-64 : target 64bit (default is 32bit)"
+  echo "-nogui : compile without gui"
+  echo "-nmv : do not move result to ../bin"
+  echo "-ts : add time stamp to name e.g. plugin-vst-20153569.so" 
+  echo "-d : enable library debug mode"
+  echo "-g : enable gcc debug mode (-gstabs)"  
+  echo "-v : verbose"
+  echo "-h : show this help message"
+  echo "[...] : pass extra parameters e.g. -DSOME_DEF_1 -DSOME_DEF_2"
+  echo "-------------------------------------------------------------------------------"
+  echo ""
+}
+
+# ----------------------------------------
+# show msg / errors
+# ----------------------------------------
+function showerr
+{
+  echo
+  echo $1
+  if [ "$v" == "yes" ];
+  then
+    echo "-------------------------------------------------------------------------------"
+  else
+    echo ""
+  fi
+  exit
+}
+
+# ------------------------- begin checking parameters
+if [ "$1" == "" ] || [ "$1" == "-h" ];
+then
+  # ------------------------- show help
+  show_help
+else
+  # ------------------------- defaults
+  compiler=$gpp
+  format="-DH_EXE"  
+  fmt_ext=""
+  libformat=""
+  tgt="-lX11 -lXrender -lGL -lpthread"
+  move="yes"
+  libdebug=""
+  gccdebug=""
+  libdebugstatus="OFF"
+  gccdebugstatus="OFF"
+  res="" 
+  v="no"
+  suffix=""
+  dbgsx=""  
+  ts=""
+  nogui=""
+  noguisx=""
+  mplt="-m32"
+  mpltsx="x86"
+    
+  # ------------------------- get timestamp
+  if [ "$2" == "-ts" ] || [ "$3" == "-ts" ] || [ "$4" == "-ts" ] || [ "$5" == "-ts" ] || [ "$6" == "-ts" ] || [ "$7" == "-ts" ] || [ "$8" == "-ts" ]
+    then
+      ts=-`date +%H%M%S`$((`date +%N`/10000000))
+  fi
+  
+  # ------------------------- strip extension
+  file=${1%.*p}
+  
+  # ------------------------- check for extra paramers
+  ext_params=""
+  if [ "$2" != "-linux" ] && [ "$2" != "-win32" ] && [ "$2" != "-exe" ] && [ "$2" != "-ladspa" ] && [ "$2" != "-vst" ] && [ "$2" != "-nmv" ] && [ "$2" != "-d" ] && [ "$2" != "-g" ] && [ "$2" != "-v" ] && [ "$2" != "-ts" ] && [ "$2" != "-nogui" ] && [ "$2" != "-64" ] && [ "$2" != "-32" ];
+    then
+      ext_p2=" $2"
+  fi
+  if [ "$3" != "-linux" ] && [ "$3" != "-win32" ] && [ "$3" != "-exe" ] && [ "$3" != "-ladspa" ] && [ "$3" != "-vst" ] && [ "$3" != "-nmv" ] && [ "$3" != "-d" ] && [ "$3" != "-g" ] && [ "$3" != "-v" ] && [ "$3" != "-ts" ] && [ "$3" != "-nogui" ] && [ "$3" != "-64" ] && [ "$3" != "-32" ];
+    then
+      ext_p3=" $3"
+  fi
+  if [ "$4" != "-linux" ] && [ "$4" != "-win32" ] && [ "$4" != "-exe" ] && [ "$4" != "-ladspa" ] && [ "$4" != "-vst" ] && [ "$4" != "-nmv" ] && [ "$4" != "-d" ] && [ "$4" != "-g" ] && [ "$4" != "-v" ] && [ "$4" != "-ts" ] && [ "$4" != "-nogui" ] && [ "$4" != "-64" ] && [ "$4" != "-32" ];
+    then
+      ext_p4=" $4"
+  fi
+  if [ "$5" != "-linux" ] && [ "$5" != "-win32" ] && [ "$5" != "-exe" ] && [ "$5" != "-ladspa" ] && [ "$5" != "-vst" ] && [ "$5" != "-nmv" ] && [ "$5" != "-d" ] && [ "$5" != "-g" ] && [ "$5" != "-v" ] && [ "$5" != "-ts" ] && [ "$5" != "-nogui" ] && [ "$5" != "-64" ] && [ "$5" != "-32" ];
+    then
+      ext_p5=" $5"
+  fi
+  if [ "$6" != "-linux" ] && [ "$6" != "-win32" ] && [ "$6" != "-exe" ] && [ "$6" != "-ladspa" ] && [ "$6" != "-vst" ] && [ "$6" != "-nmv" ] && [ "$6" != "-d" ] && [ "$6" != "-g" ] && [ "$6" != "-v" ] && [ "$6" != "-ts" ] && [ "$6" != "-nogui" ] && [ "$6" != "-64" ] && [ "$6" != "-32" ];
+    then
+      ext_p6=" $6"
+  fi
+  if [ "$7" != "-linux" ] && [ "$7" != "-win32" ] && [ "$7" != "-exe" ] && [ "$7" != "-ladspa" ] && [ "$7" != "-vst" ] && [ "$7" != "-nmv" ] && [ "$7" != "-d" ] && [ "$7" != "-g" ] && [ "$7" != "-v" ] && [ "$7" != "-ts" ] && [ "$7" != "-nogui" ] && [ "$7" != "-64" ] && [ "$7" != "-32" ];
+    then
+      ext_p7=" $7"
+  fi
+  if [ "$8" != "-linux" ] && [ "$8" != "-win32" ] && [ "$8" != "-exe" ] && [ "$8" != "-ladspa" ] && [ "$8" != "-vst" ] && [ "$8" != "-nmv" ] && [ "$8" != "-d" ] && [ "$8" != "-g" ] && [ "$8" != "-v" ] && [ "$8" != "-ts" ] && [ "$8" != "-nogui" ] && [ "$8" != "-64" ] && [ "$8" != "-32" ];
+    then
+      ext_p8=" $8"
+  fi
+  if [ "$9" != "-linux" ] && [ "$9" != "-win32" ] && [ "$9" != "-exe" ] && [ "$9" != "-ladspa" ] && [ "$9" != "-vst" ] && [ "$9" != "-nmv" ] && [ "$9" != "-d" ] && [ "$9" != "-g" ] && [ "$9" != "-v" ] && [ "$9" != "-ts" ] && [ "$9" != "-nogui" ] && [ "$9" != "-64" ] && [ "$9" != "-32" ];
+    then
+      ext_p9=" $9"
+  fi
+  
+  ext_params=$ext_p2$ext_p3$ext_p4$ext_p5$ext_p6$ext_p7$ext_p8$ext_p9
+  
+  # ------------------------- check for 64bit
+  
+  if [ "$2" == "-64" ] || [ "$3" == "-64" ] || [ "$4" == "-64" ] || [ "$5" == "-64" ] || [ "$6" == "-64" ] || [ "$7" == "-64" ] || [ "$8" == "-64" ] || [ "$9" == "-64" ];
+  then
+    mplt="-m64"
+    mpltsx="x64"
+  fi
+  
+  # ------------------------- check if no gui
+  
+  if [ "$2" == "-nogui" ] || [ "$3" == "-nogui" ] || [ "$4" == "-nogui" ] || [ "$5" == "-nogui" ] || [ "$6" == "-nogui" ] || [ "$7" == "-nogui" ] || [ "$8" == "-nogui" ] || [ "$9" == "-nogui" ];
+  then
+    nogui="yes"
+    noguisx="-nogui"
+  fi
+  
+  # ------------------------- check if extension is .cpp
+  if [ "${1: -4}" != ".cpp" ];
+  then
+    showerr "### ERR: first argument has to be a .cpp file"
+  else
+    # ------------------------- use mingw
+    if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ] || [ "$8" == "-v" ] || [ "$9" == "-v" ];
+    then
+      v="yes"
+    fi
+    # ------------------------- use mingw
+    if [ "$2" == "-win32" ] || [ "$3" == "-win32" ] || [ "$4" == "-win32" ] || [ "$5" == "-win32" ] || [ "$6" == "-win32" ] || [ "$7" == "-win32" ] || [ "$8" == "-win32" ] || [ "$9" == "-win32" ];
+    then
+      compiler=$mingw
+      fmt_ext=".exe"
+      if [ "$nogui" == "yes" ]; 
+      then
+        tgt="-DH_NOGUI"
+      else
+        tgt="-mwindows -lmsimg32 -lopengl"
+      fi
+    fi
+    # ------------------------- format is vst
+    if [ "$2" == "-vst" ] || [ "$3" == "-vst" ] || [ "$4" == "-vst" ] || [ "$5" == "-vst" ] || [ "$6" == "-vst" ] || [ "$7" == "-vst" ] || [ "$8" == "-vst" ] || [ "$9" == "-vst" ];
+    then
+      format=-DH_VST
+      libformat=" VST"
+      suffix="-vst"
+      
+      # ------------------------- case mingw
+      if [ "$compiler" == "$mingw" ];
+      then
+        fmt_ext=".dll"
+        if [ "$nogui" == "yes" ];
+        then
+          tgt="-DH_NOGUI -shared"
+        else
+          tgt="-mwindows -lmsimg32 -lopengl -shared"
+        fi
+                
+      # ------------------------- case gcc
+      else
+        fmt_ext=".so"
+        if [ "$nogui" == "yes" ]; 
+        then
+          tgt="-DH_NOGUI -shared -fPIC -export-dynamic -Wl,-Bsymbolic"
+        else
+          tgt="-lX11 -lXrender -lGL -lpthread -shared -fPIC -export-dynamic -Wl,-Bsymbolic"
+
+        fi        
+      fi
+    fi
+    # ------------------------- format is ladspa
+    if [ "$2" == "-ladspa" ] || [ "$3" == "-ladspa" ] || [ "$4" == "-ladspa" ] || [ "$5" == "-ladspa" ] || [ "$6" == "-ladspa" ] || [ "$7" == "-ladspa" ] || [ "$8" == "-ladspa" ] || [ "$9" == "-ladspa" ];
+    then
+      format=-DH_LADSPA
+      libformat=" LADSPA"
+      suffix="-ladspa"
+      # ------------------------- case mingw
+      if [ "$compiler" == "$mingw" ];
+      then
+        fmt_ext=".dll"
+        tgt="-shared"
+      # ------------------------- case gcc
+      else
+        fmt_ext=".so"
+        tgt="-shared -fPIC -export-dynamic -Wl,-Bsymbolic"
+      fi
+    fi
+    # ------------------------- don't move to ../bin
+    if [ "$2" == "-nmv" ] || [ "$3" == "-nmv" ] || [ "$4" == "-nmv" ] || [ "$5" == "-nmv" ] || [ "$6" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$7" == "-nmv" ] || [ "$8" == "-nmv" ] || [ "$9" == "-nmv" ];
+    then
+      move="no"
+    fi
+    # ------------------------- enable lib debug
+    if [ "$2" == "-d" ] || [ "$3" == "-d" ] || [ "$4" == "-d" ] || [ "$5" == "-d" ] || [ "$6" == "-d" ] || [ "$7" == "-d" ] || [ "$8" == "-d" ] || [ "$9" == "-d" ];
+    then
+      dbgsx=-debug
+      libdebug="-DH_DEBUG"
+      libdebugstatus="ON"
+    fi
+    # ------------------------- enable gcc debug
+    if [ "$2" == "-g" ] || [ "$3" == "-g" ] || [ "$4" == "-g" ] || [ "$5" == "-g" ] || [ "$6" == "-g" ] || [ "$7" == "-g" ] || [ "$8" == "-g" ] || [ "$9" == "-g" ];
+    then
+      dbgsx=-debug
+      gccdebug="-DDEBUG -gstabs"
+      linker=""      
+      gccdebugstatus="ON"
+    fi
+        
+    if [ "$v" == "yes" ];
+    then
+      echo "-------------------------------------------------------------------------------"
+    fi
+        
+    # ------------------------- resource file (mingw32-windres)
+    if [ "{$resfile}" != "" ] && [ "$compiler" == "$mingw" ];
+    then
+      echo "* preparing resources..."
+      if [ -e "{$resfile}".o ];
+      then
+        rm -f "{$resfile}".o
+      fi      
+      `$windres -i "$resfile" -o "$resfile.o"`
+      if [ -e "$resfile".o ];
+      then
+        res="$resfile".o
+      else
+        res="error"
+        showerr "### ERR: cannot create resource file '$resfile.o'"
+      fi
+    fi
+    
+    # ------------------------- echo settings    
+    echo "* compiling binary for '$1'..."
+    if [ "$v" == "yes" ];
+    then
+      echo ""
+      echo "* compiler is: $compiler `$compiler -dumpversion`" 
+      if [ "$fmt_ext" == "" ];
+      then    
+        echo "* target binary format is: exe (ELF)"
+      else
+        echo "* target binary format is:$libformat $fmt_ext"
+      fi
+      echo "* target platform is: $mpltsx"
+      echo "* lib debug is: $libdebugstatus"
+      echo "* gcc debug is: $gccdebugstatus"
+      if [ "$nogui" == "yes" ];
+      then
+        echo "* gui is: OFF"
+      fi
+    fi
+    # ------------------------- check if hpath available    
+    if [ -d "$hpath" ];
+    then
+      if [ "$v" == "yes" ];
+      then
+        echo "* found holos path '$hpath'"
+      fi
+    else
+      showerr "### ERR: cannot find holos path at '$hpath'"
+    fi
+    
+    # ------------------------- check if vstpath available
+    if [ "$format" == "-DH_VST" ]
+    then
+      if [ -d "$vstpath" ];
+      then
+        if [ "$v" == "yes" ];
+        then
+          echo "* found vst sdk path '$vstpath'"
+        fi
+      else
+        showerr "### ERR: cannot find vst sdk path at '$vstpath%'"
+      fi
+    fi
+    
+    # ------------------------- check if ladspapath available
+    if [ "$format" == "-DH_LADSPA" ]
+    then
+      if [ -d "$ladspapath" ];
+      then
+        if [ "$v" == "yes" ];
+        then
+          echo "* found ladspa sdk path '$ladspapath'"
+        fi
+      else
+        showerr "### ERR: cannot find ladspa sdk path at '$ladspapath%'"
+      fi
+    fi
+    
+    target_s_ext=$file$suffix$noguisx$dbgsx-$mpltsx$ts$fmt_ext
+    
+    # ------------------------- delete old file if exist
+    if [ -e "$target_s_ext" ];
+    then
+      `rm -f "$target_s_ext"`
+    fi
+    
+    # ------------------------- command line (compile)
+    _cmdline="$compiler \"${1}\" -o \"${target_s_ext}\" -I$ladspapath -I$vstpath -I$hpath $tgt $res $gccdebug $libdebug $ext_params $format $warn $opt $mplt $linker"
+    if [ "$v" == "yes" ];
+    then
+        echo ""
+        echo "command line is: $_cmdline"    
+        echo ""
+    fi
+    echo $_cmdline | sh
+    
+    # ------------------------- check if compiled
+    if [ -e "$target_s_ext" ];
+    then
+      # ------------------------- print file size
+      if [ "$v" == "yes" ];
+      then              
+        size=$(stat -c%s "${target_s_ext}")
+        echo ""      
+        echo "* filesize: $size bytes"
+      fi
+      # ------------------------- check if move
+      if [ "$move" == "yes" ];
+      then
+        # ------------------------- check if '../bin' exists / create it
+        if [ -d "../bin" ];
+        then
+          if [ "$v" == "yes" ];
+          then
+            echo "* folder '../bin' exists"
+          fi
+        else
+          if [ "$v" == "yes" ];
+          then
+            echo "* creating folder '../bin'"
+          fi
+          `mkdir ../bin`
+        fi
+        if [ "$v" == "yes" ];
+        then
+          echo "* moving '$target_s_ext' to '../bin'"
+        fi 
+        `mv "${target_s_ext}" ../bin`
+      fi
+      
+      # ------------------------- done
+      if [ "$v" == "yes" ];
+      then
+        echo ""
+        echo "* done"
+        echo "-------------------------------------------------------------------------------"
+      fi      
+    else
+      showerr "# ERR: not compiled!"
+    fi
+  fi
+fi
+
+exit
