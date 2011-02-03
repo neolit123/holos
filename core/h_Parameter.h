@@ -24,7 +24,7 @@
 #include "lib/h_Array.h"
 #include "lib/h_String.h"
 
-//----------
+//----------------------------------------------------------------------
 
 // parameter flags
 #define pf_None     0
@@ -38,7 +38,7 @@
 #define pt_Int      2
 #define pt_FloatPow 3
 
-//----------
+//----------------------------------------------------------------------
 
 class h_Parameter
 {
@@ -52,7 +52,7 @@ class h_Parameter
     int       m_Flags;
     float     m_Value;   // 0..1
     float     m_Pow;
-    char*     m_Strings;
+    char**    m_Strings;
   //public:
   //  int       m_Id;
   //  void*     m_Ptr;
@@ -91,7 +91,7 @@ class h_Parameter
     virtual void  do_GetDisplay(char* buf)    { h_Ftoa(buf,getValue(),5); }
 };
 
-//----------
+//----------------------------------------------------------------------
 
 typedef h_Array<h_Parameter*> h_Parameters;
 

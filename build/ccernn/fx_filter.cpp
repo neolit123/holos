@@ -1,4 +1,5 @@
-//#define H_DEBUG_LOG "holos_win.log"
+#define H_DEBUG_LOG "holos_win.log"
+#define H_DEBUG_LOG_UNIQUE
 #define H_DEBUG_CON
 //#define H_DEBUG_CON_CANQUIT
 //#define H_DEBUG_CON_NOTOP

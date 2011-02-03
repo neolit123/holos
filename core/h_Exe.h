@@ -75,6 +75,7 @@ class h_Format
     h_Descriptor* getDescriptor(void);
     h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
     int           entrypoint(void* a_Ptr);
+    h_String      getName(void) { return "exe"; }
 };
 
 //----------------------------------------------------------------------

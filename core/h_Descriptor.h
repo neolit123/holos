@@ -25,8 +25,10 @@
 
 struct h_ParamDescr
 {
-  const char*   m_Name;
-  const char*   m_Label;
+  //const char*   m_Name;
+  //const char*   m_Label;
+  h_String  m_Name;
+  h_String  m_Label;
   int           m_Type;
   int           m_Flags;
   float         m_Value;
@@ -39,7 +41,8 @@ struct h_ParamDescr
 
 struct h_ProgDescr
 {
-  const char*   m_Name;
+  //const char*   m_Name;
+  h_String  m_Name;
   float*        m_Values; // ptr to m_NumParams values (floats)
 };
 
@@ -53,9 +56,12 @@ struct h_ProgDescr
 
 struct h_Descriptor
 {
-  const char*   m_Name;
-  const char*   m_Author;
-  const char*   m_Product;
+  //const char*   m_Name;
+  //const char*   m_Author;
+  //const char*   m_Product;
+  h_String   m_Name;
+  h_String   m_Author;
+  h_String   m_Product;
   unsigned long m_Version;
   unsigned long m_UniqueId;
   int           m_Flags;

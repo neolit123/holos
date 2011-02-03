@@ -26,35 +26,22 @@
 
 class wdg_Background : public h_Widget
 {
-  private:
-    h_Color   m_Color;
-
   public:
 
-    wdg_Background(h_WidgetListener* a_Listener, h_Color a_Color=H_GREY)
-    : h_Widget(a_Listener,NULL_RECT)
+    wdg_Background(h_WidgetListener* a_Listener)
+    : h_Widget(a_Listener,H_NULL_RECT,wa_Client)
       {
-        m_Color = a_Color;
       }
+
     virtual ~wdg_Background()
       {
       }
 
-  public:
-
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        //trace("do_Paint("<<a_Rect.x<<","<<a_Rect.y <<","<< a_Rect.w<<","<<a_Rect.h<<")");
-        a_Painter->setBrushColor(m_Color);
-        a_Painter->fillRect(a_Rect.x,a_Rect.y,a_Rect.x2(),a_Rect.y2());
+        m_Skin->drawBackground(a_Painter,a_Rect,0);
+        //h_Widget::do_Paint(a_Painter,a_Rect);
       }
-
-    //test
-    virtual void do_MouseDown(int x, int y, int b, int s)
-      {
-        if (m_Listener) m_Listener->on_Hint((char*)"click");
-      }
-
 
 };
 

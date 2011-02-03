@@ -719,7 +719,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetEffectName: // 45
         trace_vst("vst dispatcher: effGetEffectName");
-        h_Strcpy((char*)ptr,m_Descriptor->m_Name);
+        h_Strcpy((char*)ptr,m_Descriptor->m_Name.ptr());
         result = 1;
         break;
 
@@ -729,13 +729,13 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetVendorString: // 47
         trace_vst("vst dispatcher: effGetVendorString");
-        h_Strcpy((char*)ptr,m_Descriptor->m_Author);
+        h_Strcpy((char*)ptr, m_Descriptor->m_Author.ptr());
         result = 1;
         break;
 
       case effGetProductString: // 48
         trace_vst("vst dispatcher: effGetProductString");
-        h_Strcpy((char*)ptr,m_Descriptor->m_Product);
+        h_Strcpy((char*)ptr, m_Descriptor->m_Product.ptr());
         //v = 1;
         break;
 

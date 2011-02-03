@@ -11,15 +11,13 @@
 //#include "lib/h_Rand.h"
 //#include "lib/h_Expression.h"
 
-#ifndef H_NOGUI
-  #include "gui/h_Window.h"
-#endif
+#include "gui/h_Window.h"
+#include "gui/wdg/wdg_Background.h"
+#include "gui/skin/skin_Default.h"
 
 //#include "core/par/par_Float.h"
 
 //----------------------------------------------------------------------
-
-#ifndef H_NOGUI
 
 class my_Widget : public h_Widget
 {
@@ -32,17 +30,19 @@ class my_Widget : public h_Widget
     virtual ~my_Widget()
       {
       }
+    virtual void do_MouseDown(int x, int y, int b, int s)
+      {
+        m_Listener->on_Hint("clickety");
+      }
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        a_Painter->setFillColor( H_RGB(128,128,128) );
+        a_Painter->setFillColor( H_RGB(160,112,112) );
         a_Painter->fillRect(m_Rect.x, m_Rect.y, m_Rect.x2(), m_Rect.y2());
         a_Painter->setTextColor( H_RGB(255,255,255) );
-        a_Painter->drawText(10,10,(char*)"hello world!");
+        a_Painter->drawText(m_Rect.x+10,m_Rect.y+10,(char*)"hello world!");
       }
 
 };
-
-#endif // H_NOGUI
 
 //----------------------------------------------------------------------
 
@@ -82,15 +82,15 @@ class my_Instance : public h_Instance,
                     public h_WidgetListener
 {
   private:
-    h_Window*   m_Window;
-    my_Widget*  m_Widget;
+    h_Window*       m_Window;
+    h_Skin*         m_Skin;
   public:
 
     my_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host,a_Descriptor)
       {
         m_Window = H_NULL;
-        m_Widget = H_NULL;
+        m_Skin   = H_NULL;
       }
 
     //virtual ~my_Instance()
@@ -132,16 +132,19 @@ class my_Instance : public h_Instance,
     //  {
     //  }
 
-  #ifndef H_NOGUI
+//TODO: move most of this into the h_Editor
 
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
         m_Window = new h_Window(this,rect,ptr);
-        m_Widget = new my_Widget(this,h_Rect(100,100),wa_Client);
-        m_Window->appendWidget(m_Widget);
+        m_Skin = new skin_Default();
+        m_Window->applySkin(m_Skin);
+        m_Window->appendWidget( new wdg_Background(this) );
+        m_Window->appendWidget( new my_Widget(this,h_Rect(10,10,100,100),wa_None) );
         m_Window->do_Realign();
         m_Window->show();
+        m_Window->setCursor(cu_Finger);
         return (void*)m_Window;
       }
 
@@ -158,7 +161,13 @@ class my_Instance : public h_Instance,
     //  {
     //  }
 
-  #endif // H_NOGUI
+    //----------
+
+    virtual void on_Hint(h_String a_Text)
+      {
+        trace("my_Instance.on_Hint: " << a_Text.ptr());
+      }
+
 
 };
 

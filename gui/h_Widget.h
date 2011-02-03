@@ -23,6 +23,7 @@
 
 #include "lib/h_Rect.h"
 #include "gui/h_Painter.h"
+#include "gui/h_Skin.h"
 
 //----------
 
@@ -88,7 +89,7 @@ class h_WidgetListener
     virtual void on_Change(h_Widget* a_Widget) {}
     virtual void on_Redraw(h_Widget* a_Widget) {}
     virtual void on_Cursor(int a_Cursor) {}
-    virtual void on_Hint(char* a_Text) {}
+    virtual void on_Hint(h_String a_Text) {}
     virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
     virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
 
@@ -128,6 +129,7 @@ class h_Widget : public h_WidgetBase,
     h_Widget* m_HoverWidget;
 
 
+
   protected:
     h_WidgetListener* m_Listener;
     //h_Widget*         m_Parent;
@@ -135,6 +137,7 @@ class h_Widget : public h_WidgetBase,
     int               m_Index;
     int               m_Flags;
     h_Rect            m_Rect;
+    h_Skin*           m_Skin;
 
   public:
     inline int        getFlags(void)        { return m_Flags; }
@@ -159,7 +162,6 @@ class h_Widget : public h_WidgetBase,
         m_Orig      = m_Rect;
         m_Alignment = a_Alignment;
         m_Content   = H_NULL_RECT;
-
         m_MinWidth       = 0;
         m_MinHeight      = 0;
         m_MaxWidth       = 999999;
@@ -168,14 +170,11 @@ class h_Widget : public h_WidgetBase,
         m_MarginY        = 0;
         m_PaddingX       = 0;
         m_PaddingY       = 0;
-
         //m_Value          = 0;
         //m_Connection     = -1;
         //m_Parameter      = NULL;
-
-        //m_Skin           = NULL;
+        m_Skin           = H_NULL;
         //m_SkinMode       = 0;
-
         m_CapturedWidget = NULL;
         m_HoverWidget    = this;
         //m_ModalWidget    = NULL;
@@ -183,10 +182,8 @@ class h_Widget : public h_WidgetBase,
         m_Client         = m_Rect;
         m_StackedX       = 0;
         m_StackedY       = 0;
-
         //m_Id             = 0;
         //m_Ptr            = NULL;
-
       }
 
     //----------
@@ -207,6 +204,10 @@ class h_Widget : public h_WidgetBase,
         int index = m_Children.size();
         a_Widget->m_Index = index;
         //a_Widget->m_Parent = this;
+
+        //a_Widget->m_Skin = this->m_Skin;
+        a_Widget->applySkin(m_Skin,true,true);
+
         m_Children.append(a_Widget);
       }
 
@@ -271,6 +272,14 @@ class h_Widget : public h_WidgetBase,
     //    m_Skin = a_Skin;
     //    for (int i=0; i<m_Children.size(); i++) setSkin(a_Skin);
     //  }
+
+    virtual void applySkin(h_Skin* a_Skin, bool a_Sub=false, bool a_OnlyIfNull=false)
+      {
+        if (a_OnlyIfNull) { if (!m_Skin) m_Skin=a_Skin; }
+        else m_Skin = a_Skin;
+        if (a_Sub) { for (int i=0; i<m_Children.size(); i++) m_Children[i]->applySkin(a_Skin,a_Sub,a_OnlyIfNull); }
+      }
+
 
     //----------
 
@@ -867,7 +876,7 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void on_Hint(char* a_Text)
+    virtual void on_Hint(h_String a_Text)
       {
         if (m_Listener) m_Listener->on_Hint(a_Text);
       }

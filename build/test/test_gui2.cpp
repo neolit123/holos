@@ -77,7 +77,7 @@ class my_Editor : public h_Editor//,
     virtual void on_Change(h_Widget* a_Widget)
       {
       }
-    virtual void on_Hint(char* a_Text)
+    virtual void on_Hint(h_String a_Text)
       {
         trace(a_Text);
       }

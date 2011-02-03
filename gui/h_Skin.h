@@ -21,8 +21,31 @@
 #define h_Skin_included
 //----------------------------------------------------------------------
 
+//#include "core/h_Parameter.h"
+
+//----------
+
+struct h_SkinSettings
+{
+  h_Color m_BackColor;
+  h_Color m_FillColor;
+  h_Color m_DrawColor;
+  h_Color m_TextColor;
+};
+
+//----------
+
 class h_Skin
 {
+
+  public:
+
+    //h_Skin() {}
+    //virtual ~h_Skin() {}
+
+    virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
+    virtual void drawPanel(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
+
 };
 
 //----------------------------------------------------------------------

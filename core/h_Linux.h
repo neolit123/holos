@@ -45,6 +45,7 @@ class h_Platform
   public:
     h_Platform();
     ~h_Platform();
+    h_String getName(void) { return "linux"; }
 };
 
 //----------------------------------------------------------------------

@@ -27,6 +27,11 @@ using namespace std;
 
 #include "lib/h_BasePath.h"
 
+#ifdef H_DEBUG_LOG_UNIQUE
+  #include "time.h"
+  #include "lib/h_Stdlib.h"
+#endif
+
 //----------------------------------------------------------------------
 
 #ifndef H_DEBUG_LOG_APPEND
@@ -53,8 +58,14 @@ class h_LogFile
     h_LogFile(const char* a_FileName)
       {
         m_LogFileName[0] = '\0';
-/* */   h_GetBasePath(m_LogFileName);
-        h_Strcat(m_LogFileName,a_FileName/*H_DEBUG_LOG*/);
+        h_GetBasePath(m_LogFileName);
+        #ifdef H_DEBUG_LOG_UNIQUE
+          time_t t_int = time(0);
+          char t_str[33];
+          h_Strcat(m_LogFileName, h_Itoa(t_str, t_int));
+          h_Strcat(m_LogFileName, (char*)"_");
+        #endif
+        h_Strcat(m_LogFileName, a_FileName/*H_DEBUG_LOG*/);
         m_LogFile.open(m_LogFileName, std::fstream::out H_DEBUG_LOG_APPEND);
       }
 

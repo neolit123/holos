@@ -220,7 +220,9 @@ class h_Window_Win32 : public h_Widget,
       {
       }
 
-    //----------
+    //----------------------------------------
+    //
+    //----------------------------------------
 
     virtual void show(void)
       {
@@ -235,7 +237,9 @@ class h_Window_Win32 : public h_Widget,
         ShowWindow(m_WinHandle,SW_HIDE);
       }
 
-    //----------
+    //----------------------------------------
+    // set
+    //----------------------------------------
 
     virtual void setPos(int a_Xpos, int a_Ypos)
       {
@@ -445,7 +449,6 @@ class h_Window_Win32 : public h_Widget,
         LRESULT result = 0;
         h_Rect rc;
         int x,y,b,w,h;
-        //int left,top,right,bottom;
 
         switch (message)
         {
@@ -459,6 +462,7 @@ class h_Window_Win32 : public h_Widget,
               w += m_WinAdjustWidth;
               h += m_WinAdjustHeight;
             }
+
             //if (w!=m_WinRect.w || h!=m_WinRect.h)
             //{
             //// hack: ignore this if there is other WM_SIZE messages in the queue
@@ -468,9 +472,12 @@ class h_Window_Win32 : public h_Widget,
             //}
             //else
             //{
-              //resizeBuffer(w,h);
-              //if (m_Root) m_Root->do_SetSize(w,h);
-              do_SetSize(w,h);
+            //resizeBuffer(w,h);
+            //if (m_Root) m_Root->do_SetSize(w,h);
+            //resizeWindow(w,h);
+
+            do_SetSize(w,h);
+            do_Realign();
             //}
             result = 0;
             break;
@@ -478,14 +485,11 @@ class h_Window_Win32 : public h_Widget,
           case WM_PAINT:
 
             beginPaint();
-            //left   = m_WinPS.rcPaint.left;
-            //top    = m_WinPS.rcPaint.top;
-            //right  = m_WinPS.rcPaint.right;
-            //bottom = m_WinPS.rcPaint.bottom;
             rc = h_Rect(  m_WinPS.rcPaint.left,
                           m_WinPS.rcPaint.top,
                           m_WinPS.rcPaint.right -  m_WinPS.rcPaint.left + 2,
                           m_WinPS.rcPaint.bottom - m_WinPS.rcPaint.top  + 2);
+
             ////m_Canvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
             //if ((m_WinFlags&AX_WIN_BUFFERED) && m_Surface )
             //{
@@ -500,18 +504,17 @@ class h_Window_Win32 : public h_Widget,
             //}
             //else
             //{
-
             //  m_Painter->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
+            //TODO: blit from back-buffer
+            // assume this is already updated by the widgets themselves
+            //if (m_Root) m_Root->do_Paint(m_Painter,rc);
 
-              //TODO: blit from back-buffer
-              // assume this is already updated by the widgets themselves
-              //if (m_Root) m_Root->do_Paint(m_Painter,rc);
-              do_Paint(m_WinPainter,rc);
+            do_Paint(m_WinPainter,rc);
 
             //  m_Painter->clearClipRect();
-
             //}
             ////m_Canvas->clearClipRect();
+
             endPaint();
             break;
 
@@ -529,7 +532,6 @@ class h_Window_Win32 : public h_Widget,
               default:             b = bu_None;   //break;
             }
             m_WinClickedButton = b;
-            //if (m_Root) m_Root->do_MouseDown(x,y,b,remapKey(wParam));
             do_MouseDown(x,y,b,remapKey(wParam));
             //if (m_CapturedWidget) grabCursor();
             break;
@@ -548,7 +550,6 @@ class h_Window_Win32 : public h_Widget,
               default:           b = bu_None;   //break;
             }
             m_WinClickedButton = bu_None;
-            //if (m_Root) m_Root->do_MouseUp(x,y,b,remapKey(wParam));
             do_MouseUp(x,y,b,remapKey(wParam));
             //if (!mCapturedWidget) releaseCursor();
             break;
@@ -557,7 +558,6 @@ class h_Window_Win32 : public h_Widget,
 
             x = short(LOWORD(lParam));
             y = short(HIWORD(lParam));
-            //if (m_Root) m_Root->do_MouseMove(x,y,/*m_ClickedButton|*/remapKey(wParam));
             do_MouseMove(x,y,/*m_ClickedButton|*/remapKey(wParam));
             break;
 
@@ -568,13 +568,11 @@ class h_Window_Win32 : public h_Widget,
 
           case WM_KEYDOWN:
 
-            //if (m_Root) m_Root->do_KeyDown(wParam,lParam);
             do_KeyDown(wParam,lParam);
             break;
 
           case WM_KEYUP:
 
-            //if (m_Root) m_Root->do_KeyDown(wParam,lParam);
             do_KeyDown(wParam,lParam);
             break;
 
@@ -590,7 +588,7 @@ class h_Window_Win32 : public h_Widget,
 
           case WM_TIMER:
 
-            if (wParam==667) /*if (m_Root) m_Root->*/do_Timer();
+            if (wParam==667) do_Timer();
             result = 0;
             break;
 
@@ -628,7 +626,12 @@ class h_Window_Win32 : public h_Widget,
 
     // stop messages auto-bubbling upwards
     virtual void on_Change(h_Widget* a_Widget) {}
-    virtual void on_Hint(char* a_Text) {}
+    virtual void on_Redraw(h_Widget* a_Widget) {}
+    virtual void on_Cursor(int a_Cursor) {}
+
+    virtual void on_Hint(h_String a_Text) {}
+    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
+    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
 
 };
 

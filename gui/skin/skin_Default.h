@@ -17,31 +17,31 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Win32_included
-#define h_Win32_included
+#ifndef skin_Default_included
+#define skin_Default_included
 //----------------------------------------------------------------------
 
-#include <windows.h>
-#include "lib/h_Globals.h"
-//#include "lib/h_Rect.h"
-#include "lib/h_String.h"
-
-//----------------------------------------------------------------------
-
-class h_Platform
+class skin_Default : public h_Skin
 {
+  private:
+    h_SkinSettings m_Settings;
+
   public:
-    HINSTANCE m_WinInstance;
-    char      m_WinClassName[H_MAX_STRINGSIZE];
-    ATOM      m_WinClassAtom;
-    HCURSOR   m_WinCursor;
-    HICON     m_WinIcon;
-    WNDCLASS  m_WinClass;
-    int       m_WinDepth;
-  public:
-    h_Platform();
-    ~h_Platform();
-    h_String getName(void) { return "win32"; }
+    skin_Default()
+    //: h_Skin(&m_Settings)
+      {
+        m_Settings.m_BackColor = H_RGB(128,128,128);
+        m_Settings.m_FillColor = H_RGB(112,112,112);
+        m_Settings.m_DrawColor = H_RGB(144,144,144);
+        m_Settings.m_TextColor = H_RGB(160,160,160);
+      }
+
+    virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
+      {
+        a_Painter->setFillColor(m_Settings.m_BackColor);
+        a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+      }
+
 };
 
 //----------------------------------------------------------------------

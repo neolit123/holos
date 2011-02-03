@@ -7,7 +7,7 @@
 // move all methods from instance that uses audioMaster to host
 
 h_Host::h_Host(audioMasterCallback audioMaster, AEffect* a_AEffect)
-//: h_Host_Base()
+: h_Host_Base()
   {
     m_AudioMaster = audioMaster;
     m_AEffect = a_AEffect;

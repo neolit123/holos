@@ -49,10 +49,10 @@
 #include "lib/h_Defines.h"
 #include "lib/h_Memory.h"
 
-#ifdef H_HOT_INLINE_STDLIB
-  #define __h_stdlib_inline __hotinline
+#ifdef _H_STDLIB_USE_INLINE
+  #define _H_STDLIB_INLINE inline
 #else
-  #define __h_stdlib_inline inline
+  #define _H_STDLIB_INLINE
 #endif
 
 //----------------------------------------------------------------------
@@ -64,13 +64,11 @@
 /**
   * h_IsDigit
   */
-
 #define h_IsDigit(c)  ( ( (c) > 47 && (c) < 58 ) ? 1 : 0 )
 
 /**
   * h_IsLetter
   */
-
 #define h_IsLetter(c) \
 ( ( ((c) > 64 && (c) < 91) || ((c) > 96 && (c) < 123) ) ? 1 : 0 )
 
@@ -83,83 +81,82 @@
 /**
  * h_Memchr
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 void* h_Memchr (register const void* src, int c, unsigned int len)
+{
+  register const unsigned char* _src = (const unsigned char*) src;
+  c &= 0xff;
+  while (len--)
   {
-    register const unsigned char* _src = (const unsigned char*) src;
-    c &= 0xff;
-    while (len--)
-    {
-      if (*_src == c) return (char*) _src;
-      _src++;
-    }
-    return NULL;
+    if (*_src == c) return (char*) _src;
+    _src++;
   }
+  return NULL;
+}
 
 /**
  * h_Memcmp
  */
-
-__h_stdlib_inline
-unsigned int h_Memcmp (register const void* m1, register const void* m2, register unsigned int n)
+_H_STDLIB_INLINE
+unsigned int h_Memcmp (register const void* m1,
+  register const void* m2, register unsigned int n)
+{
+  register unsigned char* s1 = (unsigned char*) m1;
+  register unsigned char* s2 = (unsigned char*) m2;
+  while (n--)
   {
-    register unsigned char* s1 = (unsigned char*) m1;
-    register unsigned char* s2 = (unsigned char*) m2;
-    while (n--)
-    {
-      if (*s1 != *s2) return *s1 - *s2;
-      s1++;
-      s2++;
-    }
-    return 0;
+    if (*s1 != *s2) return *s1 - *s2;
+    s1++;
+    s2++;
   }
+  return 0;
+}
 
 /**
  * h_Memcpy
  */
-
-__h_stdlib_inline
-void* h_Memcpy (register void* dest, register const void* src, register unsigned int len)
-  {
-    register char* _d = (char*) dest;
-    register char* _s = (char*) src;
-    while (len--) *_d++ = *_s++;
-    return dest;
-  }
+_H_STDLIB_INLINE
+void* h_Memcpy (register void* dest,
+  register const void* src, register unsigned int len)
+{
+  register char* _d = (char*) dest;
+  register char* _s = (char*) src;
+  while (len--) *_d++ = *_s++;
+  return dest;
+}
 
 /**
  * h_Memmove
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 void* h_Memmove (register void* dst, register const void* src, unsigned int len)
+{
+  register char* _dst = (char*) dst;
+  register const char* _src = (char*) src;
+  if (_src < _dst && _dst < _src + len)
   {
-    register char* _dst = (char*) dst;
-    register const char* _src = (char*) src;
-    if (_src < _dst && _dst < _src + len)
-    {
-      _src += len;
-      _dst += len;
-      while (len--) *--_dst = *--_src;
-    }
-    else
-      while (len--) *_dst++ = *_src++;
-    return dst;
+    _src += len;
+    _dst += len;
+    while (len--) *--_dst = *--_src;
   }
+  else
+    while (len--) *_dst++ = *_src++;
+  return dst;
+}
 
 /**
  * h_Memset
  */
 
-__h_stdlib_inline
-void* h_Memset (register void* dest, register int val, register unsigned int len)
-  {
-    register unsigned char _v = (unsigned char) val;
-    register char* _d = (char*) dest;
-    while (len--) *_d++ = _v;
-    return dest;
-  }
+_H_STDLIB_INLINE
+void* h_Memset (register void* dest, register int val,
+  register unsigned int len)
+{
+  register unsigned char _v = (unsigned char) val;
+  register char* _d = (char*) dest;
+  while (len--) *_d++ = _v;
+  return dest;
+}
 
 //----------------------------------------------------------------------
 //
@@ -170,8 +167,7 @@ void* h_Memset (register void* dest, register int val, register unsigned int len
 /**
  * h_Strlen
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 unsigned int h_Strlen (register char* str)
 {
   register unsigned int num = 0;
@@ -182,8 +178,7 @@ unsigned int h_Strlen (register char* str)
 /**
  * h_Strcpy
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strcpy (register char* dest, register const char* src)
 {
   while ( (*dest++ = *src++) );
@@ -193,10 +188,8 @@ char* h_Strcpy (register char* dest, register const char* src)
 /**
  * h_Strncpy
  */
-
-__h_stdlib_inline
-char* h_Strncpy (register char* dest,
-  register const char* src, unsigned int n)
+_H_STDLIB_INLINE
+char* h_Strncpy (register char* dest, register const char* src, unsigned int n)
 {
   while ( n-- && (*dest++ = *src++) != '\0' );
   return dest;
@@ -205,8 +198,7 @@ char* h_Strncpy (register char* dest,
 /**
  * h_Strdup
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strdup (register char* src)
 {
   register char* dst = (char*) h_Malloc(h_Strlen(src) + 1);
@@ -218,10 +210,8 @@ char* h_Strdup (register char* src)
 /**
  * h_Strchr
  */
-
-__h_stdlib_inline
-char* h_Strchr (register const char* str,
-  register const int c)
+_H_STDLIB_INLINE
+char* h_Strchr (register const char* str, register const int c)
 {
   while (*str && *str != c)
     str++;
@@ -233,8 +223,7 @@ char* h_Strchr (register const char* str,
 /**
  * h_Strrchr
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strrchr (register const char* s, const int c)
 {
   char* p = NULL;
@@ -247,8 +236,7 @@ char* h_Strrchr (register const char* s, const int c)
 /**
  * h_Strcmp
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 int h_Strcmp (register const char* s1,
   register const char* s2)
 {
@@ -260,8 +248,7 @@ int h_Strcmp (register const char* s1,
 /**
  * h_Strncmp
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 int h_Strncmp (register const char* s1,
   register const char* s2, register unsigned int n)
 {
@@ -281,8 +268,7 @@ int h_Strncmp (register const char* s1,
 /**
  * h_Strcat
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 const char* h_Strcat (register char* s1,
   register const char* s2)
 {
@@ -295,8 +281,7 @@ const char* h_Strcat (register char* s1,
 /**
  * h_Strncat
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strncat (register char* s1, register char* s2,
   register unsigned int n)
 {
@@ -312,8 +297,7 @@ char* h_Strncat (register char* s1, register char* s2,
 /**
  * h_Strstr
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strstr (register const char* s1,
   register const char* s2)
 {
@@ -336,8 +320,7 @@ char* h_Strstr (register const char* s1,
 /**
  * h_Strspn
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 unsigned int h_Strspn (register const char* s1,
   register const char* s2)
 {
@@ -358,9 +341,8 @@ unsigned int h_Strspn (register const char* s1,
 /**
  * h_Strcspn
  */
-__h_stdlib_inline
-unsigned int h_Strcspn (register const char* s1,
-  register const char* s2)
+_H_STDLIB_INLINE
+unsigned int h_Strcspn (register const char* s1, register const char* s2)
 {
   register const char *_s1, *_s2;
   _s1 = s1;
@@ -379,10 +361,8 @@ unsigned int h_Strcspn (register const char* s1,
 /**
  * h_Strpbrk
  */
-
-__h_stdlib_inline
-char* h_Strpbrk (register const char* s1,
-  register const char* s2)
+_H_STDLIB_INLINE
+char* h_Strpbrk (register const char* s1, register const char* s2)
 {
   register const char* _s1;
   while (*s1++)
@@ -399,8 +379,7 @@ char* h_Strpbrk (register const char* s1,
 /**
  * h_Strtok
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strtok (register char* str, const char* spr)
 {
   register char *s1, *s2;
@@ -426,22 +405,21 @@ char* h_Strtok (register char* str, const char* spr)
 /**
  * h_Strrev
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 char* h_Strrev (register char* str)
+{
+  register unsigned int i = 0;
+  register unsigned int j = h_Strlen(str)-1;
+  while (i < j)
   {
-    register unsigned int i = 0;
-    register unsigned int j = h_Strlen(str)-1;
-    while (i < j)
-    {
-      str[i] ^= str[j];
-      str[j] ^= str[i];
-      str[i] ^= str[j];
-      ++i;
-      --j;
-    }
-    return str;
+    str[i] ^= str[j];
+    str[j] ^= str[i];
+    str[i] ^= str[j];
+    ++i;
+    --j;
   }
+  return str;
+}
 
 //----------------------------------------------------------------------
 //
@@ -468,89 +446,89 @@ char* h_Strrev (register char* str)
  *
  */
 
-__h_stdlib_inline
-char* h_Itoa(register char* _st, int n, unsigned int maxlen = 10, unsigned int base = 10, unsigned int fg = 0)
+_H_STDLIB_INLINE
+char* h_Itoa(register char* _st, int n, unsigned int maxlen = 10,
+  unsigned int base = 10, unsigned int fg = 0)
+{
+  if (!_st || maxlen > 33) return (char*)"0";
+  register unsigned int v, p = 1;
+  register int i = 0;
+  char* st = _st;
+  char _t[33];
+  register char* t = _t;
+  v = (unsigned int) n;
+  if (base == 10)
   {
-    if (!_st || maxlen > 33) return (char*)"0";
-    register unsigned int v, p = 1;
-    register int i = 0;
-    char* st = _st;
-    char _t[33];
-    register char* t = _t;
-    v = (unsigned int) n;
-    if (base == 10)
+    if (n < 0)
     {
-      if (n < 0)
-      {
-        v = -n;
-        *st++ = '-';
-        maxlen--;
-      }
-      else
-      {
-        if (fg == 1) { *st++ = '+'; maxlen--; }
-        if (fg == 2) { *st++ = ' '; maxlen--; }
-      }
-    }
-    while (i < (int)maxlen)
-    {
-      p *= 10;
-      i++;
-    }
-    if (base == 10 && v >= (p-1))
-    {
-      while (maxlen--)
-        *st++ = '9';
+      v = -n;
+      *st++ = '-';
+      maxlen--;
     }
     else
     {
-      while (v || t == _t)
-      {
-        i = v % base;
-        v = v / base;
-        if (i < 10)
-          *t++ = '0' + i;
-        else
-          *t++ = 'a' + i - 10;
-      }
-      while (t > _t)
-        *st++ = *--t;
+      if (fg == 1) { *st++ = '+'; maxlen--; }
+      if (fg == 2) { *st++ = ' '; maxlen--; }
     }
-    *st = 0;
-    return _st;
   }
+  while (i < (int)maxlen)
+  {
+    p *= 10;
+    i++;
+  }
+  if (base == 10 && v >= (p-1))
+  {
+    while (maxlen--)
+      *st++ = '9';
+  }
+  else
+  {
+    while (v || t == _t)
+    {
+      i = v % base;
+      v = v / base;
+      if (i < 10)
+        *t++ = '0' + i;
+      else
+        *t++ = 'a' + i - 10;
+    }
+    while (t > _t)
+      *st++ = *--t;
+  }
+  *st = 0;
+  return _st;
+}
 
 /**
  * h_Atoi
  */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 int h_Atoi (register const char* s)
+{
+  if (!s) return 0;
+  const char digits[] = "0123456789";
+  register unsigned val = 0;
+  register int neg = 0;
+  while (*s == ' ' || *s == '\t') s++;
+  if (*s == '-')
   {
-    if (!s) return 0;
-    const char digits[] = "0123456789";
-    register unsigned val = 0;
-    register int neg = 0;
-    while (*s == ' ' || *s == '\t') s++;
-    if (*s == '-')
-    {
-      neg = 1;
-      s++;
-    }
-    else if (*s == '+') s++;
-    while (*s)
-    {
-      const char *w;
-      unsigned digit;
-      w = h_Strchr(digits, *s);
-      if (!w) break;
-      digit = (w - digits);
-      val = val*10 + digit;
-      s++;
-    }
-    if (neg) return -val;
-    return val;
+    neg = 1;
+    s++;
   }
+  else if (*s == '+') s++;
+  while (*s)
+  {
+    const char *w;
+    unsigned digit;
+    w = h_Strchr(digits, *s);
+    if (!w) break;
+    digit = (w - digits);
+    val = val*10 + digit;
+    s++;
+  }
+  if (neg) return -val;
+  return val;
+}
 
 /*
  * h_Ftoa(string, floatnumber, maximumchars, flag)
@@ -565,151 +543,150 @@ int h_Atoi (register const char* s)
  * allocated memory for 'string' should be >= 'maximumchars'
  *
  */
-
-__h_stdlib_inline
-char* h_Ftoa(register char* st, register double f, register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
+_H_STDLIB_INLINE
+char* h_Ftoa(register char* st, register double f,
+  register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
+{
+  if (!st) return (char*)"0";
+  char* ret = st;
+  register int exp = 0;
+  register int z;
+  int j = 0;
+  if (f < 0)
   {
-    if (!st) return (char*)"0";
-    char* ret = st;
-    register int exp = 0;
-    register int z;
-    int j = 0;
-    if (f < 0)
+   *st++ = '-';
+   j++;
+   f = -f;
+  }
+  else
+  {
+    if (fg == 1) { *st++ = '+';  j++; }
+    if (fg == 2) { *st++ = ' ';  j++; }
+  }
+  if (f)
+  {
+    while (f < 1.f)
     {
-     *st++ = '-';
-     j++;
-     f = -f;
+      f *= 10.f;
+      exp--;
     }
-    else
+    while ( (f >= 10.f && exp < maxlen) || exp < 0 )
     {
-      if (fg == 1) { *st++ = '+';  j++; }
-      if (fg == 2) { *st++ = ' ';  j++; }
+      f *= 0.1f;
+      exp++;
     }
-    if (f)
+  }
+  if (exp > maxlen - ( j + 1 ))
+  {
+    maxlen -= j;
+    while (maxlen--) *st++ = '9';
+  }
+  else
+  {
+    while ( (exp > 0) && (exp <= maxlen) && j < maxlen-1 )
     {
-      while (f < 1.f)
-      {
-        f *= 10.f;
-        exp--;
-      }
-      while ( (f >= 10.f && exp < maxlen) || exp < 0 )
-      {
-        f *= 0.1f;
-        exp++;
-      }
+      *st++ = '0' + (char)f;
+      z = (int)f;
+      f -= z;
+      f *= 10.f;
+      exp--;
+      j++;
     }
-    if (exp > maxlen - ( j + 1 ))
+    *st++ = '0' + (char)f;
+    z = (int)f;
+    f -= z;
+    f *= 10.f;
+    j++;
+    if (j < maxlen-1)
     {
-      maxlen -= j;
-      while (maxlen--) *st++ = '9';
-    }
-    else
-    {
-      while ( (exp > 0) && (exp <= maxlen) && j < maxlen-1 )
+      *st++ = '.';
+      j++;
+      register unsigned int i = 0;
+      while (j < maxlen)
       {
         *st++ = '0' + (char)f;
         z = (int)f;
         f -= z;
         f *= 10.f;
-        exp--;
+        i++;
         j++;
       }
-      *st++ = '0' + (char)f;
-      z = (int)f;
-      f -= z;
-      f *= 10.f;
-      j++;
-      if (j < maxlen-1)
-      {
-        *st++ = '.';
-        j++;
-        register unsigned int i = 0;
-        while (j < maxlen)
-        {
-          *st++ = '0' + (char)f;
-          z = (int)f;
-          f -= z;
-          f *= 10.f;
-          i++;
-          j++;
-        }
-      }
     }
-    /*
-    // note: exponent output is disabled. instead it writes the maximum integer.
-    if (exp != 0 && e)
-    {
-      *st++ = 'e';
-      if (exp < 0)
-      {
-        *st++ = '-';
-        exp = -exp;
-      }
-      else *st++ = '+';
-      register int expd10 = exp/10;
-      *st++ = '0' + expd10;
-      *st++ = '0' + (exp -= expd10 * 10);
-    }
-    */
-    *st++ = 0;
-    return ret;
   }
+  /*
+  // note: exponent output is disabled. instead it writes the maximum integer.
+  if (exp != 0 && e)
+  {
+    *st++ = 'e';
+    if (exp < 0)
+    {
+      *st++ = '-';
+      exp = -exp;
+    }
+    else *st++ = '+';
+    register int expd10 = exp/10;
+    *st++ = '0' + expd10;
+    *st++ = '0' + (exp -= expd10 * 10);
+  }
+  */
+  *st++ = 0;
+  return ret;
+}
 
 /**
   * h_Atof
   */
-
-__h_stdlib_inline
+_H_STDLIB_INLINE
 float h_Atof (register char* s)
+{
+  if (!s) return 0.f;
+  register float a = 0.f;
+  register int e = 0;
+  register unsigned int c;
+  float _asign = 1.f;
+  if ( s[0] == '-' )
   {
-    if (!s) return 0.f;
-    register float a = 0.f;
-    register int e = 0;
-    register unsigned int c;
-    float _asign = 1.f;
-    if ( s[0] == '-' )
-    {
-      _asign = -1.f;
-      s++; //*s++;
-    }
-    while ( (c = *s++) != '\0' && h_IsDigit(c) )
-      a = a*10.f + (c - '0');
-    if (c == '.')
-      while ( (c = *s++) != '\0' && h_IsDigit(c) )
-      {
-        a = a*10.f + (c - '0');
-        e = e-1;
-      }
-    if (c == 'e' || c == 'E')
-    {
-      int sign = 1;
-      register int i = 0;
-      c = *s++;
-      if (c == '+') c = *s++;
-      else if (c == '-')
-      {
-        c = *s++;
-        sign = -1;
-      }
-      while ( h_IsDigit(c) )
-      {
-        i = i*10 + (c - '0');
-        c = *s++;
-      }
-      e += i*sign;
-    }
-    while (e > 0)
-    {
-      a *= 10.f;
-      e--;
-    }
-    while (e < 0)
-    {
-      a *= 0.1f;
-      e++;
-    }
-    return a*_asign;
+    _asign = -1.f;
+    s++; //*s++;
   }
+  while ( (c = *s++) != '\0' && h_IsDigit(c) )
+    a = a*10.f + (c - '0');
+  if (c == '.')
+    while ( (c = *s++) != '\0' && h_IsDigit(c) )
+    {
+      a = a*10.f + (c - '0');
+      e = e-1;
+    }
+  if (c == 'e' || c == 'E')
+  {
+    int sign = 1;
+    register int i = 0;
+    c = *s++;
+    if (c == '+') c = *s++;
+    else if (c == '-')
+    {
+      c = *s++;
+      sign = -1;
+    }
+    while ( h_IsDigit(c) )
+    {
+      i = i*10 + (c - '0');
+      c = *s++;
+    }
+    e += i*sign;
+  }
+  while (e > 0)
+  {
+    a *= 10.f;
+    e--;
+  }
+  while (e < 0)
+  {
+    a *= 0.1f;
+    e++;
+  }
+  return a*_asign;
+}
 
 //------------------------------------------------------------------------------
 #endif
@@ -896,7 +873,7 @@ char* h_Strncat(/*register*/ char* s1, /*register*/ char* s2, /*register*/ unsig
 
 //----------
 
-//__h_stdlib_inline
+//_H_STDLIB_INLINE
 //char* h_Strchr (register const char* str, register const int c)
 //{
 //  while (*str && *str != c)

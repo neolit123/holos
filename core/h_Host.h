@@ -21,15 +21,14 @@
 #define h_Host_included
 //----------------------------------------------------------------------
 
-#include "core/h_Parameter.h"
+#include "lib/h_String.h"
 
 class h_Host_Base
 {
   public:
     h_Host_Base() {}
     virtual ~h_Host_Base() {}
-    //virtual int  getVersion(void) { rerurn 0;}
-    //virtual void paramChanged(h_Parameter* a_Parameter) {}
+    virtual h_String getHostName(void) { return ""; }
 };
 
 //----------------------------------------------------------------------

@@ -178,18 +178,18 @@ class h_Instance : public h_Instance_Base
 //
 //----------------------------------------------------------------------
 
-class h_Format
+class h_Format //: public h_Format_Base
 {
   private:
-    bool                m_Initialized;
-    //h_Platform*         m_Platform;
+    bool  m_Initialized;
   public:
     h_Format();
     ~h_Format();
   public:
-    h_Descriptor*     getDescriptor(void);
-    h_Instance*       createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor);
-    AEffect*          entrypoint(audioMasterCallback audioMaster);
+    h_Descriptor* getDescriptor(void);
+    h_Instance*   createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor);
+    AEffect*      entrypoint(audioMasterCallback audioMaster);
+    h_String      getName(void) { return "vst"; }
   private:
     static VstIntPtr  vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt);
     static float      vst_getParameter_callback(AEffect* ae, VstInt32 index);

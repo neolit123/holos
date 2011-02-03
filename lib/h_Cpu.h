@@ -86,7 +86,7 @@ class h_Cpu
 
     // get cpu specifiction
     void
-    h_CpuId(const int fcall=33139, int* eax=NULL, int* ebx=NULL, int* ecx=NULL, int* edx=NULL)
+    CpuId(const int fcall=33139, int* eax=NULL, int* ebx=NULL, int* ecx=NULL, int* edx=NULL)
     {
       if (fcall == 33139)  // 33139 = some default number
       {
@@ -135,10 +135,9 @@ class h_Cpu
     // get cpu caps
 
     unsigned int
-    h_CpuCaps(void)
+    CpuCaps(void)
     {
-      if (!isCalled)
-        h_CpuId();
+      if (!isCalled) CpuId();
       if (_SSE3)      caps |= 0x0001;
       if (_SSSE3)     caps |= 0x0002;
       if (_FPU)       caps |= 0x0004;
@@ -156,9 +155,9 @@ class h_Cpu
 
     // h_CpuCapsString
     char*
-    h_CpuCapsString(void)
+    CpuCapsString(void)
     {
-      if (!isCalled) h_CpuId();
+      if (!isCalled) CpuId();
       cpustringbuf[0] = 0;
       if (_SSE3)     h_Strcat(cpustringbuf,(char*)"sse3 "); // space at the end make them easier to string together
       if (_SSSE3)    h_Strcat(cpustringbuf,(char*)"ssse3 ");
