@@ -33,6 +33,43 @@
 //----------------------------------------------------------------------
 #ifdef H_LINUX
 
+  #include <dlfcn.h>
+  #include <unistd.h> // readlink
+
+  const char* h_GetBasePath(char* path)
+  {
+    #if defined H_LIB
+      char filepath[H_MAX_PATH] = "";
+      Dl_info dli;
+      dladdr(__func__, &dli);
+      const char* slash = h_Strrchr(dli.dli_fname, '/');
+      if (slash)
+      {
+        int len = (slash + 1) - (char*)dli.dli_fname;
+        h_Strncpy(path, dli.dli_fname, len/*(slash + 1) - (char*)dli.dli_fname*/);
+        path[len] = 0;
+      }
+      else
+        h_Strcat(path, (char*)"./");
+    #elif defined H_FORMAT_EXE
+      char filepath[H_MAX_PATH] = "";
+      if (readlink("/proc/self/exe", filepath, H_MAX_PATH))
+      {
+        const char* slash = h_Strrchr(filepath, '/');
+        if (slash)
+        {
+          int len = (slash + 1) - (char*)filepath;
+          h_Strncpy(path, filepath, len/*(slash + 1) - (char*)filepath*/);
+          path[len] = 0;
+        }
+        else
+          h_Strcat(path, (char*)"./");
+      }
+    #else
+      h_Strcat(path, (char*)"./");
+    #endif
+    return path;
+  }
 
 #endif
 //----------------------------------------------------------------------

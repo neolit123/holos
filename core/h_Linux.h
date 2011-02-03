@@ -23,6 +23,7 @@
 
 //#include <windows.h>
 //#include "lib/h_Globals.h"
+#include "lib/h_String.h"
 
 #ifndef H_NOGUI
   #include <X11/Xlib.h>

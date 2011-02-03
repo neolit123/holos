@@ -28,8 +28,7 @@ using namespace std;
 #include "lib/h_BasePath.h"
 
 #ifdef H_DEBUG_LOG_UNIQUE
-  #include "time.h"
-  #include "lib/h_Stdlib.h"
+  #include "lib/h_Timestamp.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -60,9 +59,8 @@ class h_LogFile
         m_LogFileName[0] = '\0';
         h_GetBasePath(m_LogFileName);
         #ifdef H_DEBUG_LOG_UNIQUE
-          time_t t_int = time(0);
-          char t_str[33];
-          h_Strcat(m_LogFileName, h_Itoa(t_str, t_int));
+          h_Timestamp ts;
+          h_Strcat(m_LogFileName, ts.str());
           h_Strcat(m_LogFileName, (char*)"_");
         #endif
         h_Strcat(m_LogFileName, a_FileName/*H_DEBUG_LOG*/);
