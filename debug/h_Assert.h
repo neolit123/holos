@@ -34,6 +34,8 @@
   #define _H_SA_INLINE
 #endif
 
+#include <stdlib.h>
+
 #ifdef H_DEBUG /* H_DEBUG */
 
   /*
@@ -41,17 +43,22 @@
     runtime assertion
   */
   unsigned int _h_Assert () __attribute__ (( noinline ));
-  unsigned int _h_Assert (const unsigned int e, const char* file,
-                          const unsigned int line, const char* e_str)
+  void _h_Assert
+  (
+    const unsigned int e, const char* file,
+    const char* func, const unsigned int line,
+    const char* e_str
+  )
   {
     if (!e)
     {
-      dtrace("### H_ASSERT: " << file << ", " << line << ", (" << e_str << ")");
-      __builtin_exit(0);
+      dtrace("### H_ASSERT: " << file << ", " << func << ", " << line
+        << ", (" << e_str << ")");
+      exit(1);
     }
-    return 1;
+    return 0;
   }
-  #define h_Assert(e) _h_Assert((e), __FILE__, __LINE__, #e)
+  #define h_Assert(e) _h_Assert((e), __FILE__, __FUNC__, __LINE__, #e)
 
   /*
     h_StaticAssert()

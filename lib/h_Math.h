@@ -69,6 +69,21 @@ naming scheme:
 #define inv127      0.00787401575F
 #define inv256      0.00390625000F
 
+#define H_PI_180    0.0174532925199432957692369076848
+#define H_180_PI    57.295779513082320876798154814105
+
+
+#define h_Cabs(a, b) \
+  h_Sqrt((a)*(a) + (b)*(b))
+
+#define h_Carg(a, b) \
+  h_Atan2((b), (a))
+
+#define h_Radians(x) \
+  ((x)*H_PI_180)
+
+#define h_Degrees(x) \
+  ((x)*H_180_PI)
 
 /**
  * invert of x: (1/x)

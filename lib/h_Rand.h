@@ -27,7 +27,6 @@
   warning in g++: -Wno-long-long
 */
 
-
 #include "lib/h_Defines.h"
 #include "lib/h_Cpu.h"
 #include "lib/h_Math.h"
@@ -61,32 +60,45 @@ class h_Rand
 
     /// set seed
     _H_RAND_INLINE_ void seed (const unsigned int seed)
-    { _h_rnd = seed; }
+    {
+      _h_rnd = seed;
+    }
 
     /// get random float between 0, 1
     _H_RAND_INLINE_ float rand(void)
-    { return (float)((_h_rnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f; }
+    {
+      return (float)((_h_rnd *= 16807) & 0x7FFFFFFF) * 4.6566129e-010f;
+    }
 
     /// get random float between 0, x
     _H_RAND_INLINE_ float rand(const float range)
-    { return rand() * range; }
+    {
+      return rand() * range;
+    }
 
     /// get random float between -1, 1
     _H_RAND_INLINE_ float randSigned(void)
-    { return (float)(_h_rnd *= 16807) * 4.6566129e-010f; }
+    {
+      return (float)(_h_rnd *= 16807) * 4.6566129e-010f;
+    }
 
     /// get random float between -x, x
     _H_RAND_INLINE_ float randSigned(const float range)
-    { return randSigned() * range; }
+    {
+      return randSigned() * range;
+    }
 
     /// get random integer number between 0, x
     _H_RAND_INLINE_ unsigned int randInt(const unsigned int range=32767)
-    { return (unsigned int)(rand() * range); }
+    {
+      return (unsigned int)(rand() * range);
+    }
 
     /// get random integer from bit range (0, 31)
     _H_RAND_INLINE_ unsigned int randBit(const unsigned int range=16)
-    { return ((_h_rnd *= 16807) & 0x7FFFFFFF) >> (31 - range); }
-
+    {
+      return ((_h_rnd *= 16807) & 0x7FFFFFFF) >> (31 - range);
+    }
 };
 
 
