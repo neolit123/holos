@@ -16,7 +16,8 @@
   //----------
 
   #ifndef H_DESCRIPTOR
-    #define H_DESCRIPTOR static_Descriptor
+    //#define H_DESCRIPTOR static_Descriptor
+    #define H_DESCRIPTOR h_Descriptor
   #endif
 
   #ifndef H_INSTANCE

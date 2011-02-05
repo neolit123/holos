@@ -132,6 +132,9 @@
 		<Unit filename="..\..\core\impl\h_Vst_Instance_impl.h" />
 		<Unit filename="..\..\core\impl\h_Vst_impl.h" />
 		<Unit filename="..\..\core\impl\h_Win32_impl.h" />
+		<Unit filename="..\..\core\par\par_Db.h" />
+		<Unit filename="..\..\core\par\par_Float.h" />
+		<Unit filename="..\..\core\par\par_Integer.h" />
 		<Unit filename="..\..\debug\h_Assert.h" />
 		<Unit filename="..\..\debug\h_Console.h" />
 		<Unit filename="..\..\debug\h_Debug.h" />

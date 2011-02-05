@@ -11,33 +11,34 @@
 h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
 //: h_Instance_Base(a_Descriptor)
   {
-    m_Host = a_Host;
-    m_Descriptor = a_Descriptor;
-    m_AudioMaster = a_Host->getAudioMaster();
-    m_AEffect = a_Host->getAEffect();
+    m_Host            = a_Host;
+    m_Descriptor      = a_Descriptor;
+    m_Parameters      = m_Descriptor->getParameters();
+    m_AudioMaster     = a_Host->getAudioMaster();
+    m_AEffect         = a_Host->getAEffect();
     h_Memset(&m_MidiEventList,0,sizeof(h_VstEvents));
-    m_PlayState = 0;
-    m_SamplePos = 0;
-    m_SampleRate = 0;
-    m_BeatPos = 0;
-    m_Tempo = 0;
-    m_BlockSize = 0;
-    m_CurrentProgram = 0;
-    m_EditorRect = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
-    m_EditorIsOpen = false;
-    initParameters();
-
+    m_PlayState       = 0;
+    m_SamplePos       = 0;
+    m_SampleRate      = 0;
+    m_BeatPos         = 0;
+    m_Tempo           = 0;
+    m_BlockSize       = 0;
+    m_CurrentProgram  = 0;
+    m_EditorRect      = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
+    m_EditorIsOpen    = false;
+    //initParameters();
   }
 
 //----------
 
 h_Instance::~h_Instance()
   {
-    #ifndef H_NOAUTODELETE
-      deleteParameters();
-    #endif
-    if (m_AEffect) h_Free(m_AEffect); // !!!!!  created in entrypoint()
-    if (m_Host) delete m_Host;        // !!!!!  created in entrypoint()
+    //#ifndef H_NOAUTODELETE
+    //  deleteParameters();
+    //#endif
+    if (m_AEffect) h_Free(m_AEffect);       // !!!!!  created in entrypoint()
+    if (m_Host) delete m_Host;              // !!!!!  created in entrypoint()
+    if (m_Parameters) delete m_Parameters;  // !!!!!  created in entrypoint()
   }
 
 //----------------------------------------------------------------------
@@ -46,46 +47,46 @@ h_Instance::~h_Instance()
 //
 //----------------------------------------------------------------------
 
-void h_Instance::appendParameter(h_Parameter* a_Parameter)
-  {
-    int index = m_Parameters.size();
-    a_Parameter->setIndex(index);
-    m_Parameters.append(a_Parameter);
-  }
+//void h_Instance::appendParameter(h_Parameter* a_Parameter)
+//  {
+//    int index = m_Parameters->size();
+//    a_Parameter->setIndex(index);
+//    m_Parameters->append(a_Parameter);
+//  }
 
 //----------
 
-void h_Instance::deleteParameters(void)
-  {
-    for (int i=0; i<m_Parameters.size(); i++) delete m_Parameters[i];
-  }
+//void h_Instance::deleteParameters(void)
+//  {
+//    //for (int i=0; i<m_Parameters->size(); i++) { delete m_Parameters[i]; };
+//  }
 
 //----------
 
 // create parameters from descriptor
 
-void h_Instance::initParameters(void)
-  {
-    int numpar = m_Descriptor->m_NumParams;
-    for (int i=0; i<numpar; i++)
-    {
-      h_String name = m_Descriptor->m_Params[i].m_Name;
-      h_String label = m_Descriptor->m_Params[i].m_Label;
-      float value = m_Descriptor->m_Params[i].m_Value;
-      int flags = m_Descriptor->m_Params[i].m_Flags;
-      // todo: param type flag
-      h_Parameter* par;
-      switch (m_Descriptor->m_Params[i].m_Type)
-      {
-        case pt_None:
-          par = new h_Parameter(name,label,flags,value);
-          break;
-      }
-
-      appendParameter(par);
-
-    }
-  }
+//void h_Instance::initParameters(void)
+//  {
+//    //int numpar = m_Descriptor->m_NumParams;
+//    int numpar = m_Descriptor->m_Parameters.size();
+//    for (int i=0; i<numpar; i++)
+//    {
+//      h_String name  = m_Descriptor->m_Parameters[i]->getName();
+//      h_String label = m_Descriptor->m_Parameters[i]->getLabel();
+//      float value    = m_Descriptor->m_Parameters[i]->getInternal();
+//      int flags      = m_Descriptor->m_Parameters[i]->getFlags();
+//      // todo: param type flag
+//      h_Parameter* par = new h_Parameter();
+//      //switch (m_Descriptor->m_Params[i].m_Type)
+//      //{
+//      //  case pt_None:
+//      //    par = new h_Parameter(name,label,flags,value);
+//      //    break;
+//      //}
+//      appendParameter(par);
+//
+//    }
+//  }
 
 //----------
 
@@ -93,10 +94,10 @@ void h_Instance::initParameters(void)
 
 void h_Instance::prepareParameters(void)
   {
-    int num = m_Parameters.size();
+    int num = m_Parameters->size();
     for (int i=0; i<num; i++)
     {
-      h_Parameter* par = m_Parameters[i];
+      h_Parameter* par = m_Parameters->item(i);//[i];
       do_HandleParameter(par);
     }
   }
@@ -123,7 +124,7 @@ void h_Instance::prepareParameters(void)
 void h_Instance::notifyParameter(h_Parameter* aParameter)
   {
     int index = aParameter->getIndex();
-    float value = aParameter->do_GetValue();//getValue();
+    float value = aParameter->getInternal();//getValue();
     //host_Automate(index,value); // setParameterAutomated();
     m_Host->vst_Automate(index,value); // setParameterAutomated();
   }
@@ -335,7 +336,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetParamLabel: // 06
         trace_vst("vst dispatcher: effGetParamLabel");
-        m_Parameters[index]->do_GetLabel((char*)ptr);
+        m_Parameters->item(index)->getLabel((char*)ptr);
         //h_Strcpy((char*)ptr,"label");
         break;
 
@@ -347,7 +348,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetParamDisplay: // 07
         trace_vst("vst dispatcher: effGetParamDisplay");
-        m_Parameters[index]->do_GetDisplay((char*)ptr);
+        m_Parameters->item(index)->getDisplay((char*)ptr);
         //h_Strcpy((char*)ptr,"display");
         break;
 
@@ -359,7 +360,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetParamName: // 08
         trace_vst("vst dispatcher: effGetParamName");
-        m_Parameters[index]->do_GetName((char*)ptr);
+        m_Parameters->item(index)->getName((char*)ptr);
         //h_Strcpy((char*)ptr,"name");
         break;
 
@@ -945,7 +946,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
 float h_Instance::vst_getParameter(VstInt32 index)
   {
-    return m_Parameters[index]->do_GetValue();
+    return m_Parameters->item(index)->getInternal();
   }
 
 //----------
@@ -962,8 +963,8 @@ float h_Instance::vst_getParameter(VstInt32 index)
 
 void h_Instance::vst_setParameter(VstInt32 index, float value)
   {
-    h_Parameter* par = m_Parameters[index];
-    par->do_SetValue(value);
+    h_Parameter* par = m_Parameters->item(index);
+    par->setInternal(value);
     do_HandleParameter(par);
     // notify editor
   }

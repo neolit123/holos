@@ -16,9 +16,14 @@ h_Format::~h_Format()
 
 //----------------------------------------
 
-h_Descriptor* h_Format::getDescriptor(void)
+//h_Descriptor* h_Format::getDescriptor(void)
+//  {
+//    return &H_DESCRIPTOR;
+//  }
+
+h_Descriptor* h_Format::createDescriptor(void)
   {
-    return &H_DESCRIPTOR;
+    return new H_DESCRIPTOR();
   }
 
 //----------
@@ -37,7 +42,8 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
     trace("h_Format::entrypoint");
     AEffect*      effect  = (AEffect*)h_Malloc( sizeof(AEffect) );
     h_Host*       host    = new h_Host(audioMaster,effect);
-    h_Descriptor* desc    = getDescriptor();
+    //h_Descriptor* desc    = getDescriptor();
+    h_Descriptor* desc    = createDescriptor();
     h_Instance*   inst    = createInstance(host,desc);
 
     // instance must remember the above effect and host objects,
@@ -61,8 +67,10 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
     effect->flags                   = effFlagsCanReplacing;
     effect->version                 = 0;
     effect->uniqueID                = desc->m_UniqueId;//H_MAGIC + 0x0000;
-    effect->numPrograms             = desc->m_NumProgs;
-    effect->numParams               = desc->m_NumParams;
+    //effect->numPrograms             = desc->m_NumProgs;
+    //effect->numParams               = 0;//desc->m_NumParams;
+    effect->numPrograms             = 0;
+    effect->numParams               = desc->m_Parameters.size();
     effect->numInputs               = desc->m_NumInputs;
     effect->numOutputs              = desc->m_NumOutputs;
     effect->initialDelay            = 0;

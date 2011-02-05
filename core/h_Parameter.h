@@ -78,17 +78,23 @@ class h_Parameter
       {
       }
 
-    virtual void  setValue(float a_Value)     { m_Value=a_Value; }    // transformed
-    virtual float getValue(void)              { return m_Value; }     // transformed
-    virtual void  setIndex(int a_Index)       { m_Index=a_Index; }
-    virtual int   getIndex(void)              { return m_Index; }
-    //
-    virtual void  do_Reset(void)              { m_Value=m_Default;}
-    virtual void  do_SetValue(float a_Value)  { m_Value=a_Value; }    // 0..1
-    virtual float do_GetValue(void)           { return m_Value; }     // 0..1
-    virtual void  do_GetName(char* buf)       { h_Strcpy(buf,m_Name.ptr()); }
-    virtual void  do_GetLabel(char* buf)      { h_Strcpy(buf,m_Label.ptr()); }
-    virtual void  do_GetDisplay(char* buf)    { h_Ftoa(buf,getValue(),5); }
+    virtual void      setIndex(int a_Index)       { m_Index=a_Index; }
+    virtual void      setInternal(float a_Value)  { m_Value=a_Value; }    // 0..1
+    virtual void      setValue(float a_Value)     { m_Value=a_Value; }    // transformed
+
+    virtual void      getName(char* buf)          { h_Strcpy(buf,m_Name.ptr()); }
+    virtual void      getLabel(char* buf)         { h_Strcpy(buf,m_Label.ptr()); }
+    virtual int       getFlags(void)  { return m_Flags; }     // 0..1
+    virtual float     getValue(void)              { return m_Value; }     // transformed
+    virtual float     getInternal(void)           { return m_Value; }     // 0..1
+    virtual void      getDisplay(char* buf)       { h_Ftoa(buf,getValue(),5); }
+    virtual int       getIndex(void)              { return m_Index; }
+
+    virtual void      reset(void)                 { m_Value=m_Default;}
+
+    virtual h_String  getName(void)               { return m_Name; }
+    virtual h_String  getLabel(void)              { return m_Label; }
+
 };
 
 //----------------------------------------------------------------------

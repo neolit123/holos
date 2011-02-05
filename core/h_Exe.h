@@ -38,6 +38,7 @@ class h_Instance : public h_Instance_Base
     h_Descriptor* m_Descriptor;
     h_Rect        m_EditorRect;
     bool          m_EditorIsOpen;
+
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     //: h_Instance_Base(h_Descriptor* a_Descriptor);
@@ -72,7 +73,8 @@ class h_Format
   public:
     h_Format();
     ~h_Format();
-    h_Descriptor* getDescriptor(void);
+    //h_Descriptor* getDescriptor(void);
+    h_Descriptor* createDescriptor(void);
     h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
     int           entrypoint(void* a_Ptr);
     h_String      getName(void) { return "exe"; }

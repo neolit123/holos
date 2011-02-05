@@ -46,32 +46,54 @@ class my_Widget : public h_Widget
 
 //----------------------------------------------------------------------
 
-h_ParamDescr my_Params[] =
-{
-  {"param1","",pt_None,    PF_DEFAULT, 0,   /*0,1,0*/},
-  {"param2","",pt_None,    PF_DEFAULT, 0.5,   /*0,1,0*/},
-  {"param3","",pt_None,    PF_DEFAULT, 1,   /*0,1,0*/}
-//  {"param2","",pt_Float,   PF_DEFAULT, 0.5, 0,1,0 },
-//  {"param3","",pt_FloatPow,PF_DEFAULT, 1.0, 0,1,0, 2}
-};
+//h_ParamDescr my_Params[] =
+//{
+//  {"param1","",pt_None,    PF_DEFAULT, 0,   /*0,1,0*/},
+//  {"param2","",pt_None,    PF_DEFAULT, 0.5,   /*0,1,0*/},
+//  {"param3","",pt_None,    PF_DEFAULT, 1,   /*0,1,0*/}
+////  {"param2","",pt_Float,   PF_DEFAULT, 0.5, 0,1,0 },
+////  {"param3","",pt_FloatPow,PF_DEFAULT, 1.0, 0,1,0, 2}
+//};
+//
+////----------------------------------------------------------------------
+//
+//h_Descriptor my_Descriptor =
+//{
+//  "build.cpp",
+//  "ccernn",
+//  "holos test plugin",
+//  0,
+//  H_MAGIC,
+//  df_HasEditor | df_ReceiveMidi,//df_None,
+//  2,    // inputs
+//  2,    // outputs
+//  3,    // parameters
+//  0,    // programs
+//  my_Params,
+//  H_NULL,
+//  h_Rect(512,256)
+//};
+//
+//#define H_DESCRIPTOR my_Descriptor
 
-//----------------------------------------------------------------------
-
-h_Descriptor my_Descriptor =
+class my_Descriptor : public h_Descriptor
 {
-  "build.cpp",
-  "ccernn",
-  "holos test plugin",
-  0,
-  H_MAGIC,
-  df_HasEditor | df_ReceiveMidi,//df_None,
-  2,    // inputs
-  2,    // outputs
-  3,    // parameters
-  0,    // programs
-  my_Params,
-  H_NULL,
-  h_Rect(512,256)
+  public:
+
+    my_Descriptor()
+    : h_Descriptor()
+      {
+        m_Name        = "build.cpp";
+        m_Author      = "ccernn";
+        m_Product     = "holos test plugin";
+        m_Version     = 0;
+        m_UniqueId    = H_MAGIC;
+        m_Flags       = df_HasEditor | df_ReceiveMidi; //df_None;
+        m_NumInputs   = 2;    // inputs
+        m_NumOutputs  = 2; // outputs
+        m_EditorRect  = h_Rect(0,0,255,255);
+        m_Parameters.append( new h_Parameter("param1","",0,0) );
+      }
 };
 
 #define H_DESCRIPTOR my_Descriptor

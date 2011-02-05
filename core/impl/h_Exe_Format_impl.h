@@ -15,9 +15,14 @@ h_Format::~h_Format()
 
 //----------------------------------------
 
-h_Descriptor* h_Format::getDescriptor(void)
+//h_Descriptor* h_Format::getDescriptor(void)
+//  {
+//    return &H_DESCRIPTOR;
+//  }
+
+h_Descriptor* h_Format::createDescriptor(void)
   {
-    return &H_DESCRIPTOR;
+    return new H_DESCRIPTOR();
   }
 
 //----------
@@ -33,7 +38,8 @@ int h_Format::entrypoint(void* a_Ptr)
   {
 
     h_Host* host = new h_Host();
-    h_Descriptor* descriptor = getDescriptor();
+    //h_Descriptor* descriptor = getDescriptor();
+    h_Descriptor* descriptor = createDescriptor();
     h_Instance* instance = createInstance(host,descriptor);
     #ifndef H_NOGUI
     if (descriptor->m_Flags & df_HasEditor)
@@ -45,6 +51,7 @@ int h_Format::entrypoint(void* a_Ptr)
     }
     #endif
     delete instance;
+    delete descriptor;
     delete host;
     return 0;
   }

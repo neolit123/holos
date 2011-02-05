@@ -110,7 +110,8 @@ class h_Instance : public h_Instance_Base
     h_Rect              m_EditorRect;
     bool                m_EditorIsOpen;
     ERect               m_ERect;
-    h_Parameters        m_Parameters;
+    //h_Parameters        m_Parameters;
+    h_Parameters*       m_Parameters;
   public:
     // accessors
     inline int    getPlayState(void)                    { return m_PlayState; }
@@ -186,7 +187,8 @@ class h_Format //: public h_Format_Base
     h_Format();
     ~h_Format();
   public:
-    h_Descriptor* getDescriptor(void);
+    //h_Descriptor* getDescriptor(void);
+    h_Descriptor* createDescriptor(void);
     h_Instance*   createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     AEffect*      entrypoint(audioMasterCallback audioMaster);
     h_String      getName(void) { return "vst"; }
