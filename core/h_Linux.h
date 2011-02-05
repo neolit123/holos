@@ -35,19 +35,26 @@
 class h_Platform
 {
   public:
-    #ifndef H_NOGUI
-    Display*  m_WinDisplay;
-    Window    m_WinRoot;
-    int       m_WinScreen;
-    Visual*   m_WinVisual;
-    int       m_WinDepth;
-    Colormap  m_WinColormap;
-    #endif
-  public:
     h_Platform();
     ~h_Platform();
     h_String getName(void) { return "linux"; }
+    #ifndef H_NOGUI
+      Display* openDisplay(void);
+      void     closeDisplay(Display* a_Display);
+    #endif
 };
 
 //----------------------------------------------------------------------
 #endif
+
+
+/*
+
+http://www.equalizergraphics.com/documentation/parallelOpenGLFAQ.html
+
+X11 is also not thread safe by default. You either have to call XInitThreads
+during initialization, or to use one Display connection per thread. In the
+second case you can't use the glXContext from one Display connection with
+another connection.
+
+*/

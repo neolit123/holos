@@ -94,6 +94,9 @@ class h_Painter_Win32 //: public h_Painter_Base
 
   public:
 
+    //TODO:
+    //h_Painter_Win32(HWND a_Window)
+
     h_Painter_Win32(void* a_Ptr=H_NULL)
     //: h_Painter()
       {

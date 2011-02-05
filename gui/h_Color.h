@@ -37,13 +37,14 @@ typedef unsigned long h_Color;
 
   h_Color h_xcolor(unsigned char r, unsigned char g, unsigned char b)
       {
-        XColor xcol;
-        xcol.red   = r << 8;
-        xcol.green = g << 8;
-        xcol.blue  = b << 8;
-        xcol.flags = (DoRed or DoGreen or DoBlue);
-        XAllocColor( static_Core.m_Platform->m_WinDisplay, static_Core.m_Platform->m_WinColormap,&xcol);
-        return h_Color(xcol.pixel);
+//        XColor xcol;
+//        xcol.red   = r << 8;
+//        xcol.green = g << 8;
+//        xcol.blue  = b << 8;
+//        xcol.flags = (DoRed or DoGreen or DoBlue);
+//        XAllocColor( static_Core.m_Platform->m_WinDisplay, static_Core.m_Platform->m_WinColormap,&xcol);
+//        return h_Color(xcol.pixel);
+        return (r<<16) + (g<<8) + b;
       }
 
   #define H_RGB(r,g,b) h_xcolor(r,g,b)

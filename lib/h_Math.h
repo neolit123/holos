@@ -94,7 +94,7 @@ naming scheme:
  * invert of x: (1/x) - fast / inaccurate
  */
 H_MATH_INLINE
-float h_InverseF(register float x)
+float h_InverseF(const float x)
 {
   register union
   {

@@ -118,16 +118,24 @@ class h_Painter_Linux
   // if a_Ptr=NULL : window-painter, else surface-painter
 
     //h_Painter(h_PaintTarget* a_PaintTarget)
-    h_Painter_Linux(void* a_Ptr=H_NULL)
+
+    h_Painter_Linux(Display* a_Display, Drawable a_Drawable)
       {
-        m_Display   = static_Core.m_Platform->m_WinDisplay;
+
+        // !!!!!!!!!!
+
+        //m_Display = static_Core.m_Platform->m_WinDisplay;
+        m_Display = a_Display;
+        m_Drawable  = a_Drawable;
+
+        // !!!!!!!!!!
 
 //        if (window) m_Drawable = (Drawable)window;
 //        else m_Drawable = static_Core.m_Platform->m_WinRoot;
 
-        m_Drawable  = (Drawable)a_Ptr;
-        if (!m_Drawable) m_Drawable = static_Core.m_Platform->m_WinRoot;
 
+        //if (!m_Drawable) m_Drawable = static_Core.m_Platform->m_WinRoot;
+        if (!m_Drawable) m_Drawable = XDefaultRootWindow(m_Display);
         m_GC        = XCreateGC(m_Display,m_Drawable,0,NULL);
         m_Font      = XQueryFont(m_Display,XGContextFromGC(m_GC));
         m_ClipRect  = h_Rect(0,0,0,0);

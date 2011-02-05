@@ -21,6 +21,10 @@
 #define h_Window_Win32_included
 //----------------------------------------------------------------------
 
+//TODO:
+// http://msdn.microsoft.com/en-us/library/ms644898%28v=vs.85%29.aspx
+// SetWindowLong -> SetWindowLongPtr
+
 // needs static_Core
 
 #include <windows.h>
@@ -178,6 +182,7 @@ class h_Window_Win32 : public h_Widget,
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
 
         // todo: 64bit
+        // SetWindowLongPtr
         SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
 
         //DragAcceptFiles(m_WinHandle,true);
@@ -396,6 +401,7 @@ class h_Window_Win32 : public h_Widget,
     virtual void reparent(void* a_Parent)
       {
         //m_WinParent = (HWND)a_Parent;
+        // SetWindowLongPtr
         SetWindowLong(m_WinHandle,GWL_STYLE,(GetWindowLong(m_WinHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
         SetParent(m_WinHandle, (HWND)a_Parent);
       }

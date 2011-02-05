@@ -19,14 +19,59 @@
 
 //----------------------------------------------------------------------
 
+char* my_str[] =
+{
+  (char*)"string1",
+  (char*)"txt2",
+  (char*)"line3"
+};
+
+// unspecified defaults to 0?
+h_Parameter2 my_Params2[] =
+{
+  { "param1", 0.5 },
+  { "param2", 0.1, h_par_pow2 },
+  { "param3", 2,   H_NULL/*h_par_int*/, 0,1,2, my_str }
+};
+
+//----------------------------------------------------------------------
+
 class my_Widget : public h_Widget
 {
+  private:
+
   public:
 
     my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
+        // test
+
+        trace( "m_Name: " << my_Params2[0].m_Name.ptr() );
+        trace( "m_Value: " << my_Params2[0].m_Value );
+        trace( hex << "m_Func: 0x" << (int)my_Params2[0].m_Func );
+        trace( "m_Min: " << my_Params2[0].m_Min );
+        trace( "m_Max: " << my_Params2[0].m_Max );
+        trace( "m_Step: " << my_Params2[0].m_Step );
+        trace( "m_Strings: " << my_Params2[0].m_Strings );
+
+        // getValue
+        float val = my_Params2[1].m_Value;
+        trace( "val: " << val );
+        float val2 = my_Params2[1].getValue(val);
+        trace( "getValue: " << val2 );
+
+        // setValue
+
+        // getDisplay:
+
+        float val3 = my_Params2[2].getValue(val);
+        trace( "val3: " << val3 );
+        char* txt = my_Params2[2].m_Strings[ (int)val3 ];
+        trace( "strings: " << txt );
+
       }
+
     virtual ~my_Widget()
       {
       }

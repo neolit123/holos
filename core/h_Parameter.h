@@ -23,6 +23,7 @@
 
 #include "lib/h_Array.h"
 #include "lib/h_String.h"
+#include "lib/h_Math.h" // pow
 
 //----------------------------------------------------------------------
 
@@ -100,6 +101,57 @@ class h_Parameter
 //----------------------------------------------------------------------
 
 typedef h_Array<h_Parameter*> h_Parameters;
+
+
+
+//
+//----------------------------------------------------------------------
+//
+// test !!!
+//
+//----------------------------------------------------------------------
+//
+
+struct h_Parameter2;
+
+typedef float (*h_parameter_func)(h_Parameter2* par, float val);
+
+//class h_Parameter2
+struct h_Parameter2
+{
+  //public:
+
+    h_String          m_Name;
+    float             m_Value;
+    h_parameter_func  m_Func;
+    float             m_Min;
+    float             m_Max;
+    float             m_Step;
+    char**            m_Strings;
+    //int               m_Index;
+    //h_parameter_func  m_InvFunc;
+
+  void settValue(float a_Value)
+    {
+      //if (m_InvFunc) m_Value = m_InvFunc(a_Value);
+      //else m_Value = a_Value;
+    }
+
+  // get value is used in:
+  // - h_Instance.do_HandleParameter
+  // - getDisplay
+
+  float getValue(float a_Value)
+    {
+      if (m_Func) return m_Func(this,a_Value);
+      return m_Value;
+    }
+
+};
+
+// various par_cb functions
+float h_par_pow2(h_Parameter2* par, float val) { return h_Pow(val,2); }
+float h_par_int(h_Parameter2* par, float val) { return val; } // ???
 
 //----------------------------------------------------------------------
 #endif

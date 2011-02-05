@@ -1,3 +1,22 @@
+/*
+  Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
+
+  This file is part of the Holos Library.
+  http://holos.googlecode.com
+
+  the Holos Library is free software: you can redistribute it and/or modify
+  it under the terms of the Holos Library License, either version 1.0
+  of the License, or (at your option) any later version.
+
+  the Holos Library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See LICENSE_HOLOS for more details.
+
+  You should have received a copy of the Holos Library License
+  If not, see <http://holos.googlecode.com/>.
+*/
+//----------------------------------------------------------------------
 #ifndef h_Window_Linux_included
 #define h_Window_Linux_included
 //----------------------------------------------------------------------
@@ -99,10 +118,10 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 //----------------------------------------------------------------------
 
-static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
-  {
-    return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
-  }
+//static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
+//  {
+//    return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
+//  }
 
 //----------------------------------------------------------------------
 //
@@ -123,7 +142,6 @@ class h_Window_Linux : public h_Widget,
   friend void* h_linux_threadProc(void* data);
   friend void* h_linux_timerProc(void* data);
   //friend class axFormatVst;
-
 
   private:
 
@@ -150,8 +168,14 @@ class h_Window_Linux : public h_Widget,
     XColor      m_Black;
 
     bool        m_Embedded;
-    int         m_Width;
-    int         m_Height;
+    //int         m_Width;
+    //int         m_Height;
+    long        m_EventMask;
+    int         m_Screen;
+    Visual*     m_Visual;
+    int         m_Depth;
+    Colormap    m_Colormap;
+    Window      m_Root;
 
   public:
 
@@ -195,32 +219,34 @@ class h_Window_Linux : public h_Widget,
 
   public:
 
-    //h_Window(int a_Width, int a_Height, void* a_Parent/*=NULL*/)
-    //: h_Widget(this,h_Rect(a_Width,a_Height),wa_None)
+    // if a_Parent == H_NULL, a standalone window is created,
+    // else a_Parent is the parent window (embedded)
+    //
+
     h_Window_Linux(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
     : h_Widget(a_Listener,a_Rect)
       {
 
-        m_Display = static_Core.m_Platform->m_WinDisplay;
-        m_Width = a_Rect.w;
-        m_Height = a_Rect.h;
+        //m_Display = static_Core.m_Platform->m_WinDisplay;
+        m_Display = static_Core.m_Platform->openDisplay();
 
         if (a_Parent)
         {
           m_Embedded = true;
-          //m_Parent = *(Window*)a_Parent;
           m_Parent = (Window)a_Parent;
         }
         else
         {
           m_Embedded = false;
-          m_Parent = static_Core.m_Platform->m_WinRoot;
+          //m_Parent = static_Core.m_Platform->m_WinRoot;
+          m_Parent = XDefaultRootWindow(m_Display);
         }
 
         //int screen = H_INTERFACE->getScreen();
         //trace("m_Display: " << m_Display);
 
 //        #ifdef H_OPENGL
+
 //          int fbcount;
 //          GLXFBConfig *fbc = glXChooseFBConfig(m_Display,H_INTERFACE->getScreen(),h_window_gl_attr,&fbcount);
 //          //dump_config(m_Display,fbc,0/*fbcount)*/);
@@ -230,32 +256,35 @@ class h_Window_Linux : public h_Widget,
 //          Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
 
 //        #else
-          Visual*  visual   = static_Core.m_Platform->m_WinVisual;
-          int      depth    = static_Core.m_Platform->m_WinDepth;
-          Colormap colormap = static_Core.m_Platform->m_WinColormap;
+          m_Root      = XDefaultRootWindow(m_Display);
+          m_Screen    = XDefaultScreen(m_Display);                // the default screen number referenced by the XOpenDisplay() function
+          m_Visual    = XDefaultVisual(m_Display,m_Screen);
+          m_Depth     = XDefaultDepth(m_Display,m_Screen);
+          m_Colormap  = XCreateColormap(m_Display,m_Root,m_Visual,AllocNone);
 //        #endif
 
         //Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
-        long event_mask = ExposureMask
-                        | ButtonPressMask
-                        | ButtonReleaseMask
-                        | PointerMotionMask
-                        | KeyPressMask
-                        | KeyReleaseMask
-                        | StructureNotifyMask
-                        | PropertyChangeMask
-                        | ClientMessage;
+        long m_WinEventMask = ExposureMask
+                            | ButtonPressMask
+                            | ButtonReleaseMask
+                            | PointerMotionMask
+                            | KeyPressMask
+                            | KeyReleaseMask
+                            | StructureNotifyMask
+                            | PropertyChangeMask
+                            | ClientMessage;
 
         XSetWindowAttributes  swa;
-        swa.event_mask        = event_mask;//StructureNotifyMask;
+        swa.event_mask        = m_WinEventMask;//StructureNotifyMask;
         swa.background_pixmap = None;
-        swa.colormap          = colormap;
         swa.border_pixel      = 0;
+        swa.colormap          = m_Colormap;
 
         //CWBackPixmap, CWBackPixel
         //CWBorderPixmap, CWBorderPixel, CWBitGravity, CWWinGravity, CWBackingStore
         //CWBackingPlanes, CWBackingPixel, CWOverrideRedirect, CWSaveUnder,
         //CWDontPropagate, CWCursor
+
         unsigned long swa_mask  = CWEventMask
                                 | CWBackPixmap
                                 | CWBorderPixel
@@ -265,11 +294,11 @@ class h_Window_Linux : public h_Widget,
           m_Display,
           m_Parent,//H_INTERFACE->getRoot(),
           a_Rect.x, a_Rect.y,
-          m_Width, m_Height,//100,100,
-          0,
-          depth,//vi->depth,
+          a_Rect.w, a_Rect.h,//100,100,
+          0, // border width
+          m_Depth,//vi->depth,
           InputOutput,
-          visual,//vi->visual,
+          m_Visual,//vi->visual,
           swa_mask,//CWBorderPixel|CWColormap|CWEventMask,
           &swa
         );
@@ -302,37 +331,36 @@ class h_Window_Linux : public h_Widget,
           XSetWMProtocols(m_Display,m_Window,&m_DeleteWindowAtom,1);
         }
 
-        m_Painter  = new h_Painter((void*)m_Window);       /// ?????
+        m_Painter  = new h_Painter(m_Display,m_Window);       /// ?????
 
-        #ifdef H_ALPHA
-          XWindowAttributes winattralpha;
-          XGetWindowAttributes(m_Display,m_Window,&winattralpha );
-          XRenderPictFormat *format = XRenderFindVisualFormat(m_Display,winattralpha.visual);
-          XRenderPictureAttributes pictattralpha;
-          m_Picture = XRenderCreatePicture(m_Display,m_Window,format,None,&pictattralpha);
-          m_Painter->setPicture( m_Picture );
-          //bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
-        #endif
+        //#ifdef H_ALPHA
+        //  XWindowAttributes winattralpha;
+        //  XGetWindowAttributes(m_Display,m_Window,&winattralpha );
+        //  XRenderPictFormat *format = XRenderFindVisualFormat(m_Display,winattralpha.visual);
+        //  XRenderPictureAttributes pictattralpha;
+        //  m_Picture = XRenderCreatePicture(m_Display,m_Window,format,None,&pictattralpha);
+        //  m_Painter->setPicture( m_Picture );
+        //  //bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
+        //#endif
 
-        #ifdef H_OPENGL
-          m_GLXWindow = glXCreateWindow(m_Display,fbc[0],m_Window,0);
-          m_Renderer = new h_Renderer(this);
-          //m_Renderer->setRenderTarget(this);
-        #endif
+        //#ifdef H_OPENGL
+        //  m_GLXWindow = glXCreateWindow(m_Display,fbc[0],m_Window,0);
+        //  m_Renderer = new h_Renderer(this);
+        //  //m_Renderer->setRenderTarget(this);
+        //#endif
 
         // timer
         m_TimerRunning = false;
         m_TimerSleep = 30; // 30 ms between each timer signal
 
         // (invisible) mouse cursor
-        m_BitmapNoData = XCreateBitmapFromData(m_Display,m_Window,noData,8,8);
-        m_CurrentCursor    = -1;
-        m_Black.red    = 0;
-        m_Black.green  = 0;
-        m_Black.blue   = 0;
-        m_Black.flags  = (DoRed or DoGreen or DoBlue);
-        //XAllocColor(m_Display,XDefaultColormap(mDisplay,0),&mBlack);
-        XAllocColor(m_Display,colormap,&m_Black);
+        m_BitmapNoData  = XCreateBitmapFromData(m_Display,m_Window,noData,8,8);
+        m_CurrentCursor = -1;
+        m_Black.red     = 0;
+        m_Black.green   = 0;
+        m_Black.blue    = 0;
+        m_Black.flags   = (DoRed or DoGreen or DoBlue);
+        XAllocColor(m_Display,m_Colormap,&m_Black);
 
         // event handler thread
         if (m_Embedded)
@@ -375,6 +403,9 @@ class h_Window_Linux : public h_Widget,
         // (whihc means that a window is automatically destroyed when a host closes the editor?)
 
         if (!m_Embedded) XDestroyWindow(m_Display,m_Window);
+
+        static_Core.m_Platform->closeDisplay(m_Display);
+
       }
 
     //----------------------------------------
@@ -412,8 +443,9 @@ class h_Window_Linux : public h_Widget,
     virtual void show(void)
       {
         XMapWindow(m_Display,m_Window);
-        XEvent event;
-        XIfEvent(m_Display,&event,h_WaitForNotify,(char*)m_Window);
+//        XEvent event;
+//        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
+        //XIfEvent(m_Display,&event,h_WaitForNotify,(char*)m_Window);
       }
 
     //----------
@@ -621,15 +653,22 @@ class h_Window_Linux : public h_Widget,
 
     //----------
 
+    // todo: check if the event is really meant for us???
+    // do we need to handle the various windows ourselves?
+    // or should we have a separate Display* connection for each window?
+
     virtual void eventLoop(void)
       {
         XEvent ev;
         while (1)
         {
           XNextEvent(m_Display,&ev);
-          unsigned int data = ev.xclient.data.l[0];
-          if (ev.type==ClientMessage && data==m_DeleteWindowAtom) { break; }
-          else eventHandler(&ev);
+          //if (ev.xany.window == m_Window)
+          //{
+            unsigned int data = ev.xclient.data.l[0];
+            if (ev.type==ClientMessage && data==m_DeleteWindowAtom) { break; }
+            else eventHandler(&ev);
+          //}
         }
       }
 
@@ -788,28 +827,41 @@ typedef h_Window_Linux h_Window;
 //
 //----------------------------------------------------------------------
 
+// ignore messages not meant for our window?
+
 void* h_linux_threadProc(void* data)
   {
     h_Window* win = (h_Window*)data;
+    trace("threadProc. win=" << win);
     if (win)
     {
       XEvent ev;
       while (1)
       {
-        XNextEvent(win->m_Display,&ev);
-        if (ev.type==ClientMessage)
-        {
-          //wtrace("client message");
-          XClientMessageEvent *cev = (XClientMessageEvent *)&ev;
-          unsigned int data = ev.xclient.data.l[0];
-          if (cev->message_type==win->m_CustomEventAtom)
+        XNextEvent(win->m_Display,&ev);                                         // win->m_Display
+        //XWindowEvent(win->m_Display,win->m_Window,win->m_EventMask,&ev );
+
+        trace("threadProc.event. win=" << ev.xany.window);
+
+        //if (ev.xany.window == win->m_Window)
+        //{
+
+          if (ev.type==ClientMessage)
           {
-            if (data==ts_Kill) { /*wtrace("ts_Kill");*/ pthread_exit(NULL); }
-            else win->eventHandler(&ev);
-          }
-        } //ClientMessage
-        else win->eventHandler(&ev);
-      }
+            //wtrace("client message");
+            XClientMessageEvent *cev = (XClientMessageEvent *)&ev;
+            unsigned int data = ev.xclient.data.l[0];
+            if (cev->message_type==win->m_CustomEventAtom)                        // win->m_CustomEventAtom
+            {
+              if (data==ts_Kill) { /*wtrace("ts_Kill");*/ pthread_exit(NULL); }
+              else win->eventHandler(&ev);                                        // win->eventHandler
+            }
+          } //ClientMessage
+          else win->eventHandler(&ev);                                            // win->eventHandler
+        }
+
+      //} // = win
+
     }
     return NULL;
   }

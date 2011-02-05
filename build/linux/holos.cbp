@@ -257,6 +257,7 @@
 		<Unit filename="../../holos_impl.h" />
 		<Unit filename="../../lib/h_Array.h" />
 		<Unit filename="../../lib/h_BasePath.h" />
+		<Unit filename="../../lib/h_ComplexNumber.h" />
 		<Unit filename="../../lib/h_Cpu.h" />
 		<Unit filename="../../lib/h_DMC.h" />
 		<Unit filename="../../lib/h_Defines.h" />
@@ -279,6 +280,7 @@
 		<Unit filename="../../lib/h_Stream.h" />
 		<Unit filename="../../lib/h_String.h" />
 		<Unit filename="../../lib/h_Thread.h" />
+		<Unit filename="../../lib/h_Timestamp.h" />
 		<Unit filename="../../lib/h_Types.h" />
 		<Unit filename="../../lib/h_Utils.h" />
 		<Unit filename="../../script/h_Compiler.h" />
