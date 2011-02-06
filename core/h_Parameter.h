@@ -102,6 +102,75 @@ class h_Parameter
 
 typedef h_Array<h_Parameter*> h_Parameters;
 
+/*
+//----------------------------------------------------------------------
+class h_ParFloat : public h_Parameter
+{
+  protected:
+    float mRange;
+    float mInvRange;
+    float mNumSteps;
+    float mStepSize;
+    float mHalfStep;
+
+  public:
+    float mMin, mMax, mStep;
+
+  public:
+    h_ParFloat(h_ParameterListener* aListener, const h_String aName,
+               const h_String aLabel="", const float aValue=0,
+               const float aMin=0.f, const float aMh_=1.f,
+               const float aStep=0.f)
+    : h_Parameter(aListener, aName, aLabel)
+    {
+      setup(aValue, aMin, aMh_, aStep);
+    }
+
+    void setup(const float aVal, const float aMin, const float aMh_,
+               const float aStep)
+    {
+      mMin      = aMin;                 // 2
+      mMax      = aMh_;                 // 4
+      mStep     = aStep;                // 0.5
+      mRange    = mMax-mMin;            // 4-2 = 2
+      mInvRange = 1/mRange;
+      if(mStep > 0)
+      {
+        mNumSteps = 1 + (mRange/mStep); // 1+(2/0.5)  = 1+4   = 5
+        mStepSize = 1 / (mNumSteps-1);  // 1/(5-1)    = 1/4   = 0.25
+        mHalfStep = 0.5 * mStepSize;    // 0.5 * 0.25 = 0.125
+      }
+      else
+      {
+        mNumSteps = 1;
+        mStepSize = 1;
+        mHalfStep = 0;
+      }
+      setValue(aVal);
+    }
+
+    virtual void setValue(const float aValue)
+    {
+      mValue = ((aValue-mMin)*mInvRange);    
+    }
+    
+    virtual float getValue(void)
+    {
+      if(mStep > 0)
+      {
+        const float n = mValue*mNumSteps;
+        const int st = h_MinInt((int)n, (int)(mNumSteps - 1));
+        return mMin + (st*mStep);
+      }
+      else
+      {
+        return mMin + (mValue*mRange);
+      }
+    }
+};
+
+*/
+
 
 
 //
@@ -154,8 +223,12 @@ float h_par_pow2(h_Parameter2* par, float val) { return h_Pow(val,2); }
 float h_par_int(h_Parameter2* par, float val) { return val; } // ???
 
 //----------------------------------------------------------------------
-#endif
 
 
 
 
+
+
+
+
+#endif /* h_Parameter_included */

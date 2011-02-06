@@ -43,7 +43,7 @@
     runtime assertion
   */
   unsigned int _h_Assert () __attribute__ (( noinline ));
-  void _h_Assert
+  unsigned int _h_Assert
   (
     const unsigned int e, const char* file,
     const char* func, const unsigned int line,

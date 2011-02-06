@@ -655,7 +655,7 @@ class h_Painter_Win32 //: public h_Painter_Base
 
 //----------------------------------------------------------------------
 
-typedef h_Painter_Win32 h_Painter;
+typedef h_Painter_Win32 h_Painter_Impl;
 
 //----------------------------------------------------------------------
 #endif

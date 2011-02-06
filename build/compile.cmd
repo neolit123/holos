@@ -1,4 +1,20 @@
 :: compile.cmd
+::
+:: Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
+:: This file is part of the Holos Library.
+:: http://holos.googlecode.com
+:: the Holos Library is free software: you can redistribute it and/or modify
+:: it under the terms of the Holos Library License, either version 1.0
+:: of the License, or (at your option) any later version.
+::
+:: the Holos Library is distributed in the hope that it will be useful,
+:: but WITHOUT ANY WARRANTY; without even the implied warranty of
+:: MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+:: See LICENSE_HOLOS for more details.
+::
+:: You should have received a copy of the Holos Library License
+:: If not, see <http://holos.googlecode.com/>.
+
 @echo off
 
 :: -----------------------------------------------------------------------------
@@ -68,8 +84,9 @@ set ext_p9=
 if [%1]==[] goto syntax
 if [%1]==[-h] goto syntax
 
-:: check for cpp file
+:: check for cpp file; replace / with \
 set infile=%1
+set infile=%infile:/=\%
 set srcext=.cpp
 
 :: remove quotes

@@ -45,6 +45,7 @@ class h_Skin
 
     virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
     virtual void drawPanel(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
+    virtual void drawButton(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
 
 };
 

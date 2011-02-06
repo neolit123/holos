@@ -122,8 +122,8 @@ class h_Bitmap_Linux
 
 //----------------------------------------------------------------------
 
-//typedef h_Bitmap_Win32 h_Bitmap_Impl;
-typedef h_Bitmap_Linux h_Bitmap;
+typedef h_Bitmap_Linux h_Bitmap_Impl;
+//typedef h_Bitmap_Linux h_Bitmap;
 
 //----------------------------------------------------------------------
 #endif

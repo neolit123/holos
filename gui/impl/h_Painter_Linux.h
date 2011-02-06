@@ -532,7 +532,7 @@ class h_Painter_Linux
 
 //----------------------------------------------------------------------
 
-typedef h_Painter_Linux h_Painter;
+typedef h_Painter_Linux h_Painter_Impl;
 
 //----------------------------------------------------------------------
 #endif

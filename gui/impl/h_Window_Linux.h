@@ -819,7 +819,7 @@ class h_Window_Linux : public h_Widget,
 
 //----------------------------------------------------------------------
 
-typedef h_Window_Linux h_Window;
+typedef h_Window_Linux h_Window_Impl;
 
 //----------------------------------------------------------------------
 //
@@ -831,7 +831,7 @@ typedef h_Window_Linux h_Window;
 
 void* h_linux_threadProc(void* data)
   {
-    h_Window* win = (h_Window*)data;
+    h_Window_Impl* win = (h_Window_Impl*)data;
     trace("threadProc. win=" << win);
     if (win)
     {
@@ -874,7 +874,7 @@ void* h_linux_threadProc(void* data)
 
 void* h_linux_timerProc(void* data)
   {
-    h_Window* win = (h_Window*)data;
+    h_Window_Impl* win = (h_Window_Impl*)data;
     if (win)
     {
       while (win->m_TimerRunning)

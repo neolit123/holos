@@ -168,6 +168,10 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../test/test_gui.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../test/test_gui1.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -218,13 +222,11 @@
 		<Unit filename="../../debug/impl/h_Debug_impl.h" />
 		<Unit filename="../../docs/LICENSE.txt" />
 		<Unit filename="../../gfx/h_BitmapUtils.h" />
-		<Unit filename="../../gfx/h_Color.h" />
 		<Unit filename="../../gfx/h_PngDecoder.h" />
 		<Unit filename="../../gfx/h_PolyFiller.h" />
 		<Unit filename="../../gfx/h_RayTracer.h" />
 		<Unit filename="../../gui/h_Bitmap.h" />
 		<Unit filename="../../gui/h_Color.h" />
-		<Unit filename="../../gui/h_Container.h" />
 		<Unit filename="../../gui/h_Painter.h" />
 		<Unit filename="../../gui/h_Renderer.h" />
 		<Unit filename="../../gui/h_Skin.h" />
@@ -240,6 +242,7 @@
 		<Unit filename="../../gui/impl/h_Surface_Win32.h" />
 		<Unit filename="../../gui/impl/h_Window_Linux.h" />
 		<Unit filename="../../gui/impl/h_Window_Win32.h" />
+		<Unit filename="../../gui/skin/skin_Default.h" />
 		<Unit filename="../../gui/wdg/wdg_Background.h" />
 		<Unit filename="../../gui/wdg/wdg_Button.h" />
 		<Unit filename="../../gui/wdg/wdg_Color.h" />

@@ -120,8 +120,8 @@ class h_Bitmap_Win32// : public h_Bitmap_Base
 
 //----------------------------------------------------------------------
 
-//typedef h_Bitmap_Win32 h_Bitmap_Impl;
-typedef h_Bitmap_Win32 h_Bitmap;
+typedef h_Bitmap_Win32 h_Bitmap_Impl;
+//typedef h_Bitmap_Win32 h_Bitmap;
 
 //----------------------------------------------------------------------
 #endif

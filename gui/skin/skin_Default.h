@@ -39,7 +39,22 @@ class skin_Default : public h_Skin
     virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         a_Painter->setFillColor(m_Settings.m_BackColor);
-        a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+        a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h);
+      }
+
+    virtual void drawButton(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
+      {
+        switch (a_Mode)
+        {
+          case 0: // off
+          case 1: // off-hover
+          case 2: // off-down
+          case 3: // on
+          case 4: // on-hover
+          case 5: // on-down
+            a_Painter->setFillColor(m_Settings.m_FillColor);
+            a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h);
+        } // switch
       }
 
 };

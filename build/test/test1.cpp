@@ -208,7 +208,7 @@ class my_Instance : public h_Instance,
         m_Skin = new skin_Default();
         m_Window->applySkin(m_Skin);
         m_Window->appendWidget( new wdg_Background(this) );
-        m_Window->appendWidget( new my_Widget(this,h_Rect(10,10,100,100),wa_None) );
+        m_Window->appendWidget( new my_Widget(this,h_Rect(10,10,100,100),wa_Client) );
         m_Window->do_Realign();
         m_Window->show();
         m_Window->setCursor(cu_Finger);

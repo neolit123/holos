@@ -21,9 +21,9 @@
 #define h_Window_Win32_included
 //----------------------------------------------------------------------
 
-//TODO:
 // http://msdn.microsoft.com/en-us/library/ms644898%28v=vs.85%29.aspx
-// SetWindowLong -> SetWindowLongPtr
+// GWL_STYLE -16
+// GWLP_USERDATA -21
 
 // needs static_Core
 
@@ -181,9 +181,8 @@ class h_Window_Win32 : public h_Widget,
         m_WinAdjustWidth = (rc.right - rc.left + 1) - a_Rect.w;
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
 
-        // todo: 64bit
-        // SetWindowLongPtr
-        SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
+        //SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
+        SetWindowLongPtr(m_WinHandle,GWLP_USERDATA,(LONG_PTR)this);
 
         //DragAcceptFiles(m_WinHandle,true);
         m_WinPainter = new h_Painter(m_WinHandle);
@@ -401,8 +400,12 @@ class h_Window_Win32 : public h_Widget,
     virtual void reparent(void* a_Parent)
       {
         //m_WinParent = (HWND)a_Parent;
-        // SetWindowLongPtr
-        SetWindowLong(m_WinHandle,GWL_STYLE,(GetWindowLong(m_WinHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
+        //SetWindowLong(m_WinHandle,GWL_STYLE,(GetWindowLong(m_WinHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
+        SetWindowLongPtr( m_WinHandle,
+                          GWL_STYLE,
+                          //( GetWindowLong(m_WinHandle,GWL_STYLE) & ~WS_POPUP ) | WS_CHILD );
+                          ( GetWindowLongPtr(m_WinHandle,GWL_STYLE) & ~WS_POPUP ) | WS_CHILD );
+
         SetParent(m_WinHandle, (HWND)a_Parent);
       }
 
@@ -643,7 +646,7 @@ class h_Window_Win32 : public h_Widget,
 
 //----------------------------------------------------------------------
 
-typedef h_Window_Win32 h_Window;
+typedef h_Window_Win32 h_Window_Impl;
 
 //----------------------------------------------------------------------
 //
@@ -653,7 +656,9 @@ typedef h_Window_Win32 h_Window;
 
 LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLong(hWnd,GWL_USERDATA);
+  //h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLong(hWnd,GWL_USERDATA);
+  h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
+
 	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
   return wnd->eventHandler(hWnd, message, wParam, lParam);
 }

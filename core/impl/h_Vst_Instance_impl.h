@@ -109,7 +109,10 @@ h_Instance::~h_Instance()
 
 //----------
 
-// call do_HandleParameter for all
+// call this to initializa your parameters before yuo use them.
+// it will call do_HandleParameter for all od them, so that you
+// have a chance to grab the 'transformed' variables in
+// your instance.
 
 void h_Instance::prepareParameters(void)
   {

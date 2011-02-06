@@ -107,8 +107,7 @@ class h_Surface_Linux : public h_PaintSource
 
 //----------------------------------------------------------------------
 
-typedef h_Surface_Linux h_Surface;
-//typedef h_Surface_Win32 h_Surface_Impl;
+typedef h_Surface_Linux h_Surface_Impl;
 
 //----------------------------------------------------------------------
 #endif
