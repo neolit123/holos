@@ -25,19 +25,26 @@
 
 class wdg_Panel : public h_Widget
 {
-  private:
+  //private:
+  //  h_String m_Text;
 
   public:
 
-    wdg_Panel(h_WidgetListener* a_Listener, h_Rect a_Rect)
-    : h_Widget(a_Listener,a_Rect)
+    wdg_Panel(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*, h_String a_Text*/)
+    : h_Widget(a_Listener,a_Rect,a_Align)
       {
+        //m_Text = a_Text;
       }
+
     virtual ~wdg_Panel()
       {
       }
 
-  public:
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
+      {
+        m_Skin->drawPanel(a_Painter,m_Rect,0/*,m_Text*/);
+        h_Widget::do_Paint(a_Painter,a_Rect,0);
+      }
 
 };
 

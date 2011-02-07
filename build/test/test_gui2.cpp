@@ -82,7 +82,7 @@ class my_Editor : public h_Editor//,
         trace(a_Text);
       }
 
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
       }
 

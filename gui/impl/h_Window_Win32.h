@@ -126,15 +126,17 @@ class h_Window_Win32 : public h_Widget,
     : h_Widget(a_Listener,a_Rect)
       {
         //trace( "win class name: " << static_Core.m_Platform->m_WinClassName );
-        //m_WinParent     = (HWND)a_Parent;
-        m_WinCursor     = LoadCursor(NULL,IDC_ARROW);
-        m_WinPrevCursor    = 0;
+        //m_WinParent = (HWND)a_Parent;
+        m_WinCursor = LoadCursor(NULL,IDC_ARROW);
+        m_WinPrevCursor = 0;
         m_WinClickedButton = bu_None;
         //h_Interface_Data* data = static_Core.getInterface()->getData();
+
         RECT rc = {a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2()}; // left, top, right, bottom
+
         if (a_Parent) // --- embedded ---
         {
-          trace("embedded");
+          //trace("embedded");
           m_WinEmbedded = true;
           AdjustWindowRectEx(&rc,WS_POPUP,FALSE,WS_EX_TOOLWINDOW);
           m_WinHandle = CreateWindowEx(
@@ -145,8 +147,8 @@ class h_Window_Win32 : public h_Widget,
             WS_POPUP,
             rc.left,
             rc.top,
-            rc.right-rc.left+1,
-            rc.bottom-rc.top+1,
+            rc.right-rc.left+1, // +2 ??
+            rc.bottom-rc.top+1, // +2 ??
             0,
             0,
             //data->m_WinInstance,
@@ -154,20 +156,23 @@ class h_Window_Win32 : public h_Widget,
             0
           );
           reparent(a_Parent);
-        }
+        } // embedded
         else // --- windowed ---
         {
+          //trace("windowed");
           m_WinEmbedded = false;
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           const unsigned int adjx = ((GetSystemMetrics(SM_CXSCREEN)-a_Rect.w)>>1) + rc.left;
           const unsigned int adjy = ((GetSystemMetrics(SM_CYSCREEN)-a_Rect.h)>>1) + rc.top;
+          trace("adjx: " << adjx);
+          trace("adjy: " << adjy);
           m_WinHandle = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             static_Core.m_Platform->m_WinClassName,    // lpClassName
             static_Core.m_Platform->m_WinClassName,       // lpWindowName
             WS_OVERLAPPEDWINDOW,      // dwStyle
-            adjx,                    // center x
-            adjy,                    // center y
+            adjx,                     // center x
+            adjy,                     // center y
             rc.right-rc.left+1,       // wWidth,
             rc.bottom-rc.top+1,       // wHeight,
             0,                        // hWndParent
@@ -176,14 +181,17 @@ class h_Window_Win32 : public h_Widget,
             0                         // lpParam
           );
           SetFocus(m_WinHandle);
-        }
+        } // windowed
 
-        m_WinAdjustWidth = (rc.right - rc.left + 1) - a_Rect.w;
+        trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
+        trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
+
+        m_WinAdjustWidth  = (rc.right - rc.left + 1) - a_Rect.w;
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
-
+        trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
+        trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
         //SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
         SetWindowLongPtr(m_WinHandle,GWLP_USERDATA,(LONG_PTR)this);
-
         //DragAcceptFiles(m_WinHandle,true);
         m_WinPainter = new h_Painter(m_WinHandle);
         //if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
@@ -486,7 +494,7 @@ class h_Window_Win32 : public h_Widget,
             //resizeWindow(w,h);
 
             do_SetSize(w,h);
-            do_Realign();
+            //do_Realign();
             //}
             result = 0;
             break;
@@ -518,7 +526,7 @@ class h_Window_Win32 : public h_Widget,
             // assume this is already updated by the widgets themselves
             //if (m_Root) m_Root->do_Paint(m_Painter,rc);
 
-            do_Paint(m_WinPainter,rc);
+            do_Paint(m_WinPainter,rc,0);
 
             //  m_Painter->clearClipRect();
             //}
@@ -633,14 +641,14 @@ class h_Window_Win32 : public h_Widget,
     // widget listener
     //----------------------------------------
 
-    // stop messages auto-bubbling upwards
-    virtual void on_Change(h_Widget* a_Widget) {}
-    virtual void on_Redraw(h_Widget* a_Widget) {}
-    virtual void on_Cursor(int a_Cursor) {}
-
-    virtual void on_Hint(h_String a_Text) {}
-    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
-    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
+//    // stop messages auto-bubbling upwards
+//    virtual void on_Change(h_Widget* a_Widget) {}
+//    virtual void on_Redraw(h_Widget* a_Widget) {}
+//    virtual void on_Cursor(int a_Cursor) {}
+//
+//    virtual void on_Hint(h_String a_Text) {}
+//    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
+//    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
 
 };
 
@@ -659,7 +667,8 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
   //h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLong(hWnd,GWL_USERDATA);
   h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
 
-	if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
+	//if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
+	if (!wnd) return DefWindowProc(hWnd,message,wParam,lParam);
   return wnd->eventHandler(hWnd, message, wParam, lParam);
 }
 

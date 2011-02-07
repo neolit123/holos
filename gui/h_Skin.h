@@ -31,6 +31,8 @@ struct h_SkinSettings
   h_Color m_FillColor;
   h_Color m_DrawColor;
   h_Color m_TextColor;
+  h_Color m_LightColor;
+  h_Color m_DarkColor;
 };
 
 //----------
@@ -44,8 +46,8 @@ class h_Skin
     //virtual ~h_Skin() {}
 
     virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
-    virtual void drawPanel(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
-    virtual void drawButton(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
+    virtual void drawPanel(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode/*, h_String a_Text*/) {}
+    virtual void drawButton(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
 
 };
 

@@ -16,7 +16,7 @@ class my_Widget : public h_Widget
     virtual ~my_Widget()
       {
       }
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         trace("paint");
         a_Painter->setFillColor( H_RGB(128,128,128) );

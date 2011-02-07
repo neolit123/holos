@@ -16,93 +16,47 @@
 
 #include "gui/wdg/wdg_Background.h"
 #include "gui/wdg/wdg_Button.h"
+#include "gui/wdg/wdg_Panel.h"
 
 //#include "core/par/par_Float.h"
 
 //----------------------------------------------------------------------
 
-//char* my_str[] =
+//class my_Widget : public h_Widget
 //{
-//  (char*)"string1",
-//  (char*)"txt2",
-//  (char*)"line3"
-//};
+//  public:
 //
-//// unspecified defaults to 0?
-//h_Parameter2 my_Params2[] =
-//{
-//  { "param1", 0.5 },
-//  { "param2", 0.1, h_par_pow2 },
-//  { "param3", 2,   H_NULL/*h_par_int*/, 0,1,2, my_str }
-//};
-
-//----------------------------------------------------------------------
-
-class my_Widget : public h_Widget
-{
-  private:
-
-  public:
-
-    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
-    : h_Widget(a_Listener,a_Rect,a_Align)
-      {
-//        // test
-//
-//        trace( "m_Name: " << my_Params2[0].m_Name.ptr() );
-//        trace( "m_Value: " << my_Params2[0].m_Value );
-//        trace( hex << "m_Func: 0x" << (int)my_Params2[0].m_Func );
-//        trace( "m_Min: " << my_Params2[0].m_Min );
-//        trace( "m_Max: " << my_Params2[0].m_Max );
-//        trace( "m_Step: " << my_Params2[0].m_Step );
-//        trace( "m_Strings: " << my_Params2[0].m_Strings );
-//
-//        // getValue
-//        float val = my_Params2[1].m_Value;
-//        trace( "val: " << val );
-//        float val2 = my_Params2[1].getValue(val);
-//        trace( "getValue: " << val2 );
-//
-//        // setValue
-//
-//        // getDisplay:
-//
-//        float val3 = my_Params2[2].getValue(val);
-//        trace( "val3: " << val3 );
-//        char* txt = my_Params2[2].m_Strings[ (int)val3 ];
-//        trace( "strings: " << txt );
-//
-      }
-
-    virtual ~my_Widget()
-      {
-      }
-
-    virtual void do_MouseDown(int x, int y, int b, int s)
-      {
-        m_Listener->on_Hint("clickety");
-      }
-
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
-      {
-        a_Painter->setFillColor( H_RGB(160,112,112) );
-        a_Painter->fillRect(m_Rect.x, m_Rect.y, m_Rect.x2(), m_Rect.y2());
-        a_Painter->setTextColor( H_RGB(255,255,255) );
-        a_Painter->drawText(m_Rect.x+10,m_Rect.y+10,(char*)"hello world!");
-        h_Widget::do_Paint(a_Painter,a_Rect);
-      }
-
-//    virtual void do_Enter(h_Widget* a_Widget)
+//    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
+//    : h_Widget(a_Listener,a_Rect,a_Align)
 //      {
-//        trace("enter");
 //      }
 //
-//    virtual void do_Leave(h_Widget* a_Widget)
+//    //virtual ~my_Widget()
+//    //  {
+//    //  }
+//
+//    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
 //      {
-//        trace("leave");
+////        a_Painter->setFillColor(H_WHITE);
+////        a_Painter->fillRect(m_Rect.x, m_Rect.y,m_Rect.x2(),m_Rect.y2());
+////        a_Painter->setDrawColor(H_GREY);
+////        a_Painter->drawRect(m_Rect.x+1, m_Rect.y+1,m_Rect.x2()-1,m_Rect.y2()-1);
+////        a_Painter->setDrawColor(H_DARK_GREEN);
+////        a_Painter->drawCircle(m_Rect.x+3, m_Rect.y+3,m_Rect.x2()-3,m_Rect.y2()-3);
+//
+//        int x1 = m_Rect.x;
+//        int y1 = m_Rect.y;
+//        int x2 = m_Rect.x2();
+//        int y2 = m_Rect.y2();
+//
+//        a_Painter->setDrawColor(H_WHITE);
+//        a_Painter->drawRect(x1,y1,x1+99,y1+19);
+//        a_Painter->setFillColor(H_BLACK);
+//        a_Painter->fillRect(x1,y1+20,x1+99,y1+39);
+//
 //      }
-
-};
+//
+//};
 
 //----------------------------------------------------------------------
 
@@ -121,7 +75,7 @@ class my_Descriptor : public h_Descriptor
         m_Flags       = df_HasEditor | df_ReceiveMidi; //df_None;
         m_NumInputs   = 2;    // inputs
         m_NumOutputs  = 2; // outputs
-        m_EditorRect  = h_Rect(0,0,255,255);
+        m_EditorRect  = h_Rect(0,0,640,480);
         m_Parameters.append( new h_Parameter("param1","",0,0) );
       }
 };
@@ -157,17 +111,34 @@ class my_Instance : public h_Instance,
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
+        trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
         m_Window = new h_Window(this,rect,ptr);
         m_Skin = new skin_Default();
         m_Window->applySkin(m_Skin);
         m_Window->appendWidget( new wdg_Background(this) );
 
-        m_Window->setBorders(10,10,5,5);
+        m_Window->setBorders(50,50,10,10);
 
-        m_Window->appendWidget( new my_Widget( this,h_Rect(100,100),wa_Left) );
-        //m_Window->appendWidget( new wdg_Button(this,h_Rect(100,100),wa_LeftTop) );
+        h_Widget* wdg;
 
-        m_Window->do_Realign();
+        //m_Window->appendWidget( new wdg_Button(m_Window,h_Rect(100,100),wa_RightBottom) );
+        m_Window->appendWidget( new wdg_Panel(m_Window,h_Rect(128,0),wa_Left/*,"left"*/) );
+        m_Window->appendWidget( new wdg_Panel(m_Window,h_Rect(0,64),wa_Top/*,"top"*/) );
+        m_Window->appendWidget( wdg = new wdg_Panel(m_Window,H_NULL_RECT,wa_Client/*,"client"*/) );
+
+        wdg->setBorders(10,10,5,5);
+        //wdg->appendWidget( new my_Widget(  wdg, h_Rect(10,10,100,100),wa_TopLeft) );
+        wdg->appendWidget( new wdg_Button( wdg,h_Rect(100,20),wa_TopLeft,"button") );
+
+        // not needed for standalone?
+        // it will get a size-event and we realign there..
+
+        // fix this!!!
+
+        #ifdef H_LIB
+          m_Window->do_Realign();
+        #endif
+
         m_Window->show();
         m_Window->setCursor(cu_Finger);
         return (void*)m_Window;
@@ -191,11 +162,6 @@ class my_Instance : public h_Instance,
     //  }
 
     //----------
-
-    virtual void on_Hint(h_String a_Text)
-      {
-        trace("my_Instance.on_Hint: " << a_Text.ptr());
-      }
 
     virtual void do_HandleState(int a_State)
       {
@@ -237,6 +203,20 @@ class my_Instance : public h_Instance,
     //virtual void do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length)
     //  {
     //  }
+
+    //--------------------------------------------------
+
+    //virtual void on_Change(h_Widget* a_Widget)
+    //  {
+    //    trace("my_Instance.on_Change");
+    //  }
+
+    //virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
+    //  {
+    //    trace("my_Instance.on_Redraw");
+    //  }
+
+
 
 };
 

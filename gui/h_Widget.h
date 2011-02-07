@@ -67,18 +67,18 @@ typedef h_Array<h_Widget*> h_Widgets;
 class h_WidgetBase
 {
   public:
-    virtual void do_Timer(void)                                 { trace("h_WidgetBase.do_Timer"); }
-    virtual void do_SetPos(int x, int y)                        { trace("h_WidgetBase.do_SetPos"); }
-    virtual void do_SetSize(int w, int h)                       { trace("h_WidgetBase.do_SetSize"); }
-    virtual void do_Realign(void)                               { trace("h_WidgetBase.do_Realign"); }
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)  { trace("h_WidgetBase.do_Paint"); }
-    virtual void do_Enter(h_Widget* a_Widget)                   { trace("h_WidgetBase.do_Enter"); }
-    virtual void do_Leave(h_Widget* a_Widget)                   { trace("h_WidgetBase.do_Leave"); }
-    virtual void do_MouseDown(int x, int y, int b, int s)       { trace("h_WidgetBase.do_MouseDown"); }
-    virtual void do_MouseUp(int x, int y, int b, int s)         { trace("h_WidgetBase.do_MouseUp"); }
-    virtual void do_MouseMove(int x, int t, int s)              { trace("h_WidgetBase.do_MouseMove"); }
-    virtual void do_KeyDown(int k, int s)                       { trace("h_WidgetBase.do_KeyDown"); }
-    virtual void do_KeyUp(int k, int s)                         { trace("h_WidgetBase.do_KeyUp"); }
+    virtual void do_Timer(void)                                               { trace("h_WidgetBase.do_Timer"); }
+    virtual void do_SetPos(int x, int y)                                      { trace("h_WidgetBase.do_SetPos"); }
+    virtual void do_SetSize(int w, int h)                                     { trace("h_WidgetBase.do_SetSize"); }
+    virtual void do_Realign(void)                                             { trace("h_WidgetBase.do_Realign"); }
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode=0)  { trace("h_WidgetBase.do_Paint"); }
+    virtual void do_Enter(h_Widget* a_Widget)                                 { trace("h_WidgetBase.do_Enter"); }
+    virtual void do_Leave(h_Widget* a_Widget)                                 { trace("h_WidgetBase.do_Leave"); }
+    virtual void do_MouseDown(int x, int y, int b, int s)                     { trace("h_WidgetBase.do_MouseDown"); }
+    virtual void do_MouseUp(int x, int y, int b, int s)                       { trace("h_WidgetBase.do_MouseUp"); }
+    virtual void do_MouseMove(int x, int t, int s)                            { trace("h_WidgetBase.do_MouseMove"); }
+    virtual void do_KeyDown(int k, int s)                                     { trace("h_WidgetBase.do_KeyDown"); }
+    virtual void do_KeyUp(int k, int s)                                       { trace("h_WidgetBase.do_KeyUp"); }
 };
 
 //----------------------------------------------------------------------
@@ -86,12 +86,12 @@ class h_WidgetBase
 class h_WidgetListener
 {
   public:
-    virtual void on_Change(h_Widget* a_Widget) {}
-    virtual void on_Redraw(h_Widget* a_Widget) {}
-    virtual void on_Cursor(int a_Cursor) {}
-    virtual void on_Hint(h_String a_Text) {}
-    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
-    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
+    virtual void on_Change(h_Widget* a_Widget)                                        { trace("h_WidgetListener.on_Change"); }
+    virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)                            { trace("h_WidgetListener.on_Redraw"); }
+    virtual void on_Cursor(int a_Cursor)                                              { trace("h_WidgetListener.on_Cursor"); }
+    virtual void on_Hint(h_String a_Text)                                             { trace("h_WidgetListener.on_Hint"); }
+    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode)  { trace("h_WidgetListener.on_Size"); }
+    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget)                           { trace("h_WidgetListener.on_Modal"); }
 
 
 };
@@ -116,23 +116,24 @@ class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
   private:
+    h_Rect    m_Content;               // rect encapsulating all sub-widgets (updated in doRealign)
+    h_Rect    m_Orig;
+    int       m_Alignment;
     int       m_MinWidth, m_MinHeight;
     int       m_MaxWidth, m_MaxHeight;
     int       m_MarginX,  m_MarginY;    // container inner space (between outer border & widgets)
     int       m_PaddingX, m_PaddingY;   // space between wal_Stacked widgets
     int       m_StackedX, m_StackedY;
-    h_Rect    m_Client;
-    h_Rect    m_Content;               // rect encapsulating all sub-widgets (updated in doRealign)
-    h_Rect    m_Orig;
-    int       m_Alignment;
     h_Widget* m_CapturedWidget;
     h_Widget* m_HoverWidget;
+    h_Widget* m_ModalWidget;
+  //h_Rect    m_Client;
   protected:
     h_WidgetListener* m_Listener;
-    //h_Widget*         m_Parent;
-    h_Widgets         m_Children;
+    h_Widget*         m_Parent;
     int               m_Index;
     int               m_Flags;
+    h_Widgets         m_Children;
     h_Rect            m_Rect;
     h_Skin*           m_Skin;
 
@@ -152,15 +153,15 @@ class h_Widget : public h_WidgetBase,
     h_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Alignment=wa_None)
       {
         m_Listener        = a_Listener;
-        //m_Parent          = H_NULL;
+        m_Parent          = H_NULL;
         m_Index           = -1;
         m_Flags           = wf_Active|wf_Visible|wf_Capture|wf_Align;
         m_Rect            = a_Rect;
-        m_Client          = m_Rect;
+        m_Skin            = H_NULL;
+
         m_Content         = m_Rect;//H_NULL_RECT;
         m_Orig            = m_Rect;
         m_Alignment       = a_Alignment;
-        m_Skin            = H_NULL;
         m_MinWidth        = 0;
         m_MinHeight       = 0;
         m_MaxWidth        = 999999;
@@ -171,12 +172,15 @@ class h_Widget : public h_WidgetBase,
         m_PaddingY        = 0;
         m_StackedX        = 0;
         m_StackedY        = 0;
-        m_CapturedWidget  = NULL;
-        m_HoverWidget     = this;
+
+        m_CapturedWidget  = H_NULL; // which widget is receiving follow mouse move messages
+        m_HoverWidget     = this;   // sub-widget mouse hovers over, auume ourselves
+        m_ModalWidget     = H_NULL; // send events only to widget, if modal
+
+        //m_Client          = m_Rect;
         //m_Value          = 0;
         //m_Connection     = -1;
         //m_Parameter      = NULL;
-        //m_ModalWidget    = NULL;
         //m_ModalIndex     = -1;
         //m_Id             = 0;
         //m_Ptr            = NULL;
@@ -200,7 +204,7 @@ class h_Widget : public h_WidgetBase,
       {
         int index = m_Children.size();
         a_Widget->m_Index = index;
-        //a_Widget->m_Parent = this;
+        a_Widget->m_Parent = this;
 
         //a_Widget->m_Skin = this->m_Skin;
         a_Widget->applySkin(m_Skin,true,true);
@@ -359,14 +363,14 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void do_SetSize(int a_Width, int a_Height)
+    virtual void do_SetSize(int a_Width, int a_Height/*, bool a_Realign=false*/)
       {
         if (a_Width  < m_MinWidth)  a_Width  = m_MinWidth;
         if (a_Width  > m_MaxWidth)  a_Width  = m_MaxWidth;
         if (a_Height < m_MinHeight) a_Height = m_MinHeight;
         if (a_Height > m_MaxHeight) a_Height = m_MaxHeight;
         m_Rect.setSize(a_Width,a_Height);
-        //doRealign();
+        //if (a_Realign) do_Realign();
       }
 
     //----------
@@ -426,10 +430,7 @@ class h_Widget : public h_WidgetBase,
           h_Rect parent = m_Rect;
           parent.add( m_MarginX, m_MarginY, -(m_MarginX*2), -(m_MarginY*2) );
           h_Rect client = parent;
-
-          //mContent.set(0,0,0,0);//mMarginX*2,mMarginY*2);
           m_Content.set( m_Rect.x, m_Rect.y,0,0);
-
           int stackx   = client.x;
           int stacky   = client.y;
           int largestw = 0;
@@ -440,6 +441,7 @@ class h_Widget : public h_WidgetBase,
             h_Widget* wdg = m_Children[i];
             int ww = wdg->getRect().w;  // current widget width
             int wh = wdg->getRect().h;  // height
+
             switch (wdg->m_Alignment)
             {
 
@@ -450,6 +452,7 @@ class h_Widget : public h_WidgetBase,
               //
 
               case wa_None:
+
                 wdg->do_SetPos(wdg->m_Orig.x+parent.x, wdg->m_Orig.y+parent.y);
                 break;
 
@@ -460,6 +463,7 @@ class h_Widget : public h_WidgetBase,
               //
 
               case wa_Client:
+
                 wdg->do_SetPos(  client.x, client.y );
                 wdg->do_SetSize( client.w, client.h );
                 break;
@@ -535,6 +539,7 @@ class h_Widget : public h_WidgetBase,
               //      .
 
               case wa_LeftTop:
+
                 wdg->do_SetPos( client.x, client.y );
                 client.x += (ww + m_PaddingX);
                 client.w -= (ww + m_PaddingX);
@@ -593,6 +598,7 @@ class h_Widget : public h_WidgetBase,
               //
 
               case wa_TopLeft:
+
                 wdg->do_SetPos( client.x, client.y );
                 client.y += (wh + m_PaddingY);
                 client.h -= (wh + m_PaddingY);
@@ -736,7 +742,7 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         //if (mFlags&wf_Visible)
         if (m_Flags&wf_Visible) // self
@@ -754,7 +760,7 @@ class h_Widget : public h_WidgetBase,
               if (wdg->m_Flags&wf_Visible)
               {
                 if (/*wdg->intersects(aRect) &&*/ wdg->intersects(m_Rect)) // ??? a_Rect ?
-                  wdg->do_Paint(a_Painter,a_Rect);
+                  wdg->do_Paint(a_Painter,a_Rect,a_Mode);
               }
             } //for
             //if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
@@ -867,9 +873,9 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    virtual void on_Redraw(h_Widget* a_Widget)
+    virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
-        if (m_Listener) m_Listener->on_Redraw(a_Widget);
+        if (m_Listener) m_Listener->on_Redraw(a_Widget,a_Mode);
       }
 
     //----------

@@ -79,7 +79,7 @@ class my_Widget : public h_Widget
       {
         m_Listener->on_Hint("clickety");
       }
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         a_Painter->setFillColor( H_RGB(160,112,112) );
         a_Painter->fillRect(m_Rect.x, m_Rect.y, m_Rect.x2(), m_Rect.y2());

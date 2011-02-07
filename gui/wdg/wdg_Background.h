@@ -37,10 +37,10 @@ class wdg_Background : public h_Widget
       {
       }
 
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         m_Skin->drawBackground(a_Painter,a_Rect,0);
-        h_Widget::do_Paint(a_Painter,a_Rect);
+        h_Widget::do_Paint(a_Painter,a_Rect,0);
       }
 
 };

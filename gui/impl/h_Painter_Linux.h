@@ -312,13 +312,13 @@ class h_Painter_Linux
     //----------
 
     /*virtual*/
-    void fillRect(int x, int y, int w, int h)
+    void fillRect(int x, int y, int x2, int y2)
       {
         //XFillRectangle(m_Display,m_Drawable,m_GC,x,y,w,h);
         //#ifdef H_XRENDER
 				//XRenderFillRectangle(mDisplay,PictOpOver,mPicture,&rendercolor,aX1,aY1,aX2-aX1+1,aY2-aY1+1);
         //#else
-        XFillRectangle(m_Display,m_Drawable,m_GC,x,y,w,h);
+        XFillRectangle(m_Display,m_Drawable,m_GC,x,y,x2-x+1,y2-y+1);
       }
 
     void drawCircle(int aX1, int aY1, int aX2, int aY2)

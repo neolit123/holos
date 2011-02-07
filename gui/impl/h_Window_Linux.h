@@ -280,15 +280,20 @@ class h_Window_Linux : public h_Widget,
         swa.border_pixel      = 0;
         swa.colormap          = m_Colormap;
 
+//        swa.override_redirect = true;
+
         //CWBackPixmap, CWBackPixel
         //CWBorderPixmap, CWBorderPixel, CWBitGravity, CWWinGravity, CWBackingStore
         //CWBackingPlanes, CWBackingPixel, CWOverrideRedirect, CWSaveUnder,
         //CWDontPropagate, CWCursor
 
+        // http://tronche.com/gui/x/xlib/window/attributes/
+
         unsigned long swa_mask  = CWEventMask
                                 | CWBackPixmap
                                 | CWBorderPixel
                                 | CWColormap;
+//                                | CWOverrideRedirect;
 
         m_Window = XCreateWindow(
           m_Display,
@@ -476,8 +481,20 @@ class h_Window_Linux : public h_Widget,
 
     //----------
 
+    // valgrind reports memory leak here ('definitely lost')
+    // XStringListToTextProperty, malloc
+
+    // lii:
+    // there could be malloc() in XStringListToTextProperty(),
+    // so 'free(window_title);' might be needed after XFlush(..); ?
+
     virtual void setTitle(char* a_Title)
       {
+        //XTextProperty window_title_property;
+        //char* window_title = aTitle.ptr();
+        //XStringListToTextProperty(&window_title,1,&window_title_property);
+        //XSetWMName(mDisplay,mWindow,&window_title_property);
+        //XFlush(mDisplay);
       }
 
     //----------------------------------------
@@ -752,7 +769,7 @@ class h_Window_Linux : public h_Widget,
               //             a_Event->xexpose.width,
               //             a_Event->xexpose.height);
               //printf("Expose: %i,%i - %i,%i\n",rc.x,rc.y,rc.w,rc.h);
-              do_Paint(m_Painter,rc);
+              do_Paint(m_Painter,rc,0);
               endPaint();
             }
             break;
@@ -832,7 +849,7 @@ typedef h_Window_Linux h_Window_Impl;
 void* h_linux_threadProc(void* data)
   {
     h_Window_Impl* win = (h_Window_Impl*)data;
-    trace("threadProc. win=" << win);
+    //trace("threadProc. win=" << win);
     if (win)
     {
       XEvent ev;
@@ -841,7 +858,7 @@ void* h_linux_threadProc(void* data)
         XNextEvent(win->m_Display,&ev);                                         // win->m_Display
         //XWindowEvent(win->m_Display,win->m_Window,win->m_EventMask,&ev );
 
-        trace("threadProc.event. win=" << ev.xany.window);
+        //trace("threadProc.event. win=" << ev.xany.window);
 
         //if (ev.xany.window == win->m_Window)
         //{
@@ -871,6 +888,8 @@ void* h_linux_threadProc(void* data)
 // timer proc
 //
 //----------------------------------------------------------------------
+
+#include <unistd.h> // usleep
 
 void* h_linux_timerProc(void* data)
   {
