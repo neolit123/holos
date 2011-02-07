@@ -265,7 +265,7 @@ class h_Window : public h_Window_Impl
 
     virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
-        trace("h_Window.redraw");
+        //trace("h_Window.redraw");
         a_Widget->do_Paint(getPainter(),a_Widget->getRect(),a_Mode);
         //redrawWidget(a_Widget);
       }
