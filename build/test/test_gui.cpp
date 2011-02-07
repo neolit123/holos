@@ -69,7 +69,9 @@ class my_Descriptor : public h_Descriptor
         m_NumInputs   = 2;    // inputs
         m_NumOutputs  = 2; // outputs
         m_EditorRect  = h_Rect(0,0,640,480);
+
         m_Parameters.append( new h_Parameter("param1","",0,0) );
+
       }
 };
 
@@ -104,7 +106,7 @@ class my_Instance : public h_Instance,
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
-        trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
+        //trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
         m_Window = new h_Window(this,rect,ptr);
         m_Window->setBorders(10,10,5,5);
         m_Skin = new skin_Default();

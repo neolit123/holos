@@ -94,15 +94,14 @@ class wdg_Slider : public h_Widget
         if (dragging)
         {
           float distx = x - clickedx;
-          trace("  distx: " << distx);
+          //trace("  distx: " << distx);
           float sens = 1.0f / (float)m_Rect.w;
-          trace("  sens: " << sens);
+          //trace("  sens: " << sens);
           m_Value = origval + distx*sens;
-          trace("  m_Value: " << m_Value);
-          //m_Value = h_Max(0,h_Min(m_Value,1));
+          //trace("  m_Value: " << m_Value);
           if (m_Value>1) m_Value=1;
           if (m_Value<0) m_Value=0;
-          trace("  m_Value: " << m_Value);
+          //trace("  m_Value: " << m_Value);
           m_Listener->on_Change(this);
           m_Listener->on_Redraw(this,1); // active
           m_Listener->on_Redraw(this,2); // border on

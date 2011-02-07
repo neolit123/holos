@@ -148,6 +148,9 @@ class h_Widget : public h_WidgetBase,
     inline int        getNumChildren(void)  { return m_Children.size(); }
     inline h_Widget*  getChild(int a_Index) { return m_Children[a_Index]; }
 
+    inline void       setCapture(h_Widget* a_Widget)  { m_CapturedWidget = a_Widget; }
+    inline h_Widget*  getCapture(void)                { return m_CapturedWidget; }
+
   public:
 
     h_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Alignment=wa_None)

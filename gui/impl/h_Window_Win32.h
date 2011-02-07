@@ -164,8 +164,8 @@ class h_Window_Win32 : public h_Widget,
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           const unsigned int adjx = ((GetSystemMetrics(SM_CXSCREEN)-a_Rect.w)>>1) + rc.left;
           const unsigned int adjy = ((GetSystemMetrics(SM_CYSCREEN)-a_Rect.h)>>1) + rc.top;
-          trace("adjx: " << adjx);
-          trace("adjy: " << adjy);
+//          trace("adjx: " << adjx);
+//          trace("adjy: " << adjy);
           m_WinHandle = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             static_Core.m_Platform->m_WinClassName,    // lpClassName
@@ -183,13 +183,13 @@ class h_Window_Win32 : public h_Widget,
           SetFocus(m_WinHandle);
         } // windowed
 
-        trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
-        trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
+//        trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
+//        trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
 
         m_WinAdjustWidth  = (rc.right - rc.left + 1) - a_Rect.w;
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
-        trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
-        trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
+//        trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
+//        trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
         //SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
         SetWindowLongPtr(m_WinHandle,GWLP_USERDATA,(LONG_PTR)this);
         //DragAcceptFiles(m_WinHandle,true);
@@ -551,6 +551,7 @@ class h_Window_Win32 : public h_Widget,
             m_WinClickedButton = b;
             do_MouseDown(x,y,b,remapKey(wParam));
             //if (m_CapturedWidget) grabCursor();
+            if (getCapture()) grabCursor();
             break;
 
           case WM_LBUTTONUP:
@@ -569,6 +570,7 @@ class h_Window_Win32 : public h_Widget,
             m_WinClickedButton = bu_None;
             do_MouseUp(x,y,b,remapKey(wParam));
             //if (!mCapturedWidget) releaseCursor();
+            if (!getCapture()) releaseCursor();
             break;
 
           case WM_MOUSEMOVE:
