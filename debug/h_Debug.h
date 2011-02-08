@@ -153,7 +153,7 @@ static h_Debug static_Debug;
 #define dtrace(x) trace(x);
 
 // include "h_Assert.h" at this point
-#include "debug\h_Assert.h"
+#include "debug/h_Assert.h"
 
 //----------------------------------------------------------------------
 #endif

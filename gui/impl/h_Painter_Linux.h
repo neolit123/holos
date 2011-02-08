@@ -200,7 +200,7 @@ class h_Painter_Linux
 
     void resetPen(void)
       {
-        setPenWidth(DEF_PENWIDTH);
+        setPenWidth(H_DEF_PENWIDTH);
       }
 
     //void resetPenWidth(void)

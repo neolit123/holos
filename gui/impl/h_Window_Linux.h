@@ -574,7 +574,7 @@ class h_Window_Linux : public h_Widget,
 
     virtual void showCursor(void)
       {
-        setCursor(DEF_CURSOR);
+        setCursor(H_DEF_CURSOR);
       }
 
     //----------

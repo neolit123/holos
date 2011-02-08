@@ -164,6 +164,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/build_all.h" />
+		<Unit filename="../test/holos_diagnosis.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../test/test1.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -177,6 +181,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/test_gui2.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/test_par.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>

@@ -71,7 +71,9 @@ class my_Descriptor : public h_Descriptor
         m_NumOutputs  = 2; // outputs
         m_EditorRect  = h_Rect(0,0,640,480);
 
-        m_Parameters.append( new h_Parameter("param1","",0,0) );
+        m_Parameters.append( new h_Parameter("param","", PF_DEFAULT, 0 ) );
+        m_Parameters.append( new h_ParFloat( "float","", PF_DEFAULT, 1.5, 0,5,0.25 ) );
+        m_Parameters.append( new h_ParInt(   "int",  "", PF_DEFAULT, 3, 1,10, H_NULL) );
 
       }
 };
@@ -104,6 +106,13 @@ class my_Instance : public h_Instance,
 
     //----------
 
+    virtual void  do_HandleParameter(h_Parameter* a_Parameter)
+      {
+        trace("param");
+      }
+
+    //----------
+
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
@@ -125,7 +134,7 @@ class my_Instance : public h_Instance,
           wdg->appendWidget( new wdg_Label( wdg, h_Rect(100,20),wa_StackedVert, "label") );
           wdg->appendWidget( new wdg_Button(wdg, h_Rect(100,20),wa_StackedVert, "button") );
           wdg->appendWidget( new wdg_Value( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
-          wdg->appendWidget( new wdg_Slider( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+          wdg->appendWidget( new wdg_Slider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
 
         // not needed for standalone?
         // it will get a size-event and we realign there..
