@@ -66,6 +66,7 @@
 #define cu_Question       cu_Arrow
 #define cu_Ibeam          cu_Arrow
 
+//#define H_DEF_CURSOR      -1
 #define H_DEF_CURSOR      cu_Arrow
 
 // mouse buttons and mod keys

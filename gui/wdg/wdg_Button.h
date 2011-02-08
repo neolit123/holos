@@ -58,11 +58,13 @@ class wdg_Button : public h_Widget
     virtual void do_Enter(h_Widget* a_Widget)
       {
         m_Listener->on_Redraw(this,2); // draw border
+        m_Listener->on_Cursor(cu_Finger);
       }
 
     virtual void do_Leave(h_Widget* a_Widget)
       {
         m_Listener->on_Redraw(this,3); // remove border
+        m_Listener->on_Cursor(H_DEF_CURSOR);
       }
 
     virtual void do_MouseDown(int x, int y, int b, int s)

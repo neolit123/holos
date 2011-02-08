@@ -76,8 +76,8 @@ void* h_linux_timerProc(void* data);
 #define cu_Question        99
 #define cu_Ibeam           152
 
-//#define DEF_CURSOR    cu_Arrow
-#define DEF_CURSOR      -1
+#define H_DEF_CURSOR    cu_Arrow
+//#define H_DEF_CURSOR      -1
 
 //----------------------------------------------------------------------
 

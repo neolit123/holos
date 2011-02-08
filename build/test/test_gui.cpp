@@ -18,6 +18,7 @@
 #include "gui/wdg/wdg_Panel.h"
 #include "gui/wdg/wdg_Label.h"
 #include "gui/wdg/wdg_Button.h"
+#include "gui/wdg/wdg_Value.h"
 #include "gui/wdg/wdg_Slider.h"
 
 //#include "core/par/par_Float.h"
@@ -123,6 +124,7 @@ class my_Instance : public h_Instance,
           wdg->appendWidget( new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
           wdg->appendWidget( new wdg_Label( wdg, h_Rect(100,20),wa_StackedVert, "label") );
           wdg->appendWidget( new wdg_Button(wdg, h_Rect(100,20),wa_StackedVert, "button") );
+          wdg->appendWidget( new wdg_Value( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
           wdg->appendWidget( new wdg_Slider( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
 
         // not needed for standalone?

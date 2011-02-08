@@ -49,6 +49,7 @@ class h_Skin
     virtual void drawPanel(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
     virtual void drawLabel(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
     virtual void drawButton(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
+    virtual void drawValue(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
     virtual void drawSlider(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
 
 };

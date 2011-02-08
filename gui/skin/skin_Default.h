@@ -45,6 +45,7 @@ class skin_Default : public h_Skin
     h_SkinData  m_PanelSkin;
     h_SkinData  m_LabelSkin;
     h_SkinData  m_ButtonSkin;
+    h_SkinData  m_ValueSkin;
     h_SkinData  m_SliderSkin;
 
   public:
@@ -68,6 +69,12 @@ class skin_Default : public h_Skin
         m_SliderSkin.m_BorderColor  = H_RGB( 64, 64, 64);
         m_SliderSkin.m_ValueColor   = H_RGB(144,144,144);
         m_SliderSkin.m_ActiveColor  = H_RGB(160,160,160);
+
+        m_ValueSkin.m_FillColor    = H_RGB(112,112,112);
+        m_ValueSkin.m_BorderColor  = H_RGB( 64, 64, 64);
+        m_ValueSkin.m_ValueColor   = H_RGB(144,144,144);
+        m_ValueSkin.m_ActiveColor  = H_RGB(160,160,160);
+        m_ValueSkin.m_TextColor    = H_RGB(160,160,160);
       }
 
     //--------------------------------------------------
@@ -134,6 +141,51 @@ class skin_Default : public h_Skin
         } // switch
       }
 
+    //----------
+
+    virtual void drawValue(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value)
+      {
+        char buffer[256];
+        switch (a_Mode)
+        {
+          case 0: // normal
+            {
+              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+              h_Ftoa(buffer,a_Value);
+              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
+
+              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            }
+            break;
+          case 1: // active
+            {
+              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+              h_Ftoa(buffer,a_Value);
+              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
+              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
+              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            }
+            break;
+          case 2: // hover on
+            a_Painter->setDrawColor(m_ValueSkin.m_BorderColor);
+            a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            break;
+          case 3: // hover off
+            a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+            a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            break;
+        }
+      }
+
+    //----------
+
     virtual void drawSlider(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value)
       {
         switch (a_Mode)
@@ -172,6 +224,8 @@ class skin_Default : public h_Skin
             break;
         }
       }
+
+    //----------
 
 
 

@@ -93,7 +93,7 @@ XTransform h_alpha_mat_ident =
 };
 #endif
 
-#define DEF_PENWIDTH 0
+#define H_DEF_PENWIDTH 0
 
 //----------------------------------------------------------------------
 // h_Painter (aka Canvas)

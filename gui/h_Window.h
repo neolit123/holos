@@ -270,12 +270,12 @@ class h_Window : public h_Window_Impl
         //redrawWidget(a_Widget);
       }
 
-//
-//    virtual void on_Cursor(int aCursor)
-//      {
-//        setCursor(a_Cursor);
-//      }
-//
+
+    virtual void on_Cursor(int a_Cursor)
+      {
+        setCursor(a_Cursor);
+      }
+
 //    virtual void on_Hint(h_String aHint)
 //      {
 //      }

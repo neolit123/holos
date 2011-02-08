@@ -255,6 +255,7 @@
 		<Unit filename="../../gui/wdg/wdg_ScrollBox.h" />
 		<Unit filename="../../gui/wdg/wdg_Sizer.h" />
 		<Unit filename="../../gui/wdg/wdg_Slider.h" />
+		<Unit filename="../../gui/wdg/wdg_Value.h" />
 		<Unit filename="../../h.h" />
 		<Unit filename="../../holos.h" />
 		<Unit filename="../../holos_impl.h" />
