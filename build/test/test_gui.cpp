@@ -6,24 +6,13 @@
 //#define H_DEBUG_CON_NORESIZE
 
 #include "holos.h"
-
-//#include "lib/h_BasePath.h"
-//#include "lib/h_Rand.h"
-//#include "lib/h_Expression.h"
-
-//#include "gui/h_Window.h"
-//#include "core/h_Editor.h"
-
-#include "gui/skin/skin_Default.h"
-
-#include "gui/wdg/wdg_Background.h"
-#include "gui/wdg/wdg_Panel.h"
-#include "gui/wdg/wdg_Label.h"
-#include "gui/wdg/wdg_Button.h"
-#include "gui/wdg/wdg_Value.h"
-#include "gui/wdg/wdg_Slider.h"
-
-//#include "core/par/par_Float.h"
+#include "h/h_SkinDefault.h"
+#include "h/h_WdgBackground.h"
+#include "h/h_WdgPanel.h"
+#include "h/h_WdgLabel.h"
+#include "h/h_WdgButton.h"
+#include "h/h_WdgValue.h"
+#include "h/h_WdgSlider.h"
 
 //----------------------------------------------------------------------
 
@@ -132,21 +121,20 @@ class my_Instance : public h_Instance,
         m_Editor->setBorders(10,10,5,5);
         m_Skin = new skin_Default();
         m_Editor->applySkin(m_Skin);
-        m_Editor->appendWidget( new wdg_Background(this) );
+        m_Editor->appendWidget( new h_WdgBackground(this) );
         h_Widget* wdg;
         h_Widget* wdg2;
 
-        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect(128, 0),wa_Left ));
-        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect(  0,64),wa_Top ));
-        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect( 64, 0),wa_Right ));
-        m_Editor->appendWidget( wdg = new wdg_Panel(m_Editor,H_NULL_RECT,   wa_Client ));
-
+        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect(128, 0),wa_Left ));
+        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect(  0,64),wa_Top ));
+        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect( 64, 0),wa_Right ));
+        m_Editor->appendWidget( wdg = new h_WdgPanel(m_Editor,H_NULL_RECT,   wa_Client ));
           wdg->setBorders(20,20,10,10);
-          wdg->appendWidget( new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
-          wdg->appendWidget( new wdg_Label( wdg, h_Rect(100,20),wa_StackedVert, "label") );
-          wdg->appendWidget( new wdg_Button(wdg, h_Rect(100,20),wa_StackedVert, "button") );
-          wdg->appendWidget( new wdg_Value( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
-          wdg->appendWidget( wdg2 = new wdg_Slider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+          wdg->appendWidget(        new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
+          wdg->appendWidget(        new h_WdgLabel( wdg, h_Rect(100,20),wa_StackedVert, "label") );
+          wdg->appendWidget(        new h_WdgButton(wdg, h_Rect(100,20),wa_StackedVert, "button") );
+          wdg->appendWidget(        new h_WdgValue( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+          wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
 
         h_Parameter* par = m_Parameters->item(2);
         //trace("par name: " << par->getName().ptr());

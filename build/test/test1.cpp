@@ -7,15 +7,9 @@
 
 #include "holos.h"
 
-//#include "lib/h_BasePath.h"
-//#include "lib/h_Rand.h"
-//#include "lib/h_Expression.h"
-
-#include "gui/h_Window.h"
-#include "gui/wdg/wdg_Background.h"
-#include "gui/skin/skin_Default.h"
-
-//#include "core/par/par_Float.h"
+#include "h/h_Window.h"
+#include "h/h_WdgBackground.h"
+#include "h/h_SkinDefault.h"
 
 //----------------------------------------------------------------------
 
@@ -30,8 +24,8 @@ char* my_str[] =
 h_Parameter2 my_Params2[] =
 {
   { "param1", 0.5 },
-  { "param2", 0.1, h_par_pow2 },
-  { "param3", 2,   H_NULL/*h_par_int*/, 0,1,2, my_str }
+  { "param2", 0.1, h_ParPow2 },
+  { "param3", 2,   H_NULL/*h_ParInt*/, 0,1,2, my_str }
 };
 
 //----------------------------------------------------------------------
@@ -207,7 +201,7 @@ class my_Instance : public h_Instance,
         m_Window = new h_Window(this,rect,ptr);
         m_Skin = new skin_Default();
         m_Window->applySkin(m_Skin);
-        m_Window->appendWidget( new wdg_Background(this) );
+        m_Window->appendWidget( new h_WdgBackground(this) );
         m_Window->appendWidget( new my_Widget(this,h_Rect(10,10,100,100),wa_Client) );
         m_Window->do_Realign();
         m_Window->show();

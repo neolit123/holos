@@ -21,44 +21,86 @@
 #define holos_h_included
 //----------------------------------------------------------------------
 
-#include "lib/h_Defines.h"
-#include "debug/h_Debug.h"
-#include "core/h_Core.h"
+#include "h/h_Defines.h"
+#include "h/h_Debug.h"
+#include "h/h_Core.h"
 
 // platform
 
 #ifdef H_LINUX
-  #include "core/h_Linux.h"
+  #include "h/h_Linux.h"
 #endif
 
 #ifdef H_WIN32
-  #include "core/h_Win32.h"
+  #include "h/h_Win32.h"
 #endif
 
 
-#include "core/h_Host.h"
-//#include "core/h_Format.h"
-#include "core/h_Instance.h"
+#include "h/h_Host.h"
+//#include "h/h_Format.h"
+#include "h/h_Instance.h"
 
-#include "core/h_Parameter.h"
-#include "core/h_Descriptor.h"
+#include "h/h_Parameter.h"
+#include "h/h_Descriptor.h"
 
 // host, instance, format
 
 #ifdef H_EXE
-  #include "core/h_Exe.h"
+  #include "h/h_Exe.h"
 #endif
 
 #ifdef H_LADSPA
-  #include "core/h_Ladspa.h"
+  #include "h/h_Ladspa.h"
 #endif
 
 #ifdef H_VST
-  #include "core/h_Vst.h"
+  #include "h/h_Vst.h"
 #endif
 
-#include "core/h_Editor.h"
-//#include "core/h_Main.h"
+#include "h/h_Editor.h"
+//#include "h/h_Main.h"
+
+//----------------------------------------------------------------------
+
+//#include "lib/h_Defines.h"
+//#include "debug/h_Debug.h"
+//#include "core/h_Core.h"
+//
+//// platform
+//
+//#ifdef H_LINUX
+//  #include "core/h_Linux.h"
+//#endif
+//
+//#ifdef H_WIN32
+//  #include "core/h_Win32.h"
+//#endif
+//
+//
+//#include "core/h_Host.h"
+////#include "core/h_Format.h"
+//#include "core/h_Instance.h"
+//
+//#include "core/h_Parameter.h"
+//#include "core/h_Descriptor.h"
+//
+//// host, instance, format
+//
+//#ifdef H_EXE
+//  #include "core/h_Exe.h"
+//#endif
+//
+//#ifdef H_LADSPA
+//  #include "core/h_Ladspa.h"
+//#endif
+//
+//#ifdef H_VST
+//  #include "core/h_Vst.h"
+//#endif
+//
+//#include "core/h_Editor.h"
+////#include "core/h_Main.h"
+
 
 //----------------------------------------------------------------------
 #endif

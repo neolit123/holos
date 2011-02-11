@@ -38,58 +38,114 @@
   //#endif
 
 //----------------------------------------------------------------------
+
 //#ifndef H_NOSRC
 
-  #include "debug/source/h_Debug.cpp"
-  #include "core/source/h_Core.cpp"
+  #include "cpp/h_Debug.cpp"
+  #include "cpp/h_Core.cpp"
 
   //----------
 
-  //#include "core/source/h_Platform.cpp"
+  //#include "cpp/h_Platform.cpp"
 
   #ifdef H_LINUX
-    #include "core/source/h_Platform_Linux.cpp"
+    #include "cpp/h_Platform_Linux.cpp"
   #endif
 
   #ifdef H_WIN32
-    #include "core/source/h_Platform_Win32.cpp"
+    #include "cpp/h_Platform_Win32.cpp"
   #endif
 
-  //#include "core/source/h_Format.cpp"
+  //#include "cpp/h_Format.cpp"
 
   //----------
 
-  //#include "core/source/h_Host.cpp"
-  //#include "core/source/h_Parameter.cpp"
-  #include "core/source/h_Descriptor.cpp"
-  //#include "core/source/h_Instance.cpp"
-  #include "core/source/h_Editor.cpp"
-  //#include "core/source/h_Main.cpp"
+  //#include "cpp/h_Host.cpp"
+  //#include "cpp/h_Parameter.cpp"
+  #include "cpp/h_Descriptor.cpp"
+  //#include "cpp/h_Instance.cpp"
+  #include "cpp/h_Editor.cpp"
+  //#include "cpp/h_Main.cpp"
 
   //----------
 
   #ifdef H_EXE
-    #include "core/source/h_Host_Exe.cpp"
-    #include "core/source/h_Format_Exe.cpp"
-    #include "core/source/h_Instance_Exe.cpp"
-    #include "core/source/h_Main_Exe.cpp"
+    #include "cpp/h_Host_Exe.cpp"
+    #include "cpp/h_Format_Exe.cpp"
+    #include "cpp/h_Instance_Exe.cpp"
+    #include "cpp/h_Main_Exe.cpp"
   #endif
 
   #ifdef H_LADSPA
-    #include "core/source/h_Host_Ladspa.cpp"
-    #include "core/source/h_Format_Ladspa.cpp"
-    #include "core/source/h_Instance_Ladspa.cpp"
-    #include "core/source/h_Main_Ladspa.cpp"
+    #include "cpp/h_Host_Ladspa.cpp"
+    #include "cpp/h_Format_Ladspa.cpp"
+    #include "cpp/h_Instance_Ladspa.cpp"
+    #include "cpp/h_Main_Ladspa.cpp"
   #endif
 
   #ifdef H_VST
-    #include "core/source/h_Host_Vst.cpp"
-    #include "core/source/h_Format_Vst.cpp"
-    #include "core/source/h_Instance_Vst.cpp"
-    #include "core/source/h_Main_Vst.cpp"
+    #include "cpp/h_Host_Vst.cpp"
+    #include "cpp/h_Format_Vst.cpp"
+    #include "cpp/h_Instance_Vst.cpp"
+    #include "cpp/h_Main_Vst.cpp"
   #endif
 
 //#endif
+
+
+//----------------------------------------------------------------------
+////#ifndef H_NOSRC
+//
+//  #include "debug/source/h_Debug.cpp"
+//  #include "core/source/h_Core.cpp"
+//
+//  //----------
+//
+//  //#include "core/source/h_Platform.cpp"
+//
+//  #ifdef H_LINUX
+//    #include "core/source/h_Platform_Linux.cpp"
+//  #endif
+//
+//  #ifdef H_WIN32
+//    #include "core/source/h_Platform_Win32.cpp"
+//  #endif
+//
+//  //#include "core/source/h_Format.cpp"
+//
+//  //----------
+//
+//  //#include "core/source/h_Host.cpp"
+//  //#include "core/source/h_Parameter.cpp"
+//  #include "core/source/h_Descriptor.cpp"
+//  //#include "core/source/h_Instance.cpp"
+//  #include "core/source/h_Editor.cpp"
+//  //#include "core/source/h_Main.cpp"
+//
+//  //----------
+//
+//  #ifdef H_EXE
+//    #include "core/source/h_Host_Exe.cpp"
+//    #include "core/source/h_Format_Exe.cpp"
+//    #include "core/source/h_Instance_Exe.cpp"
+//    #include "core/source/h_Main_Exe.cpp"
+//  #endif
+//
+//  #ifdef H_LADSPA
+//    #include "core/source/h_Host_Ladspa.cpp"
+//    #include "core/source/h_Format_Ladspa.cpp"
+//    #include "core/source/h_Instance_Ladspa.cpp"
+//    #include "core/source/h_Main_Ladspa.cpp"
+//  #endif
+//
+//  #ifdef H_VST
+//    #include "core/source/h_Host_Vst.cpp"
+//    #include "core/source/h_Format_Vst.cpp"
+//    #include "core/source/h_Instance_Vst.cpp"
+//    #include "core/source/h_Main_Vst.cpp"
+//  #endif
+//
+////#endif
 //----------------------------------------------------------------------
 #endif
 #endif
