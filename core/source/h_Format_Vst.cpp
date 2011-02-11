@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Vst_Format_impl_included
-#define h_Vst_Format_impl_included
+#ifndef h_Format_Vst_cpp_included
+#define h_Format_Vst_cpp_included
 #ifdef h_Vst_included
 //----------------------------------------------------------------------
 
@@ -33,12 +33,7 @@ h_Format::~h_Format()
   {
   }
 
-//----------------------------------------
-
-//h_Descriptor* h_Format::getDescriptor(void)
-//  {
-//    return &H_DESCRIPTOR;
-//  }
+//----------
 
 h_Descriptor* h_Format::createDescriptor(void)
   {
@@ -52,7 +47,7 @@ h_Instance* h_Format::createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     return new H_INSTANCE(a_Host, a_Descriptor);
   }
 
-//----------------------------------------
+//----------
 
 // this is called for each instance of the vst plugins
 
@@ -64,16 +59,13 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
     //h_Descriptor* desc    = getDescriptor();
     h_Descriptor* desc    = createDescriptor();
     h_Instance*   inst    = createInstance(host,desc);
-
     // instance must remember the above effect and host objects,
     // (read them in its constructor)
     // and delete them in its destructor..
-
     //h_Strcpy(m_RealName,desc->m_Name);
     //#ifdef H_DEBUG
     //  h_Strcat(m_RealName,(char*)"_debug");
     //#endif
-
     h_Memset(effect,0,sizeof(effect));
     effect->magic                   = kEffectMagic;
     effect->object                  = inst;                   //
@@ -106,7 +98,6 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
 // static callbacks (called by vst-host)
 // pass the call over to the proper instance (AEffect.object)
 
-//static
 VstIntPtr h_Format::vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
   {
     h_Instance* inst = (h_Instance*)ae->object;
@@ -122,7 +113,6 @@ VstIntPtr h_Format::vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt
 
 //----------
 
-//static
 float h_Format::vst_getParameter_callback(AEffect* ae, VstInt32 index)
   {
     h_Instance* inst = (h_Instance*)ae->object;
@@ -131,7 +121,6 @@ float h_Format::vst_getParameter_callback(AEffect* ae, VstInt32 index)
 
 //----------
 
-//static
 void h_Format::vst_setParameter_callback(AEffect* ae, VstInt32 index, float value)
   {
     h_Instance* inst = (h_Instance*)ae->object;
@@ -140,7 +129,6 @@ void h_Format::vst_setParameter_callback(AEffect* ae, VstInt32 index, float valu
 
 //----------
 
-//static
 void h_Format::vst_processReplacing_callback(AEffect* ae, float** inputs, float** outputs, VstInt32 sampleFrames)
   {
     h_Instance* inst = (h_Instance*)ae->object;
@@ -149,7 +137,6 @@ void h_Format::vst_processReplacing_callback(AEffect* ae, float** inputs, float*
 
 //----------
 
-//static
 void h_Format::vst_processDoubleReplacing_callback(AEffect* ae, double** inputs, double** outputs, VstInt32 sampleFrames)
   {
     h_Instance* inst = (h_Instance*)ae->object;

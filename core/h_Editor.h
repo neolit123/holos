@@ -17,15 +17,43 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Editor_Included
-#define h_Editor_Included
+#ifndef h_Editor_included
+#define h_Editor_included
 //----------------------------------------------------------------------
 
-//class h_Editor
-//{
-//  private:
-//    h_Window* m_Window;
-//};
+#include "gui/h_Window.h"
+
+struct h_Connection
+{
+  h_Parameter*  m_Parameter;
+  h_Widget*     m_Widget;
+  h_Connection(h_Parameter* a_Parameter, h_Widget* a_Widget)
+    {
+      m_Parameter = a_Parameter;
+      m_Widget    = a_Widget;
+    }
+};
+
+typedef h_Array<h_Connection*> h_Connections;
+
+//----------------------------------------------------------------------
+
+class h_Editor : public h_Window
+{
+  private:
+    h_Instance*   m_Instance;
+    h_Connections m_Connections;
+
+  public:
+
+    h_Editor(h_Instance* a_Instance, h_Rect a_Rect, void* a_Parent);
+    virtual ~h_Editor();
+    virtual void connect(h_Parameter* a_Parameter, h_Widget* a_Widget);
+    virtual void deleteConnections(void);
+    virtual void notifyParameter_fromInstance(h_Parameter* a_Parameter);
+    virtual void on_Change(h_Widget* a_Widget);
+
+};
 
 //----------------------------------------------------------------------
 #endif

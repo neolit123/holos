@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Linux_impl_included
-#define h_Linux_impl_included
+#ifndef h_Platform_Linux_cpp_included
+#define h_Platform_Linux_cpp_included
 #ifdef h_Linux_included
 //----------------------------------------------------------------------
 /*
@@ -49,6 +49,13 @@ h_Platform::h_Platform()
 
 h_Platform::~h_Platform()
   {
+  }
+
+//----------
+
+h_String h_Platform::getName(void)
+  {
+    return "linux";
   }
 
 //--------------------------------------------------

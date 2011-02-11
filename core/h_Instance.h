@@ -21,9 +21,11 @@
 #define h_Instance_included
 //----------------------------------------------------------------------
 
+#include "core/h_Host.h"
 #include "core/h_Parameter.h"
+#include "core/h_Descriptor.h"
 
-//----------------------------------------
+//----------
 
 // instance states
 #define is_None     0
@@ -45,23 +47,39 @@
 #define ft_AutoWriting  64  // set if automation write mode active (record parameter changes)
 #define ft_AutoReading  128 // set if automation read mode active (play parameter changes)
 
-//----------------------------------------
+//----------------------------------------------------------------------
 
 class h_Instance_Base
 {
+  protected:
+    h_Descriptor* m_Descriptor;
+    h_Parameters* m_Parameters;
   public:
-    //h_Instance_Base(h_Host* a_Host, h_Descriptor* a_Descriptor) {}
-    //virtual ~h_Instance_Base() {}
-    virtual void  do_HandleState(int a_State) {}
-    virtual void  do_HandleTransport(int a_State) {}
-    virtual void  do_HandleParameter(h_Parameter* a_Parameter) {}
-    virtual void  do_HandleMidi(int a_Offset, unsigned char a_Msg1, unsigned char a_Msg2, unsigned char a_Msg3) {}
-    virtual bool  do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length) { return false; }
-    virtual void  do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
-    virtual void  do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
-    virtual void* do_OpenEditor(void* ptr) { return H_NULL; }
-    virtual void  do_CloseEditor(void) {}
-    virtual void  do_IdleEditor(void) {}
+    virtual void    do_HandleState(int a_State) {}
+    virtual void    do_HandleTransport(int a_State) {}
+    virtual void    do_HandleParameter(h_Parameter* a_Parameter) {}
+    virtual void    do_HandleMidi(int a_Offset, unsigned char a_Msg1, unsigned char a_Msg2, unsigned char a_Msg3) {}
+    virtual bool    do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length) { return false; }
+    virtual void    do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
+    virtual void    do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
+    virtual void*   do_OpenEditor(void* ptr) { return H_NULL; }
+    virtual void    do_CloseEditor(void) {}
+    virtual void    do_IdleEditor(void) {}
+  public:
+    virtual int     getPlayState(void)      { return 0; }
+    virtual double  getSamplePos(void)      { return 0; }
+    virtual double  getSampleRate(void)     { return 0; }
+    virtual double  getBeatPos(void)        { return 0; }
+    virtual double  getTempo(void)          { return 0; }
+    virtual int     getCurrentProgram(void) { return 0; }
+  public:
+    //virtual void    appendParameter(h_Parameter* a_Parameter) {}
+    //virtual void    deleteParameters(void) {}
+    virtual void    prepareParameters(void) {}
+    virtual void    notifyParameter_fromEditor(h_Parameter* a_Parameter) {}
+    virtual void    notifyResize_fromEditor(int aWidth, int aHeight) {}
+    virtual void    updateTime(void) {}
+    virtual void    sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 };
 
 //----------------------------------------------------------------------

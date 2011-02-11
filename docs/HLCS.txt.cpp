@@ -21,21 +21,27 @@
     - function that contain only one line of code should have the braces
       on separate lines surrounding the code
     - global objects and function names should start with 'h_' and use
-      'CamelCase': http://en.wikipedia.org/wiki/CamelCase
+      'CamelCase'.
     - declarations of class members preferably indented to length longest type
     - class members names starting with 'm_', while arguments in constuctors
       staring with 'a_'
     - argument list in function whith a lot of arguments should be broken into
       multiple lines
     - all operators like plus, minus, equals should be surrounded by spaces
-      preferably on both sides.
+      preferably.
     - comments only to describe code briefly e.g. above a class or a function
     - preferably no comments inside functions
     - multiline comments surrounded by C comments, unless for nested comments
+    - commenting out large code block should be done with "#if 0" or
+      more descriptively "#if NOT_ENABLED"
+    - unused variables should be solved or marked with __attribute__((unused))
+      where the attribute is placed after the variable type
 
-  useful reads:
+  examples of coding styles:
     http://en.wikipedia.org/wiki/Indent_style
     https://computing.llnl.gov/linux/slurm/coding_style.pdf
+    http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+    http://geosoft.no/development/cppstyle.html
 */
 
 /*
@@ -52,43 +58,59 @@
   do_something_with_macro(x, y, z);           \
   do_something_else_with_macro(x, y, z)
 
-// *** macros  and branching
-#if (defined H_CHECK_SOMETHING) || (defined H_CHECK_SOMETHING_ELSE)
+// *** other macro definitions with uppercase   
+#define _UNUSED __attribute__((unused))
+
+// *** macros and branching
+#if (defined H_CHECK_SOMETHING) ||            \
+    (defined H_CHECK_SOMETHING_ELSE_1) ||     \
+    (defined H_CHECK_SOMETHING_ELSE_2)
   #define H_IS_DEFINED
 #else
   #define H_IS_NOT_DEFINED
 #endif
 
-// global method & swiwtch
+// *** global method; switch statement
 int h_SomeGlobalMethod(int some_value)
 {
   switch (some_value)
   {
     case 0:
-      return some_value = 0;
+      some_value = 0;
+      return some_value;
     case 1:
-      return some_value;
+      // *** no need to put a less complicated return in braces
+      return some_value + 1;
     default:
-      return some_value;
+      return some_value + 2;
   }
 }
 
-// *** struct
+// *** struct; declarations are aligned
 struct h_SomeStruct
 {
   float         m_SomeMember1;
   unsigned int  m_SomeMember2;
 };
 
+// *** enums should use upper case names with "_" separator
+enum h_SomeEnum
+{
+  VAL_ONE,
+  VAL_TWO,
+  VAL_THREE
+};
+
 // *** basic class
 class h_SomeOtherObject
 {
   public:
-    h_SomeOtherObject(float a_SomeVar) {}
+    // *** empty methods can be on single line
+    h_SomeOtherObject(float _UNUSED a_SomeVar) {}
     ~h_SomeOtherObject() {}
 };
 
-// *** class with members
+// *** derived class with members
 class h_SomeObject : h_SomeOtherObject
 {
   private:
@@ -96,7 +118,7 @@ class h_SomeObject : h_SomeOtherObject
     float         m_SomeVar;
     unsigned int  m_SomeItr;
 
-    // *** one line in a function
+    // *** short functions are still defined on a new line
     int member_function_1(void)
     {
       return 1;
@@ -107,22 +129,27 @@ class h_SomeObject : h_SomeOtherObject
     }
 
   public:
-    h_SomeObject(float a_SomeVar, float* a_SomePtr, unsigned int a_SomeItr)
-    : h_SomeOtherObject(a_SomeVar)
+    h_SomeObject( float a_SomeVar,
+                  float* a_SomePtr,
+                  unsigned int _UNUSED a_SomeItr )
+      : h_SomeOtherObject(a_SomeVar)
     {
-      // *** declarations on top
-      float*        some_ptr, some_other_ptr;
+      // *** variables in declaration blocks are aligned
+      float        *some_ptr, *some_other_ptr;
       float         some_float;
       unsigned int  some_uint;
-
-      // *** one line inside if, then, else statement
+      
+      some_ptr = &some_float;
+      some_other_ptr = &some_float;
+      
+      // *** one line inside "if, then, else" statement
       if (a_SomePtr)
         member_function_1();
       else
         member_function_2();
 
-      // *** multiple lines inside if, then, else statement
-      if (a_SomeVar == 0)
+      // *** multiple lines inside "if, then, else" statement
+      if (a_SomeVar == 0.f)
       {
         member_function_1();
       }
@@ -132,15 +159,18 @@ class h_SomeObject : h_SomeOtherObject
         member_function_2();
       }
 
-      // *** do, while & operators
+      // *** "do, while" statement; operators with spaces
       do
       {
-        some_uint = ((2 * 4) + 1) & 0xff;
-        some_float = 25.0 / 5.0;
+        some_uint = (2 + 5) >> 1;
+        some_float = 25.f / 2.f;
       } while (0);
     }
 
     ~h_SomeObject() {}
+
+    // *** disabled section is disabled with a macro and not commented out
+    #if IS_NOT_ENABLED
 
     // *** function with a lot of arguments
     void function_with_many_arguments(float a_SomeVar1,
@@ -153,4 +183,7 @@ class h_SomeObject : h_SomeOtherObject
       a_SomeVar1 += a_SomeVar2;
       a_SomeItr1 += a_SomeItr2;
     }
+
+    #endif // #if IS_NOT_ENABLED
+
 };

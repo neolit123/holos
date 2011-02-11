@@ -37,10 +37,10 @@ class h_Platform
   public:
     h_Platform();
     ~h_Platform();
-    h_String getName(void) { return "linux"; }
+    h_String getName(void);
     #ifndef H_NOGUI
-      Display* openDisplay(void);
-      void     closeDisplay(Display* a_Display);
+    Display* openDisplay(void);
+    void     closeDisplay(Display* a_Display);
     #endif
 };
 

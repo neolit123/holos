@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Debug_impl_included
-#define h_Debug_impl_included
+#ifndef h_Debug_cpp_included
+#define h_Debug_cpp_included
 #ifdef h_Debug_included
 //----------------------------------------------------------------------
 

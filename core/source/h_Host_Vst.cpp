@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Vst_Host_impl_included
-#define h_Vst_Host_impl_included
+#ifndef h_Host_Vst_cpp_included
+#define h_Host_Vst_cpp_included
 #ifdef h_Vst_included
 //----------------------------------------------------------------------
 
@@ -31,18 +31,19 @@ h_Host::h_Host(audioMasterCallback audioMaster, AEffect* a_AEffect)
     m_AudioMaster = audioMaster;
     m_AEffect = a_AEffect;
     //NOTE: AEffect has not been prepared yet..
-//    char buffer[H_MAX_STRINGSIZE];
-//    trace("h_Host::vst_Version: " << vst_Version());
-//    vst_GetVendorString(buffer);
-//    trace("vst_GetVendorString: '" << buffer << "'");
-//    vst_GetProductString(buffer);
-//    trace("vst_GetProductString: '" << buffer << "'");
   }
 
 //----------
 
 h_Host::~h_Host()
   {
+  }
+
+//----------
+
+h_String h_Host::getName(void)
+  {
+    return "vst";
   }
 
 //----------------------------------------------------------------------
@@ -98,7 +99,6 @@ VstInt32 h_Host::vst_CurrentId()
 
 void h_Host::vst_Automate(VstInt32 index, float value)
   {
-    //wtrace("  axFormatVst.setParameterAutomated  index: " << index << " value: " << value);
     if (m_AudioMaster) m_AudioMaster(m_AEffect,audioMasterAutomate,index,0,0,value);
     //setParameter(index,value);
   }
@@ -222,17 +222,13 @@ bool h_Host::vst_SizeWindow(int aWidth, int aHeight)
 // @see AudioEffectX::updateSampleRate
 
 float h_Host::vst_GetSampleRate(void)
-//virtual void updateSampleRate(void)
   {
     float rate = 0;
-    //mSampleRate = 0;
     if (m_AudioMaster)
     {
       VstIntPtr res = m_AudioMaster(m_AEffect, audioMasterGetSampleRate, 0, 0, 0, 0);
-      if (res>0) rate = (float)res;//mSampleRate = (float)res;
-      //trace(res);
+      if (res>0) rate = (float)res;
     }
-    //return mSampleRate;
     return rate;
   }
 
@@ -282,11 +278,15 @@ float h_Host::vst_GetSampleRate(void)
 // [ptr]: char buffer for vendor string, limited to #kVstMaxVendorStrLen
 // @see AudioEffectX::getHostVendorString
 
+//----------
+
 bool h_Host::vst_GetVendorString(char* buffer)
   {
     if (m_AudioMaster) return m_AudioMaster(m_AEffect,audioMasterGetVendorString,0,0,buffer,0)==1;
     return false;
   }
+
+//----------
 
 //audioMasterGetProductString,
 // [ptr]: char buffer for vendor string, limited to #kVstMaxProductStrLen
@@ -298,6 +298,8 @@ bool h_Host::vst_GetProductString(char* buffer)
     return false;
   }
 
+//----------
+
 //audioMasterGetVendorVersion,
 // [return value]: vendor-specific version
 // @see AudioEffectX::getHostVendorVersion
@@ -307,6 +309,8 @@ int h_Host::vst_GetVendorVersion(void)
     if (m_AudioMaster) return m_AudioMaster(m_AEffect,audioMasterGetVendorVersion,0,0,0,0)==1;
     return 0;
   }
+
+//----------
 
 //audioMasterVendorSpecific,
 // no definition, vendor specific handling

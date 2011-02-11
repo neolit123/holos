@@ -17,21 +17,12 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Ladspa_Instance_impl_included
-#define h_Ladspa_Instance_impl_included
+#ifndef h_Main_Ladspa_cpp_included
+#define h_Main_Ladspa_cpp_included
 #ifdef h_Ladspa_included
 //----------------------------------------------------------------------
 
-h_Instance::h_Instance(h_Descriptor* a_Descriptor)
-//: h_Instance_Base(a_Descriptor)
-  {
-  }
 
-//----------
-
-h_Instance::~h_Instance()
-  {
-  }
 
 //----------------------------------------------------------------------
 #endif

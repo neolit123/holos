@@ -11,7 +11,9 @@
 //#include "lib/h_Rand.h"
 //#include "lib/h_Expression.h"
 
-#include "gui/h_Window.h"
+//#include "gui/h_Window.h"
+//#include "core/h_Editor.h"
+
 #include "gui/skin/skin_Default.h"
 
 #include "gui/wdg/wdg_Background.h"
@@ -71,9 +73,9 @@ class my_Descriptor : public h_Descriptor
         m_NumOutputs  = 2; // outputs
         m_EditorRect  = h_Rect(0,0,640,480);
 
-        m_Parameters.append( new h_Parameter("param","", PF_DEFAULT, 0 ) );
-        m_Parameters.append( new h_ParFloat( "float","", PF_DEFAULT, 1.5, 0,5,0.25 ) );
-        m_Parameters.append( new h_ParInt(   "int",  "", PF_DEFAULT, 3, 1,10, H_NULL) );
+        appendParameter( new h_Parameter("param","", PF_DEFAULT, 0 ) );
+        appendParameter( new h_ParFloat( "float","", PF_DEFAULT, 1.5, 0,5,0.25 ) );
+        appendParameter( new h_ParInt(   "int",  "", PF_DEFAULT, 3, 1,10, H_NULL) );
 
       }
 };
@@ -86,14 +88,17 @@ class my_Instance : public h_Instance,
                     public h_WidgetListener
 {
   private:
-    h_Window*       m_Window;
+    //h_Window*       m_Window;
+    h_Editor*       m_Editor;
     h_Skin*         m_Skin;
+
   public:
 
     my_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host,a_Descriptor)
       {
-        m_Window = H_NULL;
+        //m_Window = H_NULL;
+        m_Editor = H_NULL;
         m_Skin   = H_NULL;
         prepareParameters();
       }
@@ -108,7 +113,12 @@ class my_Instance : public h_Instance,
 
     virtual void  do_HandleParameter(h_Parameter* a_Parameter)
       {
-        trace("param");
+        char buf[H_MAX_STRINGSIZE];
+        a_Parameter->getDisplay(buf);
+        trace("do_HandleParameter(" << a_Parameter->getName().ptr() << ") = " << buf );
+        //trace("  index: " << a_Parameter->getIndex());
+        //trace("  connect: " << a_Parameter->getConnect());
+        //trace("  value: " << a_Parameter->getValue());
       }
 
     //----------
@@ -117,44 +127,53 @@ class my_Instance : public h_Instance,
       {
         h_Rect rect = getEditorRect();
         //trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
-        m_Window = new h_Window(this,rect,ptr);
-        m_Window->setBorders(10,10,5,5);
+        //m_Window = new h_Window(this,rect,ptr);
+        m_Editor = new h_Editor(this,rect,ptr);
+        m_Editor->setBorders(10,10,5,5);
         m_Skin = new skin_Default();
-        m_Window->applySkin(m_Skin);
-        m_Window->appendWidget( new wdg_Background(this) );
+        m_Editor->applySkin(m_Skin);
+        m_Editor->appendWidget( new wdg_Background(this) );
         h_Widget* wdg;
+        h_Widget* wdg2;
 
-        m_Window->appendWidget(       new wdg_Panel(m_Window,h_Rect(128, 0),wa_Left ));
-        m_Window->appendWidget(       new wdg_Panel(m_Window,h_Rect(  0,64),wa_Top ));
-        m_Window->appendWidget(       new wdg_Panel(m_Window,h_Rect( 64, 0),wa_Right ));
-        m_Window->appendWidget( wdg = new wdg_Panel(m_Window,H_NULL_RECT,   wa_Client ));
+        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect(128, 0),wa_Left ));
+        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect(  0,64),wa_Top ));
+        m_Editor->appendWidget(       new wdg_Panel(m_Editor,h_Rect( 64, 0),wa_Right ));
+        m_Editor->appendWidget( wdg = new wdg_Panel(m_Editor,H_NULL_RECT,   wa_Client ));
 
           wdg->setBorders(20,20,10,10);
           wdg->appendWidget( new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
           wdg->appendWidget( new wdg_Label( wdg, h_Rect(100,20),wa_StackedVert, "label") );
           wdg->appendWidget( new wdg_Button(wdg, h_Rect(100,20),wa_StackedVert, "button") );
           wdg->appendWidget( new wdg_Value( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
-          wdg->appendWidget( new wdg_Slider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+          wdg->appendWidget( wdg2 = new wdg_Slider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+
+        h_Parameter* par = m_Parameters->item(2);
+        //trace("par name: " << par->getName().ptr());
+        //m_Editor->connect( m_Parameters->item(0), wdg2 );
+        m_Editor->connect( par, wdg2 );
+        //trace("par connect: " << par->getConnect());
+        //trace("par index: " << par->getIndex());
 
         // not needed for standalone?
         // it will get a size-event and we realign there..
         // fix this!!!
         #ifdef H_LIB
-          m_Window->do_Realign();
+          m_Editor->do_Realign();
         #endif
 
-        m_Window->show();
+        m_Editor->show();
         //m_Window->setCursor(cu_Finger);
-        return (void*)m_Window;
+        return (void*)m_Editor;
       }
 
     //----------
 
     virtual void do_CloseEditor(void)
       {
-        m_Window->hide();
-        delete m_Window;
-        m_Window = H_NULL;
+        m_Editor->hide();
+        delete m_Editor;
+        m_Editor = H_NULL;
         delete m_Skin;
         // widgets are automatically deleted
       }
@@ -227,6 +246,8 @@ class my_Instance : public h_Instance,
 #define H_INSTANCE my_Instance
 
 //----------------------------------------------------------------------
-#include "holos_impl.h"
+
+//#include "holos_impl.h"
+#include "holos.cpp"
 
 

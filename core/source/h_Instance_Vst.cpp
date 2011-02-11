@@ -17,13 +17,13 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Vst_Instance_impl_included
-#define h_Vst_Instance_impl_included
+#ifndef h_Instance_Vst_cpp_included
+#define h_Instance_Vst_cpp_included
 #ifdef h_Vst_included
 //----------------------------------------------------------------------
 
-#define trace_vst(x) trace(x)
-//#define trace_vst(x) {}
+//#define trace_vst(x) trace(x)
+#define trace_vst(x) {}
 
 //----------------------------------------------------------------------
 
@@ -45,25 +45,16 @@ h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     m_CurrentProgram  = 0;
     m_EditorRect      = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
     m_EditorIsOpen    = false;
-    //initParameters();
   }
 
 //----------
 
 h_Instance::~h_Instance()
   {
-    //#ifndef H_NOAUTODELETE
-    //  deleteParameters();
-    //#endif
-    if (m_AEffect) h_Free(m_AEffect);       // !!!!!  created in entrypoint()
-    if (m_Host) delete m_Host;              // !!!!!  created in entrypoint()
-    //if (m_Parameters) delete m_Parameters;  // !!!!!  created in entrypoint()
+    if (m_AEffect) h_Free(m_AEffect); // !!!!!  created in entrypoint()
+    if (m_Host) delete m_Host;        // !!!!!  created in entrypoint()
   }
 
-//----------------------------------------------------------------------
-//
-// public methods
-//
 //----------------------------------------------------------------------
 
 //void h_Instance::appendParameter(h_Parameter* a_Parameter)
@@ -72,12 +63,12 @@ h_Instance::~h_Instance()
 //    a_Parameter->setIndex(index);
 //    m_Parameters->append(a_Parameter);
 //  }
-
-//----------
-
+//
+////----------
+//
 //void h_Instance::deleteParameters(void)
 //  {
-//    //for (int i=0; i<m_Parameters->size(); i++) { delete m_Parameters[i]; };
+//    for (int i=0; i<m_Parameters->size(); i++) { delete m_Parameters->item(i); };
 //  }
 
 //----------
@@ -126,7 +117,7 @@ void h_Instance::prepareParameters(void)
 
 //----------
 
-//virtual void setupPrograms()
+//void setupPrograms()
 //  {
 //    int num = mPrograms.size();
 //    if (num>0) { setNumPrograms(num); } // vst
@@ -142,25 +133,29 @@ void h_Instance::prepareParameters(void)
 
 // called when parameter has changed (from editor)
 // (we must notify the host)
+// and call do_HandleParameter
 
-void h_Instance::notifyParameter(h_Parameter* aParameter)
+void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
   {
-    int index = aParameter->getIndex();
-    float value = aParameter->getInternal();//getValue();
-    //host_Automate(index,value); // setParameterAutomated();
+    //h_Instance_Base::notifyParameter_fromEditor(a_Parameter);
+    int index = a_Parameter->getIndex();
+    float value = a_Parameter->getInternal();//getValue();
+    //trace("h_Instance::notifyParameter_fromEditor(" << index << "," << value <<  ")");
     m_Host->vst_Automate(index,value); // setParameterAutomated();
+    do_HandleParameter(a_Parameter);
   }
 
 //----------
 
 // called when we want the host to resize the window
 
-void h_Instance::notifyResize(int aWidth, int aHeight)
+void h_Instance::notifyResize_fromEditor(int a_Width, int a_Height)
   {
+    //h_Instance_Base::notifyResize_fromEditor(a_Width,a_Height);
     //m_EditorRect.w = aWidth;
     //m_EditorRect.h = aHeight;
     //host_SizeWindow(aWidth, aHeight); // vst
-    m_Host->vst_SizeWindow(aWidth, aHeight); // vst
+    //m_Host->vst_SizeWindow(a_Width,a_Height); // vst
   }
 
 //----------
@@ -230,7 +225,7 @@ void h_Instance::sendMidi(int offset, unsigned char msg1, unsigned char msg2, un
 // these are called from process()
 
 // [internal]
-void h_Instance::sendMidiClear(void)
+void h_Instance::_sendMidiClear(void)
   {
     m_MidiEventList.numEvents = 0;
   }
@@ -240,7 +235,7 @@ void h_Instance::sendMidiClear(void)
 // send all midi event in list to host (and clear the list)
 
 // [internal]
-void h_Instance::sendMidiAll(void)
+void h_Instance::_sendMidiAll(void)
   {
     int num = m_MidiEventList.numEvents;
     if( num>0 )
@@ -988,7 +983,6 @@ void h_Instance::vst_setParameter(VstInt32 index, float value)
     h_Parameter* par = m_Parameters->item(index);
     par->setInternal(value);
     do_HandleParameter(par);
-    // notify editor
   }
 
 //----------
@@ -1076,8 +1070,8 @@ void h_Instance::vst_processReplacing(float** inputs, float** outputs, VstInt32 
     do_PostProcess(inputs,outputs,sampleFrames);
     if (m_Descriptor->m_Flags&df_SendMidi)
     {
-      sendMidiAll();
-      sendMidiClear();
+      _sendMidiAll();
+      _sendMidiClear();
     }
   }
 

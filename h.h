@@ -1,5 +1,3 @@
-// svn commit-test from linux...
-
 /*
   Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 

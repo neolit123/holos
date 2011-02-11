@@ -58,6 +58,9 @@ class wdg_Value : public h_Widget
       {
       }
 
+    virtual void  setValue(float a_Value) { m_Value=a_Value; }
+    virtual float getValue(void)          { return m_Value; }
+
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         m_Skin->drawValue(a_Painter,m_Rect,a_Mode,m_Value);

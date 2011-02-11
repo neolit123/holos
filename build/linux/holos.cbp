@@ -207,27 +207,87 @@
 		<Unit filename="../../core/h_Parameter.h" />
 		<Unit filename="../../core/h_Vst.h" />
 		<Unit filename="../../core/h_Win32.h" />
-		<Unit filename="../../core/impl/h_Core_impl.h" />
-		<Unit filename="../../core/impl/h_Exe_Format_impl.h" />
-		<Unit filename="../../core/impl/h_Exe_Host_impl.h" />
-		<Unit filename="../../core/impl/h_Exe_Instance_impl.h" />
-		<Unit filename="../../core/impl/h_Exe_impl.h" />
-		<Unit filename="../../core/impl/h_Ladspa_Format_impl.h" />
-		<Unit filename="../../core/impl/h_Ladspa_Host_impl.h" />
-		<Unit filename="../../core/impl/h_Ladspa_Instance_impl.h" />
-		<Unit filename="../../core/impl/h_Ladspa_impl.h" />
-		<Unit filename="../../core/impl/h_Linux_impl.h" />
-		<Unit filename="../../core/impl/h_Vst_Format_impl.h" />
-		<Unit filename="../../core/impl/h_Vst_Host_impl.h" />
-		<Unit filename="../../core/impl/h_Vst_Instance_impl.h" />
-		<Unit filename="../../core/impl/h_Vst_impl.h" />
-		<Unit filename="../../core/impl/h_Win32_impl.h" />
+		<Unit filename="../../core/source/h_Core.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Descriptor.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Editor.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Format_Exe.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Format_Ladspa.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Format_Vst.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Host_Exe.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Host_Ladspa.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Host_Vst.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Instance.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Instance_Exe.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Instance_Ladspa.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Instance_Vst.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Main_Exe.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Main_Ladspa.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Main_Vst.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Platform_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../core/source/h_Platform_Win32.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../../debug/h_Assert.h" />
 		<Unit filename="../../debug/h_Console.h" />
 		<Unit filename="../../debug/h_Debug.h" />
 		<Unit filename="../../debug/h_LogFile.h" />
 		<Unit filename="../../debug/h_MemTracer.h" />
-		<Unit filename="../../debug/impl/h_Debug_impl.h" />
+		<Unit filename="../../debug/source/h_Debug.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../../docs/LICENSE.txt" />
 		<Unit filename="../../gfx/h_BitmapUtils.h" />
 		<Unit filename="../../gfx/h_PngDecoder.h" />
@@ -242,15 +302,47 @@
 		<Unit filename="../../gui/h_Texture.h" />
 		<Unit filename="../../gui/h_Widget.h" />
 		<Unit filename="../../gui/h_Window.h" />
-		<Unit filename="../../gui/impl/h_Bitmap_Linux.h" />
-		<Unit filename="../../gui/impl/h_Bitmap_Win32.h" />
-		<Unit filename="../../gui/impl/h_Painter_Linux.h" />
-		<Unit filename="../../gui/impl/h_Painter_Win32.h" />
-		<Unit filename="../../gui/impl/h_Surface_Linux.h" />
-		<Unit filename="../../gui/impl/h_Surface_Win32.h" />
-		<Unit filename="../../gui/impl/h_Window_Linux.h" />
-		<Unit filename="../../gui/impl/h_Window_Win32.h" />
 		<Unit filename="../../gui/skin/skin_Default.h" />
+		<Unit filename="../../gui/source/h_Bitmap_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Bitmap_Win32.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Painter_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Painter_Win32.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Renderer_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Surface_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Surface_Win32.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Texture_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Window_Linux.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../../gui/source/h_Window_Win32.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../../gui/wdg/wdg_Background.h" />
 		<Unit filename="../../gui/wdg/wdg_Button.h" />
 		<Unit filename="../../gui/wdg/wdg_Color.h" />
@@ -265,6 +357,10 @@
 		<Unit filename="../../gui/wdg/wdg_Slider.h" />
 		<Unit filename="../../gui/wdg/wdg_Value.h" />
 		<Unit filename="../../h.h" />
+		<Unit filename="../../holos.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../../holos.h" />
 		<Unit filename="../../holos_impl.h" />
 		<Unit filename="../../lib/h_Array.h" />

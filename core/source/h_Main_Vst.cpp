@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Vst_impl_included
-#define h_Vst_impl_included
+#ifndef h_Main_Vst_cpp_included
+#define h_Main_Vst_cpp_included
 #ifdef h_Vst_included
 //----------------------------------------------------------------------
 
@@ -26,9 +26,9 @@
 #include "extern/vst/aeffectx.h"
 //#include "extern/vst/vstfxstore.h"
 
-#include "core/impl/h_Vst_Host_impl.h"
-#include "core/impl/h_Vst_Instance_impl.h"
-#include "core/impl/h_Vst_Format_impl.h"
+//#include "core/source/h_Host_Vst.cpp"
+//#include "core/source/h_Instance_Vst.cpp"
+//#include "core/source/h_Format_Vst.cpp"
 
 //
 //----------------------------------------------------------------------

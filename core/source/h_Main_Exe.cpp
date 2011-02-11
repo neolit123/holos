@@ -17,39 +17,33 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Exe_Instance_impl_included
-#define h_Exe_Instance_impl_included
+#ifndef h_Main_Exe_cpp_included
+#define h_Main_Exe_cpp_included
 #ifdef h_Exe_included
 //----------------------------------------------------------------------
 
-h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
-//: h_Instance_Base(a_Descriptor)
-  {
-    m_Host = a_Host;
-    m_Descriptor = a_Descriptor;
-    m_EditorRect = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
-    m_EditorIsOpen = false;
-  }
+//#ifndef H_NOGUI
+//  #include "gui/h_Window.h"
+//#endif
 
-//----------
+//#include "core/source/h_Host_Exe.cpp"
+//#include "core/source/h_Instance_Exe.cpp"
+//#include "core/source/h_Format_Exe.cpp"
 
-h_Instance::~h_Instance()
-  {
-  }
+//----------------------------------------------------------------------
+//
+// main
+//
+//----------------------------------------------------------------------
 
-
-//----------
-
-void h_Instance::initParameters(void)
-  {
-  }
-
-//----------
-
-void h_Instance::prepareParameters(void)
-  {
-  }
-
+//int main(void)
+int main(int argc, char** argv)
+{
+  static_Debug.initialize();
+  static_Core.initialize();
+  //parse cmdline args -> entrypoint
+  return static_Core.m_Format->entrypoint(H_NULL);
+}
 
 //----------------------------------------------------------------------
 #endif

@@ -85,11 +85,11 @@ class h_Painter_Base
 //----------------------------------------------------------------------
 
 #ifdef H_WIN32
-  #include "gui/impl/h_Painter_Win32.h"
+  #include "gui/source/h_Painter_Win32.cpp"
 #endif
 
 #ifdef H_LINUX
-  #include "gui/impl/h_Painter_Linux.h"
+  #include "gui/source/h_Painter_Linux.cpp"
 #endif
 
 //----------------------------------------------------------------------

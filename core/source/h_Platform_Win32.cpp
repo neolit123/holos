@@ -17,9 +17,9 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
+#ifndef h_Platform_Win32_cpp_included
+#define h_Platform_Win32_cpp_included
 #ifdef h_Win32_included
-#ifndef h_Win32_impl_included
-#define h_Win32_impl_included
 //----------------------------------------------------------------------
 
 #include "lib/h_Globals.h"
@@ -96,6 +96,13 @@ h_Platform::~h_Platform()
     #ifndef H_NOGUI
     UnregisterClass(m_WinClassName,m_WinInstance);
     #endif
+  }
+
+//----------
+
+h_String h_Platform::getName(void)
+  {
+    return "win32";
   }
 
 //----------------------------------------------------------------------

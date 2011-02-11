@@ -55,8 +55,8 @@
 class h_Parameter
 {
   private:
-    int       m_Connection;      // which widget (if any) this is connected to
-    int       m_Index;           // index into the parameter list
+    int       m_Connect;      // which widget (if any) this is connected to
+    int       m_Index;        // index into the parameter list
     float     m_Default;
   protected:
     h_String  m_Name;
@@ -74,7 +74,7 @@ class h_Parameter
 
     h_Parameter(h_String a_Name, h_String a_Label, int a_Flags = 0, float a_Value=0 )
       {
-        m_Connection = -1;
+        m_Connect = -1;
         m_Index = -1;
         m_Name = a_Name;
         m_Label = a_Label;
@@ -104,7 +104,8 @@ class h_Parameter
     virtual void      reset(void)                 { m_Value=m_Default;}
     virtual h_String  getName(void)               { return m_Name; }
     virtual h_String  getLabel(void)              { return m_Label; }
-
+    virtual void      setConnect(int a_Connect)   { m_Connect=a_Connect; }
+    virtual int       getConnect(void)            { return m_Connect; }
 };
 
 typedef h_Array<h_Parameter*> h_Parameters;

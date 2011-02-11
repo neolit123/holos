@@ -104,11 +104,11 @@ class h_Window_Base
 //----------------------------------------------------------------------
 
 #ifdef H_WIN32
-  #include "gui/impl/h_Window_Win32.h"
+  #include "gui/source/h_Window_Win32.cpp"
 #endif
 
 #ifdef H_LINUX
-  #include "gui/impl/h_Window_Linux.h"
+  #include "gui/source/h_Window_Linux.cpp"
 #endif
 
 //----------------------------------------------------------------------

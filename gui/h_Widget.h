@@ -116,6 +116,7 @@ class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
   private:
+  //protected:
     h_Rect    m_Content;               // rect encapsulating all sub-widgets (updated in doRealign)
     h_Rect    m_Orig;
     int       m_Alignment;
@@ -128,16 +129,19 @@ class h_Widget : public h_WidgetBase,
     h_Widget* m_HoverWidget;
     h_Widget* m_ModalWidget;
   //h_Rect    m_Client;
+
   protected:
     h_WidgetListener* m_Listener;
     h_Widget*         m_Parent;
     int               m_Index;
+    int               m_Connect;
     int               m_Flags;
     h_Widgets         m_Children;
     h_Rect            m_Rect;
     h_Skin*           m_Skin;
 
   public:
+
     inline int        getFlags(void)        { return m_Flags; }
     inline int        hasFlag(int a_Flag)   { return (m_Flags&a_Flag); }
     inline void       setFlag(int a_Flag)   { m_Flags|=a_Flag; }
@@ -148,8 +152,19 @@ class h_Widget : public h_WidgetBase,
     inline int        getNumChildren(void)  { return m_Children.size(); }
     inline h_Widget*  getChild(int a_Index) { return m_Children[a_Index]; }
 
+    inline void       setIndex(int a_Index) { m_Index=a_Index; }
+    inline int        getIndex(void)        { return m_Index; }
+
+    inline void       setConnect(int a_Connect) { m_Connect=a_Connect; }
+    inline int        getConnect(void)          { return m_Connect; }
+
     inline void       setCapture(h_Widget* a_Widget)  { m_CapturedWidget = a_Widget; }
     inline h_Widget*  getCapture(void)                { return m_CapturedWidget; }
+
+    //----------
+
+    virtual void  setValue(float a_Value) {}
+    virtual float getValue(void) { return 0; }
 
   public:
 
@@ -158,6 +173,7 @@ class h_Widget : public h_WidgetBase,
         m_Listener        = a_Listener;
         m_Parent          = H_NULL;
         m_Index           = -1;
+        m_Connect         = -1;
         m_Flags           = wf_Active|wf_Visible|wf_Capture|wf_Align;
         m_Rect            = a_Rect;
         m_Skin            = H_NULL;

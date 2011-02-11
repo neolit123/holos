@@ -37,12 +37,6 @@ class h_Host : public h_Host_Base
   private:
     audioMasterCallback m_AudioMaster;
     AEffect*            m_AEffect;
-  public:
-    inline audioMasterCallback getAudioMaster(void) { return m_AudioMaster; }
-    inline AEffect* getAEffect(void) { return m_AEffect; }
-  public:
-    h_Host(audioMasterCallback audioMaster, AEffect* m_AEffect);
-    ~h_Host();
   private:
     VstInt32      vst_Version(void);
     VstInt32      vst_CurrentId(void);
@@ -59,6 +53,13 @@ class h_Host : public h_Host_Base
     bool          vst_CanDo(const char* text);
     bool          vst_BeginEdit(VstInt32 index);
     bool          vst_EndEdit(VstInt32 index);
+  public:
+    inline audioMasterCallback getAudioMaster(void) { return m_AudioMaster; }
+    inline AEffect* getAEffect(void) { return m_AEffect; }
+  public:
+    h_Host(audioMasterCallback audioMaster, AEffect* m_AEffect);
+    ~h_Host();
+    virtual h_String getName(void);
 };
 
 //----------------------------------------------------------------------
@@ -85,21 +86,20 @@ struct h_VstEvents
   VstEvent* events[H_MAX_MIDI_SEND];
 };
 
-
 //------------------------------
 
 class h_Instance : public h_Instance_Base
 {
   friend class h_Format;
+
   private:
     h_Host*             m_Host;
-    h_Descriptor*       m_Descriptor;
     audioMasterCallback m_AudioMaster;
     AEffect*            m_AEffect;
     VstTimeInfo*        m_TimeInfo;
     h_VstEvents         m_MidiEventList;
-    char                m_ProgramName[kVstMaxProgNameLen];
     int                 m_NumPrograms;
+    char                m_ProgramName[kVstMaxProgNameLen];
     VstInt32            m_CurrentProgram;
     double              m_SampleRate;
     long                m_BlockSize;
@@ -107,71 +107,39 @@ class h_Instance : public h_Instance_Base
     double              m_SamplePos;
     double              m_BeatPos;
     double              m_Tempo;
-    h_Rect              m_EditorRect;
     bool                m_EditorIsOpen;
     ERect               m_ERect;
-    //h_Parameters        m_Parameters;
-    h_Parameters*       m_Parameters;
-  public:
-    // accessors
-    inline int    getPlayState(void)                    { return m_PlayState; }
-    inline double getSamplePos(void)                    { return m_SamplePos; }
-    inline double getSampleRate(void)                   { if (m_SampleRate==0) updateTime(); return m_SampleRate; /*host_GetSampleRate();*/ }
-    inline double getBeatPos(void)                      { return m_BeatPos; }
-    inline double getTempo(void)                        { return m_Tempo; }
-    inline int    getCurrentProgram(void)               { return m_CurrentProgram; }
-    inline h_Rect getEditorRect(void)                   { return m_EditorRect; }
+  protected:
+    //h_Descriptor*       m_Descriptor;
+    h_Rect              m_EditorRect;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
-  public:
-    void          appendParameter(h_Parameter* a_Parameter);
-    void          deleteParameters(void);
-    void          initParameters(void);
-    void          prepareParameters(void);
-    void          notifyParameter(h_Parameter* aParameter);
-    void          notifyResize(int aWidth, int aHeight);
-    void          updateTime(void);
-    void          sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
+    inline h_Rect getEditorRect(void) { return m_EditorRect; }
   private:
-//    inline void   _clear_aeFlags(void)                  { m_AEffect->flags = 0; }
-//    inline void   _clear_aeFlag(int aFlag)              { m_AEffect->flags &= ~aFlag; }
-//    inline bool   _get_aeFlag(int aFlag)                { return (m_AEffect->flags|aFlag); }
-//    inline void   _set_aeFlag(int aFlag)                { m_AEffect->flags |= aFlag; }
-//    inline void   _set_aeFlag(int aFlag, bool aState)   { if (aState) _set_aeFlag(aFlag); else _clear_aeFlag(aFlag); }
-//  //
-//    inline void   _setUniqueID(int aID)                  { m_AEffect->uniqueID = aID; }         // Must be called to set the plug-ins unique ID!
-//    inline void   _setNumInputs(int aNum)                { m_AEffect->numInputs = aNum; }       // set the number of inputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available inputs.
-//    inline void   _setNumOutputs(int aNum)               { m_AEffect->numOutputs = aNum; }      // set the number of outputs the plug-in will handle. For a plug-in which could change its IO configuration, this number is the maximun available ouputs.
-//    inline void   _setInitialDelay(int aDelay)           { m_AEffect->initialDelay = aDelay; }  // use to report the plug-in's latency (Group Delay)
-//    inline void   _setVersion(int aVer)                  { m_AEffect->version = aVer; }
-//    inline void   _setNumPrograms(int aNum)              { m_AEffect->numPrograms = aNum; }
-//    inline void   _setNumParams(int aNum)                { m_AEffect->numParams = aNum; }
-//  //
-//    inline void   _canProcessReplacing(bool aState=true) { _set_aeFlag(effFlagsCanReplacing,aState); }        // tells that processReplacing() could be used. Mandatory in VST 2.4!
-//    inline void   _canDoubleReplacing(bool aState=true)  { _set_aeFlag(effFlagsCanDoubleReplacing,aState); }  // tells that processDoubleReplacing() is implemented.
-//    inline void   _programsAreChunks(bool aState=false)  { _set_aeFlag(effFlagsProgramChunks,aState); }       // program data is handled in formatless chunks (using getChunk-setChunks)
-//    inline void   _isSynth(bool aState=false)            { _set_aeFlag(effFlagsIsSynth,aState); }
-//    inline void   _hasEditor(bool aState=false)          { _set_aeFlag(effFlagsHasEditor,aState); }
-//    inline void   _noSoundInStop(bool aState=true)       { _set_aeFlag(effFlagsNoSoundInStop,aState); }
-    void          sendMidiClear(void);
-    void          sendMidiAll(void);
-    VstIntPtr     vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt);
-    float         vst_getParameter(VstInt32 index);
-    void          vst_setParameter(VstInt32 index, float value);
-    void          vst_processReplacing(float** inputs, float** outputs,VstInt32 sampleFrames);
-    void          vst_processDoubleReplacing(double** inputs, double** outputs, VstInt32 sampleFrames);
-//    VstInt32      host_Version(void);
-//    VstInt32      host_CurrentId(void);
-//    void          host_Automate(VstInt32 param, float val);
-//    void          host_Idle(void);
-//    VstTimeInfo*  host_GetTime(VstInt32 filter);
-//    bool          host_ProcessEvents(VstEvents* events);
-//    bool          host_IOChanged(void);
-//    bool          host_SizeWindow(int aWidth, int aHeight);
-//    float         host_GetSampleRate(void); // float?
-//    bool          host_BeginEdit(VstInt32 index);
-//    bool          host_EndEdit(VstInt32 index);
+    void            _sendMidiClear(void);
+    void            _sendMidiAll(void);
+    VstIntPtr       vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt);
+    float           vst_getParameter(VstInt32 index);
+    void            vst_setParameter(VstInt32 index, float value);
+    void            vst_processReplacing(float** inputs, float** outputs,VstInt32 sampleFrames);
+    void            vst_processDoubleReplacing(double** inputs, double** outputs, VstInt32 sampleFrames);
+  public:
+    virtual int     getPlayState(void)      { return m_PlayState; }
+    virtual double  getSamplePos(void)      { return m_SamplePos; }
+    virtual double  getSampleRate(void)     { if (m_SampleRate==0) updateTime(); return m_SampleRate; /*host_GetSampleRate();*/ }
+    virtual double  getBeatPos(void)        { return m_BeatPos; }
+    virtual double  getTempo(void)          { return m_Tempo; }
+    virtual int     getCurrentProgram(void) { return m_CurrentProgram; }
+    //virtual h_Rect  getEditorRect(void)     { return m_EditorRect; }
+  public:
+    //virtual void    appendParameter(h_Parameter* a_Parameter);
+    //virtual void    deleteParameters(void);
+    virtual void    prepareParameters(void);
+    virtual void    notifyParameter_fromEditor(h_Parameter* aParameter);
+    virtual void    notifyResize_fromEditor(int aWidth, int aHeight);
+    virtual void    updateTime(void);
+    virtual void    sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
 
 };
 
@@ -191,7 +159,7 @@ class h_Format //: public h_Format_Base
     h_Descriptor* createDescriptor(void);
     h_Instance*   createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     AEffect*      entrypoint(audioMasterCallback audioMaster);
-    h_String      getName(void) { return "vst"; }
+    h_String      getName(void);
   private:
     static VstIntPtr  vst_dispatcher_callback(AEffect* ae, VstInt32 opCode, VstInt32 index, VstIntPtr value, void* ptr, float opt);
     static float      vst_getParameter_callback(AEffect* ae, VstInt32 index);

@@ -37,11 +37,11 @@ class h_Bitmap_Base
 //----------------------------------------------------------------------
 
 #ifdef H_WIN32
-  #include "gui/impl/h_Bitmap_Win32.h"
+  #include "gui/source/h_Bitmap_Win32.cpp"
 #endif
 
 #ifdef H_LINUX
-  #include "gui/impl/h_Bitmap_Linux.h"
+  #include "gui/source/h_Bitmap_Linux.cpp"
 #endif
 
 //----------------------------------------------------------------------

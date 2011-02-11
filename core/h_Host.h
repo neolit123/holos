@@ -28,7 +28,7 @@ class h_Host_Base
   public:
     h_Host_Base() {}
     virtual ~h_Host_Base() {}
-    virtual h_String getHostName(void) { return ""; }
+    virtual h_String getName(void) { return ""; }
 };
 
 //----------------------------------------------------------------------

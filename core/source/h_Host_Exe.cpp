@@ -17,28 +17,29 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Core_included
-#define h_Core_included
+#ifndef h_Host_Exe_cpp_included
+#define h_Host_Exe_cpp_included
+#ifdef h_Exe_included
 //----------------------------------------------------------------------
 
-class h_Platform;
-class h_Format;
+h_Host::h_Host()
+: h_Host_Base()
+  {
+  }
 
-class h_Core
-{
-  private:
-    bool  m_Initialized;
-  public:
-    h_Platform* m_Platform;
-    h_Format*   m_Format;
-  public:
-    h_Core();
-    ~h_Core();
-    void initialize(void);
-};
+//----------
 
-static h_Core static_Core;
+h_Host::~h_Host()
+  {
+  }
+
+//----------
+
+h_String h_Host::getName(void)
+  {
+    return "exe";
+  }
 
 //----------------------------------------------------------------------
 #endif
-
+#endif

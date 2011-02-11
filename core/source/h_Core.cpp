@@ -17,22 +17,40 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Exe_Host_impl_included
-#define h_Exe_Host_impl_included
-#ifdef h_Exe_included
+#ifndef h_Core_cpp_included
+#define h_Core_cpp_included
+#ifdef h_Core_included
 //----------------------------------------------------------------------
 
-h_Host::h_Host()
-: h_Host_Base()
+h_Core::h_Core()
   {
+    m_Initialized = false;
+    m_Platform  = H_NULL;
+    m_Format = H_NULL;
   }
 
 //----------
 
-h_Host::~h_Host()
+h_Core::~h_Core()
   {
+    if (m_Initialized)
+    {
+      /*if (m_Platform)*/  delete m_Platform;
+      /*if (m_Format)*/ delete m_Format;
+    }
   }
 
+//----------
+
+void h_Core::initialize(void)
+  {
+    if (!m_Initialized)
+    {
+      m_Platform  = new h_Platform();
+      m_Format = new h_Format();
+      m_Initialized = true;
+    }
+  }
 
 //----------------------------------------------------------------------
 #endif
