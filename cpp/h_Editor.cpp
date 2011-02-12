@@ -65,9 +65,14 @@ void h_Editor::notifyParameter_fromInstance(h_Parameter* a_Parameter)
     int conn = a_Parameter->getConnect();
     if (conn>=0)
     {
-      //trace("h_Editor.notifyParameter_fromInstance");
-      //h_Widget* wdg = m_Connections[index]->m_Widget;
-      // redraw widget..
+      trace("h_Editor.notifyParameter_fromInstance");
+      h_Widget* wdg = m_Connections[conn]->m_Widget;
+      float val = a_Parameter->getInternal();
+      wdg->setValue( val );
+      h_Painter* painter = getPainter();
+      redrawWidget(wdg);
+      //wdg->do_Paint(painter,wdg->getRect(),0);
+      //flush();
     }
   }
 
@@ -84,7 +89,6 @@ void h_Editor::on_Change(h_Widget* a_Widget)
     {
       h_Parameter* par = m_Connections[conn]->m_Parameter;
       par->setInternal( a_Widget->getValue() );
-
       // in vst instance (impl)
       m_Instance->notifyParameter_fromEditor(par);
     }

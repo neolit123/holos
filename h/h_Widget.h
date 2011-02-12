@@ -20,10 +20,20 @@
 #ifndef h_Widget_included
 #define h_Widget_included
 //----------------------------------------------------------------------
+/*
 
-//#include "lib/h_Rect.h"
-//#include "gui/h_Painter.h"
-//#include "gui/h_Skin.h"
+TODO: consider if we should split the widget into two classes:
+      - a simple widget without children
+      - a container with children
+
+widget size/overhead:
+- WidgetBase/Listener vtable: 18*4 = 72
+- vars/members: around 30*4 = 120
+
+so, around 200 bytes for vars,
+
+*/
+
 #include "h/h_Rect.h"
 #include "h/h_Painter.h"
 #include "h/h_Skin.h"
@@ -146,29 +156,22 @@ class h_Widget : public h_WidgetBase,
 
   public:
 
-    inline int        getFlags(void)        { return m_Flags; }
-    inline int        hasFlag(int a_Flag)   { return (m_Flags&a_Flag); }
-    inline void       setFlag(int a_Flag)   { m_Flags|=a_Flag; }
-    inline void       clearFlag(int a_Flag) { m_Flags&=~a_Flag; }
-
-    inline h_Rect     getRect(void)         { return m_Rect; }
-    inline h_Rect     getContent(void)      { return m_Content; }
-    inline int        getNumChildren(void)  { return m_Children.size(); }
-    inline h_Widget*  getChild(int a_Index) { return m_Children[a_Index]; }
-
-    inline void       setIndex(int a_Index) { m_Index=a_Index; }
-    inline int        getIndex(void)        { return m_Index; }
-
-    inline void       setConnect(int a_Connect) { m_Connect=a_Connect; }
-    inline int        getConnect(void)          { return m_Connect; }
-
+    inline int        getFlags(void)                  { return m_Flags; }
+    inline int        hasFlag(int a_Flag)             { return (m_Flags&a_Flag); }
+    inline void       setFlag(int a_Flag)             { m_Flags|=a_Flag; }
+    inline void       clearFlag(int a_Flag)           { m_Flags&=~a_Flag; }
+    inline h_Rect     getRect(void)                   { return m_Rect; }
+    inline h_Rect     getContent(void)                { return m_Content; }
+    inline int        getNumChildren(void)            { return m_Children.size(); }
+    inline h_Widget*  getChild(int a_Index)           { return m_Children[a_Index]; }
+    inline void       setIndex(int a_Index)           { m_Index=a_Index; }
+    inline int        getIndex(void)                  { return m_Index; }
+    inline void       setConnect(int a_Connect)       { m_Connect=a_Connect; }
+    inline int        getConnect(void)                { return m_Connect; }
     inline void       setCapture(h_Widget* a_Widget)  { m_CapturedWidget = a_Widget; }
     inline h_Widget*  getCapture(void)                { return m_CapturedWidget; }
-
-    //----------
-
-    virtual void  setValue(float a_Value) {}
-    virtual float getValue(void) { return 0; }
+    virtual void      setValue(float a_Value)         {}
+    virtual float     getValue(void)                  { return 0; }
 
   public:
 

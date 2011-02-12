@@ -21,18 +21,10 @@
 #define h_DspRBJ_included
 //----------------------------------------------------------------------
 
-/**
- * \file dspRBJ.h
- * \brief biquad filters based on rbj's filter cookbook
- */
-
-/*!
- * \class dspRBJ
- * \brief biquad filters based on rbj's filter cookbook
- *
- * original filters by: <br>
- * Robert Bristow-Johnson, rbj at audioimagination.com <br>
- */
+// biquad filters based on rbj's filter cookbook
+//
+// original filters by:
+// Robert Bristow-Johnson, rbj at audioimagination.com
 
 class h_DspRBJ
 {

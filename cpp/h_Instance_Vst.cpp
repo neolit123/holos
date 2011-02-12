@@ -45,6 +45,7 @@ h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     m_CurrentProgram  = 0;
     m_EditorRect      = m_Descriptor->m_EditorRect;// h_Rect(0,0,320,240);
     m_EditorIsOpen    = false;
+    m_Editor          = H_NULL;
   }
 
 //----------
@@ -445,7 +446,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
           if (!m_EditorIsOpen)
           {
             //do_OpenEditor(&ptr);
-            do_OpenEditor(ptr);
+            m_Editor = (h_Editor*)do_OpenEditor(ptr);                   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             m_EditorIsOpen = true;
             result = 1;
           }
@@ -462,6 +463,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
           {
             do_CloseEditor();
             m_EditorIsOpen = false;
+            m_Editor = H_NULL;
             result = 1; // ??? test
           }
         }
@@ -764,17 +766,17 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       //----------
 
-//namespace PlugCanDos
-//{
-//	const char* canDoSendVstEvents = "sendVstEvents"; ///< plug-in will send Vst events to Host
-//	const char* canDoSendVstMidiEvent = "sendVstMidiEvent"; ///< plug-in will send MIDI events to Host
-//	const char* canDoReceiveVstEvents = "receiveVstEvents"; ///< plug-in can receive MIDI events from Host
-//	const char* canDoReceiveVstMidiEvent = "receiveVstMidiEvent"; ///< plug-in can receive MIDI events from Host
-//	const char* canDoReceiveVstTimeInfo = "receiveVstTimeInfo"; ///< plug-in can receive Time info from Host
-//	const char* canDoOffline = "offline"; ///< plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
-//	const char* canDoMidiProgramNames = "midiProgramNames"; ///< plug-in supports function #getMidiProgramName ()
-//	const char* canDoBypass = "bypass"; ///< plug-in supports function #setBypass ()
-//}
+      //namespace PlugCanDos
+      //{
+      //	const char* canDoSendVstEvents = "sendVstEvents"; ///< plug-in will send Vst events to Host
+      //	const char* canDoSendVstMidiEvent = "sendVstMidiEvent"; ///< plug-in will send MIDI events to Host
+      //	const char* canDoReceiveVstEvents = "receiveVstEvents"; ///< plug-in can receive MIDI events from Host
+      //	const char* canDoReceiveVstMidiEvent = "receiveVstMidiEvent"; ///< plug-in can receive MIDI events from Host
+      //	const char* canDoReceiveVstTimeInfo = "receiveVstTimeInfo"; ///< plug-in can receive Time info from Host
+      //	const char* canDoOffline = "offline"; ///< plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+      //	const char* canDoMidiProgramNames = "midiProgramNames"; ///< plug-in supports function #getMidiProgramName ()
+      //	const char* canDoBypass = "bypass"; ///< plug-in supports function #setBypass ()
+      //}
 
       // case effVendorSpecific:
       //    if (index == effGetParamDisplay && ptr)
@@ -983,7 +985,15 @@ void h_Instance::vst_setParameter(VstInt32 index, float value)
     h_Parameter* par = m_Parameters->item(index);
     par->setInternal(value);
     do_HandleParameter(par);
+    if (m_Editor && m_EditorIsOpen) m_Editor->notifyParameter_fromInstance(par);
+    //trace("todo: update editor");
   }
+
+/*
+  we should notify the editor here, but currently, the instance has no
+  knowledge about any editor (in case we have a gui-less plugin..
+  todo: find some way of letting the instance know about an editor
+*/
 
 //----------
 

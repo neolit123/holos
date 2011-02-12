@@ -20,11 +20,7 @@
 #ifndef h_DspOsc_included
 #define h_DspOsc_included
 //----------------------------------------------------------------------
-
-/**
-  \file dspOsc0.h
-  \brief primitive multi oscillator
-*/
+// primitive multi oscillator
 
 #include "h/h_Rand.h"
 
@@ -37,8 +33,7 @@
 #define osc_Saw     5
 #define osc_Squ     6
 #define osc_Sin     7
-
-//TODO: oty_Pulse, oty_Tri
+//TODO: osc_Pulse, osc_Tri
 
 //----------------------------------------------------------------------
 

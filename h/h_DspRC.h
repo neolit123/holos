@@ -21,10 +21,7 @@
 #define h_DspRC_included
 //----------------------------------------------------------------------
 
-/**
-  \file dspRC.h
-  \brief RC filter
-*/
+// RC filter
 
 #include "h/h_Math.h"
 

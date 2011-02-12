@@ -29,13 +29,7 @@ based on code from jack.cpp (jacklab)
 
 */
 
-//#include "lib/h_Memory.h"
-//#include "lib/h_Stdlib.h"
 #include "h/h_Stdlib.h"
-
-//#define H_QUEUE_ALLOC
-
-//#define H_QUEUE_SIZE  512
 
 //----------
 
@@ -62,7 +56,7 @@ class h_Queue
     void write(_T a_Data)
       {
         m_Data[m_WritePos] = a_Data;
-        m_WritePos = (m_WritePos + 1) % SIZE; // & SIZE if ^2
+        m_WritePos = (m_WritePos + 1) % SIZE; // & (SIZE-1) if ^2
       }
 
     //----------

@@ -40,7 +40,8 @@ typedef h_Array<h_Connection*> h_Connections;
 
 class h_Editor : public h_Window
 {
-  private:
+  //private:
+  protected:
     h_Instance*   m_Instance;
     h_Connections m_Connections;
 

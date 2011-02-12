@@ -24,6 +24,7 @@
 #include "extern/vst/aeffect.h"
 #include "extern/vst/aeffectx.h"
 //#include "extern/vst/vstfxstore.h"
+
 #include "h/h_Rect.h"
 
 //struct VstEvents
@@ -48,6 +49,8 @@ struct h_VstEvents
 
 //------------------------------
 
+class h_Editor;
+
 class h_Instance : public h_Instance_Base
 {
   friend class h_Format;
@@ -69,6 +72,7 @@ class h_Instance : public h_Instance_Base
     double              m_Tempo;
     bool                m_EditorIsOpen;
     ERect               m_ERect;
+    h_Editor*           m_Editor;
   protected:
     //h_Descriptor*       m_Descriptor;
     h_Rect              m_EditorRect;
