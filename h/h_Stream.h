@@ -28,6 +28,7 @@ class h_Stream
   public:
     virtual int read(void* buffer, int size) {}
     virtual int write(void* buffer, int size) {}
+    // read/write: bit, byte, word, dword, char, etc... ???
 };
 
 //----------------------------------------------------------------------

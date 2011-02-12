@@ -21,12 +21,12 @@
 #define h_Script_included
 //----------------------------------------------------------------------
 
-//#include "script/h_VirtualMachine.h"
-//#include "script/h_Compiler.h"
 #include "h/h_VirtualMachine.h"
 #include "h/h_Compiler.h"
 
 //----------------------------------------------------------------------
+
+// combines the compiler and virtual machine into a single entity
 
 class h_Script
 {

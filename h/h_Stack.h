@@ -21,6 +21,8 @@
 #define h_Stack_included
 //----------------------------------------------------------------------
 
+// templated stack with static size
+
 template<class _T,int SIZE>
 class h_Stack
 {
@@ -55,6 +57,9 @@ class h_Stack
         m_Index--;
         return m_Buffer[m_Index];
       }
+
+    // a few helper functions for the forth-like scripting language
+    // see: h_Script, h_Compiler, h_VirtualMachine
 
     inline
     void dup(void)

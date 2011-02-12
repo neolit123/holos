@@ -35,6 +35,8 @@ typedef unsigned long h_Color;
 
 #ifdef H_LINUX
 
+  // this only works for 32-bit, bgra
+
   h_Color h_xcolor(unsigned char r, unsigned char g, unsigned char b)
       {
         //XColor xcol;

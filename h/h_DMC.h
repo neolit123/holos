@@ -22,16 +22,18 @@
 //----------------------------------------------------------------------
 //
 // Dynamic Markov Compression (DMC)
-//
 // http://en.wikipedia.org/wiki/Dynamic_Markov_Compression
 // http://plg1.cs.uwaterloo.ca/~ftp/dmc/
+// - predictive arithmetic coding
+// - good compression ratio
+// - not widely implemented
 
 #ifndef h_EOF
   #define h_EOF -1
 #endif
 
-#define h_dmc_threshold 8
-#define h_dmc_bigthresh 8
+#define h_dmc_threshold 2 // 8
+#define h_dmc_bigthresh 2 // 8
 
 // threshold = 32;//2;
 // bigthresh = 32;//2;

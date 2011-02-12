@@ -21,7 +21,6 @@
 #define h_Types_included
 //----------------------------------------------------------------------
 
-//#include "lib/h_Defines.h"
 #include "h/h_Defines.h"
 
 // limits

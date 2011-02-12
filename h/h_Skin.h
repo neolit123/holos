@@ -37,6 +37,14 @@
 
 //----------
 
+/*
+  note that a skin doesn't need to overload all methods, we could for example
+  have a skin with just a knob drawing function... if we attach this skin
+  only to a knob widget, all is fine...
+  nice fif we need different looking widgets for different parts of a
+  plugin editor... (sliders, knobs, buttons...)
+*/
+
 class h_Skin
 {
 

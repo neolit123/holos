@@ -327,6 +327,7 @@
 		<Unit filename="../../h/h_List.h" />
 		<Unit filename="../../h/h_LogFile.h" />
 		<Unit filename="../../h/h_Math.h" />
+		<Unit filename="../../h/h_Matrix.h" />
 		<Unit filename="../../h/h_MemTracer.h" />
 		<Unit filename="../../h/h_Memory.h" />
 		<Unit filename="../../h/h_Mutex.h" />
@@ -359,6 +360,7 @@
 		<Unit filename="../../h/h_Timestamp.h" />
 		<Unit filename="../../h/h_Types.h" />
 		<Unit filename="../../h/h_Utils.h" />
+		<Unit filename="../../h/h_Vector.h" />
 		<Unit filename="../../h/h_VirtualMachine.h" />
 		<Unit filename="../../h/h_VoiceManager.h" />
 		<Unit filename="../../h/h_WdgBackground.h" />

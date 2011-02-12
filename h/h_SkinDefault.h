@@ -21,6 +21,10 @@
 #define skin_Default_included
 //----------------------------------------------------------------------
 
+// default/simple skin
+// for testing/developing purposes mainly, but might be fleshed out
+// to a proper skin sometime (and renamed... h_SkinSimple perhaps?
+
 //#include "gui/h_Skin.h"
 #include "h/h_Skin.h"
 

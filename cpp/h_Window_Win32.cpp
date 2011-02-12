@@ -29,10 +29,6 @@
 
 #include <windows.h>
 
-//#include "gui/h_Widget.h"
-//#include "gui/h_Painter.h"
-//#include "gui/h_Skin.h"
-
 #include "h/h_Widget.h"
 #include "h/h_Painter.h"
 #include "h/h_Skin.h"
@@ -87,7 +83,6 @@
 
 //----------------------------------------------------------------------
 
-// also declared in h_Interface_Win32.h
 LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 //----------------------------------------------------------------------
@@ -116,10 +111,8 @@ class h_Window_Win32 : public h_Widget,
   public:
     inline h_Painter* getPainter(void)  { return m_WinPainter; }
     //inline h_Rect     getWinRect(void)  { return m_WinRect; }
-
     // h_PaintSource
     virtual HDC getDC(void) { return m_WinPainter->getDC(); }
-
     //// widget owner (called by widgets)
     //virtual void on_Redraw(void) {}
     //virtual void on_Redraw(h_Rect a_Rect) {}
@@ -127,19 +120,14 @@ class h_Window_Win32 : public h_Widget,
 
   public:
 
-
     h_Window_Win32(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
     : h_Widget(a_Listener,a_Rect)
       {
-        //trace( "win class name: " << static_Core.m_Platform->m_WinClassName );
         //m_WinParent = (HWND)a_Parent;
         m_WinCursor = LoadCursor(NULL,IDC_ARROW);
         m_WinPrevCursor = 0;
         m_WinClickedButton = bu_None;
-        //h_Interface_Data* data = static_Core.getInterface()->getData();
-
         RECT rc = {a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2()}; // left, top, right, bottom
-
         if (a_Parent) // --- embedded ---
         {
           //trace("embedded");
@@ -170,8 +158,8 @@ class h_Window_Win32 : public h_Widget,
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           const unsigned int adjx = ((GetSystemMetrics(SM_CXSCREEN)-a_Rect.w)>>1) + rc.left;
           const unsigned int adjy = ((GetSystemMetrics(SM_CYSCREEN)-a_Rect.h)>>1) + rc.top;
-//          trace("adjx: " << adjx);
-//          trace("adjy: " << adjy);
+          //trace("adjx: " << adjx);
+          //trace("adjy: " << adjy);
           m_WinHandle = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             static_Core.m_Platform->m_WinClassName,    // lpClassName
@@ -188,18 +176,17 @@ class h_Window_Win32 : public h_Widget,
           );
           SetFocus(m_WinHandle);
         } // windowed
-
-//        trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
-//        trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
-
+        //trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
+        //trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
         m_WinAdjustWidth  = (rc.right - rc.left + 1) - a_Rect.w;
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
-//        trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
-//        trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
+        //trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
+        //trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
         //SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
         SetWindowLongPtr(m_WinHandle,GWLP_USERDATA,(LONG_PTR)this);
         //DragAcceptFiles(m_WinHandle,true);
         m_WinPainter = new h_Painter(m_WinHandle);
+        //TODO:
         //if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
       }
 
@@ -289,7 +276,7 @@ class h_Window_Win32 : public h_Widget,
       {
         if (a_Cursor<0)
         {
-          hideCursor();// aCursor = DEF_CURSOR;
+          hideCursor();// a_Cursor = DEF_CURSOR;
           m_WinPrevCursor = a_Cursor;
         } //-1
         else
@@ -415,11 +402,7 @@ class h_Window_Win32 : public h_Widget,
       {
         //m_WinParent = (HWND)a_Parent;
         //SetWindowLong(m_WinHandle,GWL_STYLE,(GetWindowLong(m_WinHandle,GWL_STYLE)&~WS_POPUP)|WS_CHILD);
-        SetWindowLongPtr( m_WinHandle,
-                          GWL_STYLE,
-                          //( GetWindowLong(m_WinHandle,GWL_STYLE) & ~WS_POPUP ) | WS_CHILD );
-                          ( GetWindowLongPtr(m_WinHandle,GWL_STYLE) & ~WS_POPUP ) | WS_CHILD );
-
+        SetWindowLongPtr( m_WinHandle, GWL_STYLE, ( GetWindowLongPtr(m_WinHandle,GWL_STYLE) & ~WS_POPUP ) | WS_CHILD );
         SetParent(m_WinHandle, (HWND)a_Parent);
       }
 

@@ -35,6 +35,7 @@ class h_String
 {
   private:
     /*const*/ char* mText;
+
   public:
 
     h_String()                            { mText = (char*)""; }

@@ -21,14 +21,10 @@
 #define h_WdgButton_included
 //----------------------------------------------------------------------
 // action button
-// switch extends this to have on/off state
+// [h_WdgSwitch] extends this to have on/off state
 
-//#include "gui/h_Color.h"
-//#include "gui/h_Widget.h"
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
-
-// assumes m_Listener is valid...
 
 class h_WdgButton : public h_Widget
 {
@@ -54,7 +50,6 @@ class h_WdgButton : public h_Widget
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         m_Skin->drawButton(a_Painter,m_Rect,a_Mode,m_Text);
-        //h_Widget::do_Paint(a_Painter,a_Rect);
       }
 
     virtual void do_Enter(h_Widget* a_Widget)
@@ -72,7 +67,6 @@ class h_WdgButton : public h_Widget
     virtual void do_MouseDown(int x, int y, int b, int s)
       {
         m_Listener->on_Redraw(this,1); // highlight
-        //if (inside) m_Listener->on_Change(this);
         m_Clicked = true;
         m_WasInside = true;
       }

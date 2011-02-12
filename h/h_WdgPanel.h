@@ -21,20 +21,16 @@
 #define h_WdgPanel_included
 //----------------------------------------------------------------------
 
-//#include "gui/h_Widget.h"
 #include "h/h_Widget.h"
 
 class h_WdgPanel : public h_Widget
 {
-  //private:
-  //  h_String m_Text;
 
   public:
 
-    h_WdgPanel(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*, h_String a_Text*/)
+    h_WdgPanel(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
-        //m_Text = a_Text;
       }
 
     virtual ~h_WdgPanel()
@@ -43,7 +39,7 @@ class h_WdgPanel : public h_Widget
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        m_Skin->drawPanel(a_Painter,m_Rect,0/*,m_Text*/);
+        m_Skin->drawPanel(a_Painter,m_Rect,0);
         h_Widget::do_Paint(a_Painter,a_Rect,0);
       }
 

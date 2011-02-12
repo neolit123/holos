@@ -21,6 +21,8 @@
 #define h_RayTracer_included
 //----------------------------------------------------------------------
 
+#include "h/h_Vector.h"
+
 //class rt_Vec;
 //class rt_Ray;
 //

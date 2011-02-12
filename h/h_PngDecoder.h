@@ -66,6 +66,10 @@ class h_PngDecoder
         m_Buffer = H_NULL;
       }
 
+    // why the new?
+    // why not just YsRawPngDecoder m_Decoder; ??
+    // and no pointer/indirection?
+
     void decode(char* filename)
       {
         YsRawPngDecoder* m_Decoder;
@@ -82,7 +86,6 @@ class h_PngDecoder
         m_Decoder = H_NULL;
         clear();
       }
-
 
 };
 

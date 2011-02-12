@@ -39,8 +39,8 @@ class h_WdgValue : public h_Widget
     bool  m_IsDragging;
   protected:
     float m_Value;
-    bool  m_DragVertical; // drag direction
-    float m_DragSensitivity;     // drag sensitivity
+    bool  m_DragVertical;
+    float m_DragSensitivity;
 
   public:
 
@@ -60,13 +60,19 @@ class h_WdgValue : public h_Widget
       {
       }
 
-    virtual void  setValue(float a_Value) { m_Value=a_Value; }
-    virtual float getValue(void)          { return m_Value; }
+    virtual void setValue(float a_Value)
+      {
+        m_Value=a_Value;
+      }
+
+    virtual float getValue(void)
+      {
+        return m_Value;
+      }
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         m_Skin->drawValue(a_Painter,m_Rect,a_Mode,m_Value);
-        //h_Widget::do_Paint(a_Painter,a_Rect);
       }
 
     virtual void do_Enter(h_Widget* a_Widget)
@@ -102,31 +108,31 @@ class h_WdgValue : public h_Widget
         if (inside) m_Listener->on_Redraw(this,2); // border on
       }
 
+    // m_Rect.w/h and m_DragSensitivity must be > 0
+
     virtual void do_MouseMove(int x, int y, int s)
       {
         if (m_IsDragging)
         {
           float dist;
-          if (m_DragVertical) // |
-          {
+          if (m_DragVertical)
+          { // |
             dist = m_ClickedY - y;
             dist *= 1.0f / (float)m_Rect.h * m_DragSensitivity;
           }
-          else // -
-          {
+          else
+          { // --
             dist = x - m_ClickedX;
             dist *= 1.0f / (float)m_Rect.w * m_DragSensitivity;
           }
           m_Value = m_OrigValue + dist;
           if (m_Value>1) m_Value=1;
           if (m_Value<0) m_Value=0;
-          //trace("  m_Value: " << m_Value);
           m_Listener->on_Change(this);
           m_Listener->on_Redraw(this,1); // active
           m_Listener->on_Redraw(this,2); // border on
         }
       }
-
 
 };
 

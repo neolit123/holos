@@ -23,8 +23,6 @@
 
 #include <stdio.h>  // printf
 
-//#include "debug/h_Debug.h"
-//#include "lib/h_Stack.h"
 #include "h/h_Debug.h"
 #include "h/h_Stack.h"
 
@@ -37,6 +35,7 @@
 
 typedef void* h_Cell;
 //typedef long h_Cell; // void*
+
 typedef h_Stack<h_Cell, VM_DATA_STACK_SIZE> h_DataStack;
 typedef h_Stack<h_Cell*,VM_CALL_STACK_SIZE> h_CallStack;
 

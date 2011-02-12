@@ -21,18 +21,10 @@
 #define h_Window_Linux_cpp_included
 //----------------------------------------------------------------------
 
-//#include <stdio.h>  // printf
-//#include <memory.h> // memset
-
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <pthread.h>
 //#include <string.h>
-
-//#include "gui/h_Widget.h"
-//#include "gui/h_Painter.h"
-//#include "gui/h_Skin.h"
-////#include "gui/h_Renderer.h"
 
 #include "h/h_Widget.h"
 #include "h/h_Painter.h"
@@ -43,10 +35,6 @@ void* h_linux_threadProc(void* data);
 void* h_linux_timerProc(void* data);
 
 //----------------------------------------------------------------------
-
-// thread state
-#define ts_Kill  666
-#define ts_Timer 667
 
 // mouse buttons and mod keys
 #define bu_None    0
@@ -86,16 +74,17 @@ void* h_linux_timerProc(void* data);
 
 //----------------------------------------------------------------------
 
+// thread state
+#define ts_Kill  666
+#define ts_Timer 667
+
 //int h_winfbconfig_attr[] =
-//{
-//  GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT|GLX_PIXMAP_BIT|GLX_PBUFFER_BIT,
-//  None
-//};
+//  { GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT|GLX_PIXMAP_BIT|GLX_PBUFFER_BIT, None };
 
 int h_window_attr[] =
 {
-  //GLX_PBUFFER_WIDTH,  256,
-  //GLX_PBUFFER_HEIGHT, 256,
+  //GLX_PBUFFER_WIDTH,      256,
+  //GLX_PBUFFER_HEIGHT,     256,
   //GLX_PRESERVED_CONTENTS, True,
   None
 };
@@ -123,10 +112,14 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 //----------------------------------------------------------------------
 
-//static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
-//  {
-//    return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
-//  }
+// there's some weird problems with energy xt2, where sometimes, not always,
+// the window comes up, but no painting is done. could be a case of xlib
+// not having finished the window creation yet? (x11 is async)
+
+static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
+  {
+    return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
+  }
 
 //----------------------------------------------------------------------
 //
@@ -453,8 +446,8 @@ class h_Window_Linux : public h_Widget,
     virtual void show(void)
       {
         XMapWindow(m_Display,m_Window);
-//        XEvent event;
-//        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
+        XEvent event;
+        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
         //XIfEvent(m_Display,&event,h_WaitForNotify,(char*)m_Window);
       }
 
@@ -493,6 +486,17 @@ class h_Window_Linux : public h_Widget,
     // there could be malloc() in XStringListToTextProperty(),
     // so 'free(window_title);' might be needed after XFlush(..); ?
 
+    //-----
+
+    // XStringListToTextProperty docs:
+    // "To free the storage for the value field, use XFree()."
+    // but should we do it right after XSetWMName, or do we need to wait
+    // until the window closes..
+    // see also: XSetWMName [name, icon,commandline,
+
+    // i think i saw some other way of doing this somewhere,
+    // will try to hunt it down...
+
     virtual void setTitle(char* a_Title)
       {
         //XTextProperty window_title_property;
@@ -514,6 +518,7 @@ class h_Window_Linux : public h_Widget,
 
     virtual void endPaint(void)
       {
+        // todo: check if actually needed...
         flush();
       }
 
@@ -521,7 +526,6 @@ class h_Window_Linux : public h_Widget,
 
     virtual void reparent(void* a_Parent)
       {
-        //m_Parent = *(Window*)a_Parent;
         m_Parent = (Window)a_Parent;
         XReparentWindow(m_Display,m_Window,m_Parent,0,0);
         //XFlush(m_Display);
@@ -695,43 +699,6 @@ class h_Window_Linux : public h_Widget,
       }
 
     //----------------------------------------
-
-//    //#define bu_None    0
-//    //#define bu_Left    1
-//    //#define bu_Right   2
-//    //#define bu_Middle  4
-//    //#define bu_Shift   8
-//    //#define bu_Ctrl    16
-//    //#define bu_Alt     32
-//
-//    int remapButton(int a_Button)
-//      {
-//        int ret = bu_None;
-//        switch (a_Button)
-//        {
-//          case 1: ret = bu_Left;   break;
-//          case 2: ret = bu_Middle; break;
-//          case 3: ret = bu_Right;  break;
-//        }
-//        return ret;
-//      }
-//
-//    //----------
-//
-//    int remapKey(int a_Key)
-//      {
-//        int ret = 0;
-//        if (a_Key & 1) ret |= bu_Shift;
-//        // 2 CapsLock
-//        if (a_Key & 4) ret |= bu_Ctrl;
-//        if (a_Key & 8) ret |= bu_Alt;
-//        // 128 Alt Gr
-//        return ret;
-//      }
-
-
-
-    //----------------------------------------
     //----------------------------------------
 
     //virtual
@@ -862,12 +829,9 @@ void* h_linux_threadProc(void* data)
       {
         XNextEvent(win->m_Display,&ev);                                         // win->m_Display
         //XWindowEvent(win->m_Display,win->m_Window,win->m_EventMask,&ev );
-
         //trace("threadProc.event. win=" << ev.xany.window);
-
         //if (ev.xany.window == win->m_Window)
         //{
-
           if (ev.type==ClientMessage)
           {
             //wtrace("client message");
@@ -881,9 +845,7 @@ void* h_linux_threadProc(void* data)
           } //ClientMessage
           else win->eventHandler(&ev);                                            // win->eventHandler
         }
-
       //} // = win
-
     }
     return NULL;
   }

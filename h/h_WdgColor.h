@@ -21,8 +21,8 @@
 #define h_WdgColor_included
 //----------------------------------------------------------------------
 
-//#include "gui/h_Color.h"
-//#include "gui/h_Widget.h"
+//TODO: remove? we have h_WdgBackground
+
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
 
@@ -47,7 +47,6 @@ class h_WdgColor : public h_Widget
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect)
       {
-        //trace("do_Paint("<<a_Rect.x<<","<<a_Rect.y <<","<< a_Rect.w<<","<<a_Rect.h<<")");
         a_Painter->setBrushColor(m_Color);
         a_Painter->fillRect(a_Rect.x,a_Rect.y,a_Rect.x2(),a_Rect.y2());
       }

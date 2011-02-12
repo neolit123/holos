@@ -24,6 +24,8 @@
 class h_Platform;
 class h_Format;
 
+//----------
+
 class h_Core
 {
   private:
@@ -36,6 +38,8 @@ class h_Core
     ~h_Core();
     void initialize(void);
 };
+
+//----------
 
 static h_Core static_Core;
 

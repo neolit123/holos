@@ -21,8 +21,6 @@
 #define h_WdgBackground_included
 //----------------------------------------------------------------------
 
-//#include "gui/h_Color.h"
-//#include "gui/h_Widget.h"
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
 

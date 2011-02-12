@@ -21,8 +21,7 @@
 #define h_Pattern_included
 //----------------------------------------------------------------------
 
-//TOSO: rename to regex or something similar?
-// or, it isn't really regex, is it?
+//TODO: rename to regex or something similar?
 
 // based on code from: http://c.snippets.org/browser.php
 // "All source code free as noted."

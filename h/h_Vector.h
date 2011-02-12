@@ -17,31 +17,12 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Platform_Win32_included
-#define h_Platform_Win32_included
+#ifndef h_Vector_included
+#define h_Vector_included
 //----------------------------------------------------------------------
 
-#include <windows.h>
-#include "h/h_Globals.h"
-#include "h/h_String.h"
-
-//----------------------------------------------------------------------
-
-class h_Platform
-{
-  public:
-    HINSTANCE m_WinInstance;
-    char      m_WinClassName[H_MAX_STRINGSIZE];
-    ATOM      m_WinClassAtom;
-    HCURSOR   m_WinCursor;
-    HICON     m_WinIcon;
-    WNDCLASS  m_WinClass;
-    int       m_WinDepth;
-  public:
-    h_Platform();
-    ~h_Platform();
-    h_String getName(void);
-};
+//TODO:
+// 3d vector (x,y,z)
 
 //----------------------------------------------------------------------
 #endif

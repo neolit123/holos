@@ -20,15 +20,9 @@
 #ifndef h_WdgLabel_included
 #define h_WdgLabel_included
 //----------------------------------------------------------------------
-// action button
-// switch extends this to have on/off state
 
-//#include "gui/h_Color.h"
-//#include "gui/h_Widget.h"
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
-
-// assumes m_Listener is valid...
 
 class h_WdgLabel : public h_Widget
 {
@@ -50,7 +44,6 @@ class h_WdgLabel : public h_Widget
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
         m_Skin->drawLabel(a_Painter,m_Rect,a_Mode,m_Text);
-        //h_Widget::do_Paint(a_Painter,a_Rect);
       }
 
 };
