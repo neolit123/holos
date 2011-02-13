@@ -58,22 +58,6 @@ h_Instance::~h_Instance()
 
 //----------------------------------------------------------------------
 
-//void h_Instance::appendParameter(h_Parameter* a_Parameter)
-//  {
-//    int index = m_Parameters->size();
-//    a_Parameter->setIndex(index);
-//    m_Parameters->append(a_Parameter);
-//  }
-//
-////----------
-//
-//void h_Instance::deleteParameters(void)
-//  {
-//    for (int i=0; i<m_Parameters->size(); i++) { delete m_Parameters->item(i); };
-//  }
-
-//----------
-
 // create parameters from descriptor
 
 //void h_Instance::initParameters(void)
@@ -106,7 +90,7 @@ h_Instance::~h_Instance()
 // have a chance to grab the 'transformed' variables in
 // your instance.
 
-void h_Instance::prepareParameters(void)
+void h_Instance::transferParameters(void)
   {
     int num = m_Parameters->size();
     for (int i=0; i<num; i++)
@@ -132,9 +116,11 @@ void h_Instance::prepareParameters(void)
 
 //----------
 
-// called when parameter has changed (from editor)
+// called when a widget connected to a parameter is changed (from editor)
+
 // (we must notify the host)
 // and call do_HandleParameter
+
 
 void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
   {
@@ -978,7 +964,7 @@ float h_Instance::vst_getParameter(VstInt32 index)
 //0.0 to 1.0. How data is presented to the user is merely in the user-interface handling. This is a
 //convention, but still worth regarding. Maybe the VST-Host's automation system depends on this range.
 
-// called (from host) when a parameter changed
+// called (from host) when a parameter is changed
 
 void h_Instance::vst_setParameter(VstInt32 index, float value)
   {
@@ -988,12 +974,6 @@ void h_Instance::vst_setParameter(VstInt32 index, float value)
     if (m_Editor && m_EditorIsOpen) m_Editor->notifyParameter_fromInstance(par);
     //trace("todo: update editor");
   }
-
-/*
-  we should notify the editor here, but currently, the instance has no
-  knowledge about any editor (in case we have a gui-less plugin..
-  todo: find some way of letting the instance know about an editor
-*/
 
 //----------
 

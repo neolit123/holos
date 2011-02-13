@@ -36,7 +36,7 @@ class h_Instance : public h_Instance_Base
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
     //inline h_Rect getEditorRect(void) { return m_EditorRect; }
-    virtual void  prepareParameters(void);
+    virtual void  transferParameters(void);
     //virtual void  notifyParameter_fromEditor(h_Parameter* aParameter);
     //virtual void  notifyResize_fromEditor(int aWidth, int aHeight);
     virtual void  updateTime(void);

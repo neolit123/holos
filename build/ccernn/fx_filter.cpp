@@ -57,7 +57,7 @@ class my_Instance : public h_Instance
         cur0 = 0;
         cur1 = 0;
         weight = 0;
-        prepareParameters();
+        transferParameters();
       }
 
     virtual ~my_Instance()

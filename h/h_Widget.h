@@ -26,11 +26,8 @@ TODO: consider if we should split the widget into two classes:
       - a simple widget without children
       - a container with children
 
-widget size/overhead:
-- WidgetBase/Listener vtable: 18*4 = 72
-- vars/members: around 30*4 = 120
+TODO: multiple listeners?
 
-so, around 200 bytes for vars,
 
 */
 
@@ -170,8 +167,9 @@ class h_Widget : public h_WidgetBase,
     inline int        getConnect(void)                { return m_Connect; }
     inline void       setCapture(h_Widget* a_Widget)  { m_CapturedWidget = a_Widget; }
     inline h_Widget*  getCapture(void)                { return m_CapturedWidget; }
-    virtual void      setValue(float a_Value)         {}
-    virtual float     getValue(void)                  { return 0; }
+
+    virtual void      setInternal(float a_Value)      { }
+    virtual float     getInternal(void)               { return 0; }
 
   public:
 
@@ -231,10 +229,7 @@ class h_Widget : public h_WidgetBase,
         int index = m_Children.size();
         a_Widget->m_Index = index;
         a_Widget->m_Parent = this;
-
-        //a_Widget->m_Skin = this->m_Skin;
         a_Widget->applySkin(m_Skin,true,true);
-
         m_Children.append(a_Widget);
       }
 
@@ -286,26 +281,6 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-    //virtual void appendListener(h_WidgetListener* a_Listener)
-    //  {
-    //    m_Listeners.append(a_Listener);
-    //  }
-
-    //----------
-
-    //virtual void removeListener(h_WidgetListener* a_Listener)
-    //  {
-    //    m_Listeners.remove();
-    //  }
-
-    //----------
-
-    //virtual void setSkin(h_Skin* a_Skin)
-    //  {
-    //    m_Skin = a_Skin;
-    //    for (int i=0; i<m_Children.size(); i++) setSkin(a_Skin);
-    //  }
-
     virtual
     void applySkin(h_Skin* a_Skin, bool a_Sub=false, bool a_OnlyIfNull=false)
       {
@@ -317,11 +292,11 @@ class h_Widget : public h_WidgetBase,
 
     //----------
 
-//    virtual void setPainter(h_Painter* a_Painter)
-//      {
-//        m_Painter = a_Painter;
-//        for (int i=0; i<m_Children.size(); i++) { setPainter(a_Painter); }
-//      }
+    //virtual void setPainter(h_Painter* a_Painter)
+    //  {
+    //    m_Painter = a_Painter;
+    //    for (int i=0; i<m_Children.size(); i++) { setPainter(a_Painter); }
+    //  }
 
     //----------
 
@@ -494,7 +469,7 @@ class h_Widget : public h_WidgetBase,
                 wdg->do_SetSize( client.w, client.h );
                 break;
 
-//----------
+    //----------
 
               //  _____
               // |  |
@@ -556,7 +531,7 @@ class h_Widget : public h_WidgetBase,
                 client.h -= (wh+m_PaddingY);
                 break;
 
-//----------
+    //----------
 
               //  __________
               // |    |
@@ -615,7 +590,7 @@ class h_Widget : public h_WidgetBase,
                 client.w -= (ww + m_PaddingX);
                 break;
 
-//----------
+    //----------
 
               //  __________
               // |    |
@@ -676,7 +651,7 @@ class h_Widget : public h_WidgetBase,
                 client.h -= (wh + m_PaddingY);
                 break;
 
-//----------
+    //----------
 
               //  __________________
               // |    |    |   |
@@ -770,12 +745,10 @@ class h_Widget : public h_WidgetBase,
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        //if (mFlags&wf_Visible)
         if (m_Flags&wf_Visible) // self
         {
           if (m_Rect.intersects(a_Rect)) // self
           {
-            //if (mFlags&wf_Clip)
             if (m_Flags&wf_Clipping) // self
             {
               a_Painter->setClipRect(m_Rect.x,m_Rect.y,m_Rect.x2(),m_Rect.y2());
@@ -789,7 +762,6 @@ class h_Widget : public h_WidgetBase,
                   wdg->do_Paint(a_Painter,a_Rect,a_Mode);
               }
             } //for
-            //if (mFlags&wf_Clip) aCanvas->clearClipRect(); // resetClipRect();
             if (m_Flags&wf_Clipping) a_Painter->clearClipRect(); // resetClipRect();
           } //intersect
         } //visible

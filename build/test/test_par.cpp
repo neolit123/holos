@@ -35,9 +35,9 @@ class inst : public h_Instance
     inst(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host, a_Descriptor)
     {
-      prepareParameters();
+      transferParameters();
     }
-    
+
     virtual void do_HandleParameter(h_Parameter* a_Parameter)
     {
       trace(a_Parameter->getIndex() << ":" << a_Parameter->getValue());

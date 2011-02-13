@@ -40,19 +40,7 @@ h_Instance::~h_Instance()
 
 //----------
 
-//void h_Instance::appendParameter(h_Parameter* a_Parameter)
-//  {
-//    int index = m_Parameters->size();
-//    a_Parameter->setIndex(index);
-//    m_Parameters->append(a_Parameter);
-//  }
-//
-//void h_Instance::deleteParameters(void)
-//  {
-//    //for (int i=0; i<m_Parameters->size(); i++) { delete m_Parameters->item(i); };
-//  }
-
-void h_Instance::prepareParameters(void)
+void h_Instance::transferParameters(void)
   {
     int num = m_Parameters->size();
     for (int i=0; i<num; i++)
@@ -65,19 +53,10 @@ void h_Instance::prepareParameters(void)
 void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
   {
     do_HandleParameter(a_Parameter);
-    //h_Instance_Base::notifyParameter_fromEditor(a_Parameter);
-    //int index = a_Parameter->getIndex();
-    //float value = a_Parameter->getInternal();//getValue();
-    //trace("h_Instance::notifyParameter_fromEditor(" << index << "," << value <<  ")");
   }
 
 void h_Instance::notifyResize_fromEditor(int a_Width, int a_Height)
   {
-    //h_Instance_Base::notifyResize_fromEditor(a_Width,a_Height);
-    //m_EditorRect.w = aWidth;
-    //m_EditorRect.h = aHeight;
-    //host_SizeWindow(aWidth, aHeight); // vst
-    //m_Host->vst_SizeWindow(a_Width,a_Height); // vst
   }
 
 void h_Instance::updateTime(void)

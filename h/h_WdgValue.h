@@ -20,15 +20,9 @@
 #ifndef h_WdgValue_included
 #define h_WdgValue_included
 //----------------------------------------------------------------------
-// action button
-// switch extends this to have on/off state
 
-//#include "gui/h_Color.h"
-//#include "gui/h_Widget.h"
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
-
-// assumes m_Listener is valid...
 
 class h_WdgValue : public h_Widget
 {
@@ -60,15 +54,19 @@ class h_WdgValue : public h_Widget
       {
       }
 
-    virtual void setValue(float a_Value)
+    //----------
+
+    virtual void setInternal(float a_Value)
       {
         m_Value=a_Value;
       }
 
-    virtual float getValue(void)
+    virtual float getInternal(void)
       {
         return m_Value;
       }
+
+    //----------
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {

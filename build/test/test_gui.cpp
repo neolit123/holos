@@ -89,7 +89,7 @@ class my_Instance : public h_Instance,
         //m_Window = H_NULL;
         m_Editor = H_NULL;
         m_Skin   = H_NULL;
-        prepareParameters();
+        transferParameters();
       }
 
     //----------
@@ -179,7 +179,7 @@ class my_Instance : public h_Instance,
         switch(a_State)
         {
           case is_Resume:
-            //prepareParameters();
+            //transferParameters();
             break;
         }
       }

@@ -51,7 +51,7 @@ h_Descriptor::~h_Descriptor(void)
     #endif
   }
 
-//----------
+// ---------- parameters ----------
 
 h_Parameters* h_Descriptor::getParameters(void)
   {
@@ -80,6 +80,10 @@ void h_Descriptor::deleteParameters(void)
   {
     for (int i=0; i<m_Parameters.size(); i++) { delete m_Parameters[i]; };
   }
+
+// ---------- programs ----------
+
+//TODO
 
 
 //----------------------------------------------------------------------

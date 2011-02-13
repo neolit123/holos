@@ -1,4 +1,6 @@
+
 ----------------------------------------------------------------------
+
 ----------------------------------------------------------------------
 
 * opengl, glx/wgl
@@ -20,3 +22,16 @@
 * linux: bitmap
 
 * finish png-loader (testing)
+
+----------------------------------------------------------------------
+known bugs
+----------------------------------------------------------------------
+
+- in a dual-display setup in linux, if i drag the editor window to the
+  other screen than energy xt2, close it, and try to re-open it, x
+  freezes completely, and i have to do a AltGr-SysRq-K to kill x.
+
+  i think it might have something to do with opening a Display connection
+  on a different screen than the parent Window.
+
+  idea: check createwindow/parent, and reparent()

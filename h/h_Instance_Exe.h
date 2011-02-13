@@ -32,13 +32,19 @@ class h_Instance : public h_Instance_Base
     double    m_SamplePos;
     double    m_BeatPos;
     double    m_Tempo;
+
+  protected:
+    h_Descriptor* m_Descriptor;
+    h_Parameters* m_Parameters;
+
   public:
+
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
+
     inline h_Rect getEditorRect(void) { return m_EditorRect; }
-    //virtual void  appendParameter(h_Parameter* a_Parameter);
-    //virtual void  deleteParameters(void);
-    virtual void  prepareParameters(void);
+
+    virtual void  transferParameters(void);
     virtual void  notifyParameter_fromEditor(h_Parameter* aParameter);
     virtual void  notifyResize_fromEditor(int aWidth, int aHeight);
     virtual void  updateTime(void);

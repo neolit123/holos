@@ -279,6 +279,8 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../../docs/LICENSE.txt" />
+		<Unit filename="../../docs/faq.txt" />
+		<Unit filename="../../docs/todo.txt" />
 		<Unit filename="../../h.h" />
 		<Unit filename="../../h/h_Array.h" />
 		<Unit filename="../../h/h_Assert.h" />

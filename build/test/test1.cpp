@@ -165,7 +165,7 @@ class my_Instance : public h_Instance,
         switch(a_State)
         {
           case is_Resume:
-            prepareParameters();
+            transferParameters();
             break;
         }
       }

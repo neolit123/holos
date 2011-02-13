@@ -74,7 +74,8 @@ class h_Instance : public h_Instance_Base
     ERect               m_ERect;
     h_Editor*           m_Editor;
   protected:
-    //h_Descriptor*       m_Descriptor;
+    h_Descriptor*       m_Descriptor;
+    h_Parameters*       m_Parameters;
     h_Rect              m_EditorRect;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
@@ -97,9 +98,7 @@ class h_Instance : public h_Instance_Base
     virtual int     getCurrentProgram(void) { return m_CurrentProgram; }
     //virtual h_Rect  getEditorRect(void)     { return m_EditorRect; }
   public:
-    //virtual void    appendParameter(h_Parameter* a_Parameter);
-    //virtual void    deleteParameters(void);
-    virtual void    prepareParameters(void);
+    virtual void    transferParameters(void);
     virtual void    notifyParameter_fromEditor(h_Parameter* aParameter);
     virtual void    notifyResize_fromEditor(int aWidth, int aHeight);
     virtual void    updateTime(void);

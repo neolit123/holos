@@ -54,9 +54,6 @@
 
 class h_Instance_Base
 {
-  protected:
-    h_Descriptor* m_Descriptor;
-    h_Parameters* m_Parameters;
   public:
     virtual void    do_HandleState(int a_State) {}
     virtual void    do_HandleTransport(int a_State) {}
@@ -76,9 +73,7 @@ class h_Instance_Base
     virtual double  getTempo(void)          { return 0; }
     virtual int     getCurrentProgram(void) { return 0; }
   public:
-    //virtual void    appendParameter(h_Parameter* a_Parameter) {}
-    //virtual void    deleteParameters(void) {}
-    virtual void    prepareParameters(void) {}
+    virtual void    transferParameters(void) {}
     virtual void    notifyParameter_fromEditor(h_Parameter* a_Parameter) {}
     virtual void    notifyResize_fromEditor(int aWidth, int aHeight) {}
     virtual void    updateTime(void) {}

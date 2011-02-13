@@ -29,9 +29,9 @@
 class h_WdgButton : public h_Widget
 {
   private:
-    h_String m_Text;
-    bool  m_Clicked;
-    bool  m_WasInside;
+    h_String  m_Text;
+    bool      m_Clicked;
+    bool      m_WasInside;
 
   public:
 

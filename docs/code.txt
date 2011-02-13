@@ -1,19 +1,38 @@
 
+1. make it work
+2. make it right
+3. make it fast   [and small - ccernn]
+
+
+----------------------------------------------------------------------
+
+:: core
+
 core
 platform
 format
 
-parameter
-widget
-
-descriptor
-instance
-editor
-host
+:: wrappers
 
 window
-surface
 bitmap
+surface
+texture
 
+:: gui
+
+widget
 painter
 renderer
+skin
+
+:: app/plugin
+
+host
+instance
+descriptor
+parameter
+editor
+
+----------------------------------------------------------------------
+

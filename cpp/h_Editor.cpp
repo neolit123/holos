@@ -22,6 +22,10 @@
 //#ifdef h_Editor_included
 //----------------------------------------------------------------------
 
+// setup widgets from connections/parameters?
+// vst editor is re-created each time we open/close it, so perhaps we
+// should have some way of saving/loading editor/window state?
+
 h_Editor::h_Editor(h_Instance* a_Instance, h_Rect a_Rect, void* a_Parent)
 : h_Window(this,a_Rect,a_Parent)
   {
@@ -57,9 +61,15 @@ void h_Editor::deleteConnections(void)
 
 //----------
 
-// called by host [via instance]
-// check if we need to update a widget
+/*
 
+called from h_Instance [vst only, at the moment, in vst_setParameter}
+after value in parameter has been updated, do_HandleParameter() has been
+called, and if editor is open..
+
+*/
+
+// on_Change(h_Parameter* a_Parameter) ???
 void h_Editor::notifyParameter_fromInstance(h_Parameter* a_Parameter)
   {
     int conn = a_Parameter->getConnect();
@@ -68,18 +78,22 @@ void h_Editor::notifyParameter_fromInstance(h_Parameter* a_Parameter)
       trace("h_Editor.notifyParameter_fromInstance");
       h_Widget* wdg = m_Connections[conn]->m_Widget;
       float val = a_Parameter->getInternal();
-      wdg->setValue( val );
-      h_Painter* painter = getPainter();
-      redrawWidget(wdg);
+      wdg->setInternal( val );
+      //h_Painter* painter = getPainter();
+      //redrawWidget(wdg);
+      appendUpdate(wdg,0);
+      redrawUpdates();
       //wdg->do_Paint(painter,wdg->getRect(),0);
-      //flush();
+      //on_Redraw(wdg,0);
     }
   }
 
 //----------
 
-// widget has changed/tweaked.. (from editor)
-// if this is connected to a parameter, notify instance
+// widget value has changed (from editor)
+// if widget connected to a parameter:
+// - update parameter value (from widget)
+// - notify instance
 
 void h_Editor::on_Change(h_Widget* a_Widget)
   {
@@ -88,7 +102,7 @@ void h_Editor::on_Change(h_Widget* a_Widget)
     if (conn>=0)
     {
       h_Parameter* par = m_Connections[conn]->m_Parameter;
-      par->setInternal( a_Widget->getValue() );
+      par->setInternal( a_Widget->getInternal() );
       // in vst instance (impl)
       m_Instance->notifyParameter_fromEditor(par);
     }

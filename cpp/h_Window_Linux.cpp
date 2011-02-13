@@ -116,6 +116,13 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 // the window comes up, but no painting is done. could be a case of xlib
 // not having finished the window creation yet? (x11 is async)
 
+// ---
+
+// this seems to freeze x if we have ext2 on monitor #2, and tries to
+// open a window.. perhaps because all those XGetDefaultScreen, etc,
+// reads data from default screen (0) ???
+
+
 static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
   {
     return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
@@ -254,12 +261,18 @@ class h_Window_Linux : public h_Widget,
 //          Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
 
 //        #else
+
+          trace("getting some default value from x");
+
           m_Root      = XDefaultRootWindow(m_Display);
           m_Screen    = XDefaultScreen(m_Display);                // the default screen number referenced by the XOpenDisplay() function
           m_Visual    = XDefaultVisual(m_Display,m_Screen);
           m_Depth     = XDefaultDepth(m_Display,m_Screen);
           m_Colormap  = XCreateColormap(m_Display,m_Root,m_Visual,AllocNone);
+
 //        #endif
+
+        trace("ok, we have the variables...");
 
         //Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
         long m_WinEventMask = ExposureMask
@@ -277,7 +290,6 @@ class h_Window_Linux : public h_Widget,
         swa.background_pixmap = None;
         swa.border_pixel      = 0;
         swa.colormap          = m_Colormap;
-
 //        swa.override_redirect = true;
 
         //CWBackPixmap, CWBackPixel
@@ -292,6 +304,8 @@ class h_Window_Linux : public h_Widget,
                                 | CWBorderPixel
                                 | CWColormap;
 //                                | CWOverrideRedirect;
+
+        trace("creating window");
 
         m_Window = XCreateWindow(
           m_Display,
@@ -371,6 +385,8 @@ class h_Window_Linux : public h_Widget,
           pthread_create(&m_EventThread,NULL,&h_linux_threadProc,this);
         }
 
+        trace("..and the constructor seems to be ok");
+
       }
 
     //----------
@@ -443,12 +459,23 @@ class h_Window_Linux : public h_Widget,
 
     //----------
 
+    // x frezes if we wait for such an event on a second monitor,
+    // in certain settings... investigate this.. i have a suspicion
+    // it's related to the Display*, event handler queue, the a
+    // window being reparented to a window with a different thread or
+    // Display*
+
     virtual void show(void)
       {
+        trace("show window...");
+        trace("  m_Display: " << m_Display);
+        trace("  m_Window: " << m_Window);
         XMapWindow(m_Display,m_Window);
-        XEvent event;
-        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
+        trace("  WaitForNotify");
+//        XEvent event;
+//        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
         //XIfEvent(m_Display,&event,h_WaitForNotify,(char*)m_Window);
+        trace("show window ok...");
       }
 
     //----------
@@ -522,13 +549,22 @@ class h_Window_Linux : public h_Widget,
         flush();
       }
 
+    // http://tronche.com/gui/x/xlib/window-and-session-manager/XReparentWindow.html
 
+    /*
+
+    A BadMatch error results if:
+    - The new parent window is not on the same screen as the old parent window.
+
+    */
 
     virtual void reparent(void* a_Parent)
       {
+        trace("reparent window...");
         m_Parent = (Window)a_Parent;
         XReparentWindow(m_Display,m_Window,m_Parent,0,0);
         //XFlush(m_Display);
+        trace("reparent window ok");
       }
 
     //----------
