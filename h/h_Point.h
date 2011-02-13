@@ -69,7 +69,7 @@ struct h_Point
 
 //----------------------------------------------------------------------
 
-#define NULL_POINT axPoint(0,0)
+#define NULL_POINT h_Point(0,0)
 
 //#include "lib/h_Array.h"
 #include "h/h_Array.h"

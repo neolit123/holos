@@ -47,8 +47,8 @@ naming scheme:
 #endif
 
 #define DENORM      1.0000000E-37F
-#define LOG2DB      8.65617024533F
-#define DB2LOG      0.11552453009F
+#define LIN2DB      8.65617024533F
+#define DB2LIN      0.11552453009F
 #define E           2.71828182845F
 #define LOG2E       1.44269504088F
 #define LOG10E      0.43429448190F
@@ -72,27 +72,29 @@ naming scheme:
 #define H_PI_180    0.0174532925199432957692369076848
 #define H_180_PI    57.295779513082320876798154814105
 
-
+// cabs
 #define h_Cabs(a, b) \
   h_Sqrt((a)*(a) + (b)*(b))
 
+// carg
 #define h_Carg(a, b) \
   h_Atan2((b), (a))
 
+// degrees to radians
 #define h_Radians(x) \
   ((x)*H_PI_180)
 
+// radians to degrees
 #define h_Degrees(x) \
   ((x)*H_180_PI)
 
-/**
- * invert of x: (1/x)
- */
+#define h_Sqr(x) ((x)*(x))
+#define h_Cube(x) ((x)*(x)*(x))
+
+// inverse of x
 #define h_Inverse(x) (1/(x))
 
-/**
- * invert of x: (1/x) - fast / inaccurate
- */
+// inverse of x
 H_MATH_INLINE
 float h_InverseF(const float x)
 {
@@ -106,39 +108,7 @@ float h_InverseF(const float x)
   return u.j;
 }
 
-/**
- * square of x: (x^2)
- */
-#define h_Sqr(x) ((x)*(x))
-
-/**
- * cube of x: (x^3)
- */
-
-#define h_Cube(x) ((x)*(x)*(x))
-
-/**
- * convert radians to degrees <br>
- * \code
- * deg = rad*(180/pi);
- * \endcode
- */
-#define h_Rad2Deg(x) ( (x)*57.2957795130823f )
-
-/**
- * convert degrees to radians
- * \code
- * rad = deg*(pi/180);
- * \endcode
- */
-
-#define h_Deg2Rad(x) ( (x)*0.01745329251994f )
-
-/**
- * returns the floor of a floating point number
- * @param[in] value float
- * @return result float
- */
+// returns the floor of a floating point number
 H_MATH_INLINE
 float h_Floor(register const float v)
 {
@@ -146,11 +116,7 @@ float h_Floor(register const float v)
   else return (float)(int)(v);
 }
 
-/**
- * returns the ceil of a floating point number
- * @param[in] value float
- * @return result float
- */
+//returns the ceil of a floating point number
 H_MATH_INLINE
 float h_Ceil(register const float v)
 {
@@ -158,11 +124,7 @@ float h_Ceil(register const float v)
   else return (float)(int)(v+1.f);
 }
 
-/**
- * rounds a floating point number
- * @param[in] value float
- * @return result float
-*/
+// rounds a floating point number
 H_MATH_INLINE
 float h_Round(register const float v)
 {
@@ -170,21 +132,9 @@ float h_Round(register const float v)
   else return (float)(int)(v + 0.5f);
 }
 
-/**
- * fast modf() for floating point values. <br>
- * returns the fractional part of a floating point number
- * and stores the integer part in the second argument.
- * \code
- * // example:
- * value_pi = 3.141592;
- * float integer;
- * float fraction = h_Modf(value_pi, &integer);
- * // fraction = 0.141592, integer = 3
- * \endcode
- * @param[in] value float - input variable
- * @param[in] intpart float* - pointer to integer part variable
- * @return float - fractional part
- */
+// fast modf() for floating point values. 
+// returns the fractional part of a floating point number
+// and stores the integer part in the second argument.
 H_MATH_INLINE
 float h_Modf(register const float value, register float* intpart)
 {
@@ -192,18 +142,8 @@ float h_Modf(register const float value, register float* intpart)
   return (value - *intpart);
 }
 
-/**
- * returns the remainder of the division of two arguments
- * \code
- * // example:
- * float numerator = 5.3f;
- * float denominator = 2.f;
- * float result = numerator - (floorf(numerator/denominator) * denominator);
- * // result = 1.3
- * \endcode
- * @param[in] x float - numerator (divident)
- * @param[in] y float - denominator (devisor or modulus)
- */
+// returns the remainder of the division of two arguments
+// result = numerator - (floorf(numerator/denominator) * denominator);
 H_MATH_INLINE
 float h_Fmod(register const float x, register const float y)
 {
@@ -219,11 +159,7 @@ float h_Fmod(register const float x, register const float y)
   return value;
 }
 
-/**
- * returns the absolute value of a floating point number
- * @param[in] value float
- * @return value float
-*/
+// returns the absolute value of a floating point number
 H_MATH_INLINE
 float h_Abs(register const float value)
 {
@@ -238,12 +174,7 @@ float h_Abs(register const float value)
   return u.j;
 }
 
-/**
- * returns the negative of a floating point number
- * @param[in] value float
- * @return value float
-*/
-
+// returns the negative of a floating point number
 H_MATH_INLINE
 float h_Neg(register float value)
 {
@@ -252,11 +183,7 @@ float h_Neg(register float value)
   return value;
 }
 
-/**
- * returns the sign (-1 or 1) of a floating point number
- * @param[in] value float
- * @return value float
-*/
+// returns the sign (-1 or 1) of a floating point number
 H_MATH_INLINE
 float h_Sign(register const float v)
 {
@@ -269,11 +196,7 @@ float h_Sign(register const float v)
   return (1 | (u.i >> 31));
 }
 
-/**
- * returns the sign bit (1 or 0) of a floating point number
- * @param[in] value float
- * @return value float
-*/
+// returns the sign bit (1 or 0) of a floating point number
 H_MATH_INLINE
 unsigned int h_SignBit(register const float v)
 {
@@ -286,36 +209,21 @@ unsigned int h_SignBit(register const float v)
   return (unsigned int)(-(u.i >> 31));
 }
 
-/**
- * returns the smaller of two floating point numbers
- * @param[in] a float
- * @param[in] b float
- * @return result float
- */
+// returns the smaller of two floating point numbers
 H_MATH_INLINE
 float h_Min(register const float a, register const float b)
 {
   return (a < b) ? a : b;
 }
 
-/**
- * returns the larger of two floating point numbers
- * @param[in] a float
- * @param[in] b float
- * @return result float
- */
+// returns the larger of two floating point numbers
 H_MATH_INLINE
 float h_Max(register const float a, register const float b)
 {
   return (a > b) ? a : b;
 }
 
-/**
- * limits a floating point number to [-limit, limit]
- * @param[in] input float
- * @param[in] limit float
- * @return result float
- */
+// limits a floating point number to [-limit, limit]
 H_MATH_INLINE
 float h_Limit(register const float input,
   register const float limit)
@@ -324,36 +232,21 @@ float h_Limit(register const float input,
   return (_t > limit) ? _t : limit;
 }
 
-/**
- * returns the smaller of two integer numbers
- * @param[in] a int
- * @param[in] b int
- * @return result float
- */
+// returns the smaller of two integer numbers
 H_MATH_INLINE
 int h_Mini(register const int a, register const int b)
 {
   return (a < b) ? a : b;
 }
 
-/**
- * returns the larger of two integer numbers
- * @param[in] a int
- * @param[in] b int
- * @return result float
- */
+// returns the larger of two integer numbers
 H_MATH_INLINE
 int h_Maxi(register const int a, register const int b)
 {
   return (a > b) ? a : b;
 }
 
-/**
- * limits an integer number to [-limit, limit]
- * @param[in] input int
- * @param[in] limit int
- * @return a_or_b float
- */
+// limits an integer number to [-limit, limit]
 H_MATH_INLINE
 int h_Limiti(register const int input,
   register const int limit)
@@ -362,11 +255,7 @@ int h_Limiti(register const int input,
   return (_t > limit) ? _t : limit;
 }
 
-/**
- * calculates the logarithm base 2 of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the logarithm base 2 of a floating point number (fpu)
 H_MATH_INLINE
 float h_Log2(register float value)
 {
@@ -378,12 +267,8 @@ float h_Log2(register float value)
   return value;
 }
 
-/**
- * fast approximation of the logarithm base 2 function
- * based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
- * @param[in] val float
- * @return result float
- */
+// fast approximation of the logarithm base 2 function
+// based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
 H_MATH_INLINE
 float h_Log2F(register const float val)
 {
@@ -403,11 +288,8 @@ float h_Log2F(register const float val)
   else return 0.f;
 }
 
-/**
- * calculates the natural logarithm (base e) of a floating point number
- * @param[in] value float
- * @return value float
- */
+
+// calculates the natural logarithm (base e) of a floating point number
 H_MATH_INLINE
 float h_Log(register float value)
 {
@@ -420,24 +302,15 @@ float h_Log(register float value)
   return value;
 }
 
-/**
- * fast approximation of the natural logarithm function
- * based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
- * @param[in] val float
- * @return result float
- */
+// fast approximation of the natural logarithm function
+// based on code from http://www.flipcode.com/archives/Fast_log_Function.shtml
 H_MATH_INLINE
 float h_LogF(register const float &val)
 {
   return (h_Log2(val)*0.69314718f);
 }
 
-/**
- * calculates the logarithm base 10 of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
-
+// calculates the logarithm base 10 of a floating point number (fpu)
 H_MATH_INLINE
 float h_Log10(register float value)
 {
@@ -449,11 +322,7 @@ float h_Log10(register float value)
   return value;
 }
 
-/**
- * calculates the logarithm base 10 of a floating point number
- * @param[in] x float
- * @return value float
- */
+// calculates the logarithm base 10 of a floating point number
 H_MATH_INLINE
 float h_Log10F(register const float x)
 {
@@ -464,18 +333,9 @@ float h_Log10F(register const float x)
   return (2.f*y*(1 + y2*0.3333333333f + y2*y2*0.2f))*0.4342945239647f;
 }
 
-/**
- * performs fast and accurate powf(float, float) approximation (fpu)
- * optimized for fractional exponent. <br>
- * for (long) integer exponent use h_Pow() <br>
- * \code
- * h_Pow(3.5f, 2);
- * h_Powf(3.5f, 2.5f);
- * \endcode
- * @param[in] x float - base
- * @param[in] y float - exponent
- * @return float
- */
+// performs fast and accurate powf(float, float) approximation (fpu)
+// optimized for fractional exponent.
+// for integer exponent use h_Pow()
 H_MATH_INLINE
 float h_Pow(register const float x, register const float y)
 {
@@ -499,12 +359,7 @@ float h_Pow(register const float x, register const float y)
   return value;
 }
 
-/**
- * performs fast pow(float, integer)
- * @param[in] x float
- * @param[in] n int
- * @return result float
- */
+// performs fast pow(float, integer)
 H_MATH_INLINE
 float h_PowF(register float x, register unsigned long n)
 {
@@ -518,11 +373,7 @@ float h_PowF(register float x, register unsigned long n)
   return res;
 }
 
-/**
- * approximation of [e] to the power of a number (fpu)
- * @param[in] x float input value
- * @return value float
- */
+// pproximation of [e] to the power of a number (fpu)
 H_MATH_INLINE
 float h_Exp(register const float x)
 {
@@ -544,13 +395,9 @@ float h_Exp(register const float x)
   return value;
 }
 
-/**
- * fast approximation of [e] to the power of a number <br>
- * based on http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf <br>
- * note: original is for double precision (has a double to float cast)
- * @param[in] exponent float
- * @return result float
- */
+// fast approximation of [e] to the power of a number 
+// based on http://theoval.sys.uea.ac.uk/publications/pdf/nc2000a.pdf 
+// note: original is for double precision (has a double to float cast)
 H_MATH_INLINE
 float h_ExpF(register const float v)
 {
@@ -571,20 +418,8 @@ float h_ExpF(register const float v)
   return (float)u.d;
 }
 
-/**
- * returns the result of x*(2^floor(y)) <br>
- * ( significand (x) multiplied by the exponent(2^y) )
- * \code
- * // example:
- * float sig = 2.f;
- * float exponent = 4.1f; // will be truncated to 4.0f
- * float result = h_Fscale(sig, exponent);
- * // result = 32.f
- * \endcode
- * @param[in] x float - significand
- * @param[in] y float - exponent
- * @return value float
- */
+// returns the result of x*(2^floor(y))
+// ( significand (x) multiplied by the exponent(2^y) )
 H_MATH_INLINE
 float h_Fscale(register const float x, register const float y)
 {
@@ -596,25 +431,8 @@ float h_Fscale(register const float x, register const float y)
   return value;
 }
 
-/**
- * separates the input variable x into significand*(2^exponent)<br>
- * uses IEEE logb(x)
- * \code
- * // example:
- * float value = 3.141592;
- * float exponent;
- * float significand = h_Fxtract(value, &exponent);
- * // significand = 1.5708, exponent = 1
- * // 3.141592 = 1.5708 * (2^1)
- * // -----------------------------------
- * // NOTE: using frexp() from libm
- * // significand = 0.785398, exponent = 2
- * // 3.141592 = 0.785398 * (2^2)
- * \endcode
- * @param[in] value float - input value
- * @param[in] _exp float* - pointer to the exponent variable
- * @return sig float - value of significand
- */
+// separates the input variable x into significand*(2^exponent)
+// uses IEEE logb(x)
 H_MATH_INLINE
 float h_Fxtract(register float value, register float* _exp)
 {
@@ -626,13 +444,7 @@ float h_Fxtract(register float value, register float* _exp)
   return sig;
 }
 
-/**
- * rought approximation of a N-th root function (inaccurate) <br>
- * use h_Powf(x, 1/n) instead.
- * @param[in] value float
- * @param[in] root long
- * @return value float
- */
+// rought approximation of a N-th root function (inaccurate)
 H_MATH_INLINE
 float h_Nrt(register float value,register  long root)
 {
@@ -648,11 +460,7 @@ float h_Nrt(register float value,register  long root)
   return value;
 }
 
-/**
- * returns the square root of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// returns the square root of a floating point number (fpu)
 H_MATH_INLINE
 float h_Sqrt(register float value)
 {
@@ -663,12 +471,8 @@ float h_Sqrt(register float value)
   return value;
 }
 
-/**
- * fast approximation of the squre root function <br>
- * based on: http://www.azillionmonkeys.com/qed/sqroot.html
- * @param[in] x float
- * @return value float
- */
+// fast approximation of the squre root function 
+// based on: http://www.azillionmonkeys.com/qed/sqroot.html
 H_MATH_INLINE
 float h_SqrtF(register const float x)
 {
@@ -683,11 +487,7 @@ float h_SqrtF(register const float x)
   return x*u.j*(1.5f - u.j*u.j*halfx) + 0.001f; // newton iteration
 }
 
-/**
- * returns the invert squre root of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// returns the invert squre root of a floating point number (fpu)
 H_MATH_INLINE
 float h_InvSqrt(register float value)
 {
@@ -699,12 +499,7 @@ float h_InvSqrt(register float value)
   return value;
 }
 
-/**
- * fast approximation of the invert squre root function
- * based on code found in 'quake 3 arena' by 'id software'
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the invert squre root function
 H_MATH_INLINE
 float h_InvSqrtF(register const float x)
 {
@@ -716,16 +511,12 @@ float h_InvSqrtF(register const float x)
   } u;
   u.j = x;
   u.i = 0x5f3759df - (u.i >> 1); // good initial guess
-  // newton iteration <- enable for better result
+  // add one more newton iteration
   // return u.j*(1.5f - u.j*u.j*halfx) + 0.001f;
   return u.j;
 }
 
-/**
- * calculates the sine of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the sine of a floating point number (fpu)
 H_MATH_INLINE
 float h_Sin(register float value)
 {
@@ -736,11 +527,7 @@ float h_Sin(register float value)
   return value;
 }
 
-/**
- * fast approximation of the sine function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the sine function for range [-pi, pi]
 H_MATH_INLINE
 float h_SinF(register float x)
 {
@@ -748,11 +535,7 @@ float h_SinF(register float x)
   return 0.225f * (x * h_Abs(x) - x) + x;
 }
 
-/**
- * calculates the cosine of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the cosine of a floating point number (fpu)
 H_MATH_INLINE
 float h_Cos(register float value)
 {
@@ -763,11 +546,7 @@ float h_Cos(register float value)
   return value;
 }
 
-/**
- * fast approximation of the cosine function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the cosine function for range [-pi, pi]
 H_MATH_INLINE
 float h_CosF(register const float x)
 {
@@ -775,11 +554,7 @@ float h_CosF(register const float x)
   return (15120 + x2*(-6900 + 313*x2)) / (15120 + x2*(660 + 13*x2));
 }
 
-/**
- * calculates the tangens of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the tangens of a floating point number (fpu)
 H_MATH_INLINE
 float h_Tan(register float value)
 {
@@ -791,11 +566,7 @@ float h_Tan(register float value)
   return value;
 }
 
-/**
- * fast approximation of the tangens function for range [-pi, pi]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the tangens function for range [-pi, pi]
 H_MATH_INLINE
 float h_TanF(register const float x)
 {
@@ -803,20 +574,7 @@ float h_TanF(register const float x)
   return (x*(105 - 10*x2)) / (105 - x2*(45 - x2));
 }
 
-/**
- * calculates both the sine and cosine of a floating point number (fpu)
- * \code
- * // example:
- * float sinx;
- * float cosx;
- * h_SinCosf(x, &sinx, &cosx);
- * // sinx and cosx will recieve the results
- * \endcode
- * @param[in] x float input variable
- * @param[in] sin float* pointer to sin value
- * @param[in] cos float* pointer to cos value
- * @return void
- */
+// calculates both the sine and cosine of a floating point number (fpu)
 H_MATH_INLINE
 void h_SinCos(const float x, float* sin, float* cos)
 {
@@ -826,11 +584,7 @@ void h_SinCos(const float x, float* sin, float* cos)
   );
 }
 
-/**
- * calculates the arc-sine of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arc-sine of a floating point number (fpu)
 H_MATH_INLINE
 float h_Asin(register float value)
 {
@@ -845,11 +599,7 @@ float h_Asin(register float value)
   return value;
 }
 
-/**
- * fast approximation of the arc-sine function for range [-1, 1]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the arc-sine function for range [-1, 1]
 H_MATH_INLINE
 float h_AsinF(register const float x)
 {
@@ -857,11 +607,7 @@ float h_AsinF(register const float x)
   x*(0.0187293 + 0.395*x))));
 }
 
-/**
- * calculates the arc-cosine of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arc-cosine of a floating point number (fpu)
 H_MATH_INLINE
 float h_Acos(register float value)
 {
@@ -876,11 +622,7 @@ float h_Acos(register float value)
   return value;
 }
 
-/**
- * fast approximation of the arc-cosine function for range [-1, 1]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the arc-cosine function for range [-1, 1]
 H_MATH_INLINE
 float h_AcosF(register const float x)
 {
@@ -888,11 +630,7 @@ float h_AcosF(register const float x)
   return x*(x2*(-0.55*x2 + 0.097) - 1.008) + 1.571;
 }
 
-/**
- * calculates the arc-tangens of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arc-tangens of a floating point number (fpu)
 H_MATH_INLINE
 float h_Atan(register float value)
 {
@@ -904,11 +642,7 @@ float h_Atan(register float value)
   return value;
 }
 
-/**
- * fast approximation of the arc-tangens function for range [-2, 2]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the arc-tangens function for range [-2, 2]
 H_MATH_INLINE
 float h_AtanF(register const float x)
 {
@@ -916,13 +650,7 @@ float h_AtanF(register const float x)
   return (x*(105 + 55*x2)) / (105 + x2*(90 + 9*x2));
 }
 
-/**
- * calculates the angle in radians between the positive x-h_is of a plane
- * and the point given by the coordinates (x, y) on it.
- * @param[in] x float - x coordinate
- * @param[in] y float - y coordinate
- * @return value float
- */
+// calculates the angle in radians between the positive x-h_is of a plane
 H_MATH_INLINE
 float h_Atan2(register const float y, register const float x)
 {
@@ -934,11 +662,7 @@ float h_Atan2(register const float y, register const float x)
   return value;
 }
 
-/**
- * calculates the cotangens of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the cotangens of a floating point number (fpu)
 H_MATH_INLINE
 float h_Cotan(register float value)
 {
@@ -951,11 +675,7 @@ float h_Cotan(register float value)
   return value;
 }
 
-/**
- * calculates the cosecant of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the cosecant of a floating point number (fpu)
 H_MATH_INLINE
 float h_Csc(register float value)
 {
@@ -968,11 +688,7 @@ float h_Csc(register float value)
   return value;
 }
 
-/**
- * calculates the secant of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the secant of a floating point number (fpu)
 H_MATH_INLINE
 float h_Sec(register float value)
 {
@@ -985,11 +701,7 @@ float h_Sec(register float value)
   return value;
 }
 
-/**
- * calculates the arccotangent of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arccotangent of a floating point number (fpu)
 H_MATH_INLINE
 float h_Acotan(register float value)
 {
@@ -1002,11 +714,7 @@ float h_Acotan(register float value)
   return value;
 }
 
-/**
- * calculates the arcsecant of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arcsecant of a floating point number (fpu)
 H_MATH_INLINE
 float h_Asec(register float value)
 {
@@ -1020,11 +728,7 @@ float h_Asec(register float value)
   return value;
 }
 
-/**
- * calculates the arccosecant of a floating point number (fpu)
- * @param[in] value float
- * @return value float
- */
+// calculates the arccosecant of a floating point number (fpu)
 H_MATH_INLINE
 float h_Acsc(register float value)
 {
@@ -1038,11 +742,7 @@ float h_Acsc(register float value)
   return value;
 }
 
-/**
- * approximation of the hyperbolic-sine function for range (fpu)
- * @param[in] x float
- * @return result float
- */
+// approximation of the hyperbolic-sine function for range (fpu)
 H_MATH_INLINE
 float h_Sinh(register const float x)
 {
@@ -1058,11 +758,7 @@ float h_Sinh(register const float x)
   }
 }
 
-/**
- * fast approximation of the hyperbolic-sine function for range [-3.5, 3.5]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the hyperbolic-sine function for range [-3.5, 3.5]
 H_MATH_INLINE
 float h_SinhF(register const float x)
 {
@@ -1070,11 +766,7 @@ float h_SinhF(register const float x)
   return x*(x2*(0.012*x2 + 0.156) + 1.004);
 }
 
-/**
- * approximation of the hyperbolic-cosine function (fpu)
- * @param[in] x float
- * @return result float
- */
+// approximation of the hyperbolic-cosine function (fpu)
 H_MATH_INLINE
 float h_Cosh(register const float x)
 {
@@ -1082,11 +774,7 @@ float h_Cosh(register const float x)
   return (_e + 1.0f/_e)*0.5f;
 }
 
-/**
- * fast approximation of the hyperbolic-cosine function for range [-3.5, 3.5]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the hyperbolic-cosine function for range [-3.5, 3.5]
 H_MATH_INLINE
 float h_CoshF(register const float x)
 {
@@ -1094,11 +782,7 @@ float h_CoshF(register const float x)
   return x2*(0.065*x2 + 0.428) + 1.025;
 }
 
-/**
- * approximation of the hyperbolic-tangens function for range [-50, 50] (fpu)
- * @param[in] value const float
- * @return result float
- */
+// approximation of the hyperbolic-tangens function for range [-50, 50] (fpu)
 H_MATH_INLINE
 float h_Tanh(register const float value)
 {
@@ -1112,11 +796,7 @@ float h_Tanh(register const float value)
   }
 }
 
-/**
- * fast approximation of the hyperbolic-tangens function for range [-4.2, 4.2]
- * @param[in] x float
- * @return result float
- */
+// fast approximation of the hyperbolic-tangens function for range [-4.2, 4.2]
 H_MATH_INLINE
 float h_TanhF(register const float x)
 {
@@ -1124,17 +804,7 @@ float h_TanhF(register const float x)
   return x*(27 + x2) / (27 + 9*x2);
 }
 
-/**
- * calculate the average value of a set of floats
- * example: <br>
- * \code
- * float ar[] = { -1.f, 2.f, 3.f, 4.f, 5.f };
- * float result = h_Avrg(5, ar); // result is 2.6f
- * \endcode
- * @param n unsigned int - number of elements (n)
- * @param ar float* - array of floats
- * @return float
- */
+// calculate the average value of a set of floats
 H_MATH_INLINE
 float h_Avrg(register const unsigned int n,
   register const float* ar)
@@ -1149,17 +819,7 @@ float h_Avrg(register const unsigned int n,
   return total/n;
 }
 
-/**
- * calculate the average value of a set of integers
- * example: <br>
- * \code
- * int ar[] = { -1, 2, 3, 4, 5 };
- * int result = h_AvrgInt(5, ar); // result is 2 (truncated)
- * \endcode
- * @param n unsigned int - number of elements (n)
- * @param ar int* - array of integers
- * @return int
- */
+// calculate the average value of a set of integers 
 H_MATH_INLINE
 int h_Avrgi(register const unsigned int n, register const int* ar)
 {
@@ -1173,18 +833,7 @@ int h_Avrgi(register const unsigned int n, register const int* ar)
   return total/n;
 }
 
-/**
- * calculate the RMS of a set (array) of float numbers
- * example:
- * \code
- * float ar[] = { 1.f, 2.f, 3.f, 4.f, 5.f };
- * float result = h_RMS(5, ar);   // result = 3.31662
- * \endcode
- * @param[in] n unsigned int - size of the array
- * @param[in] ar float* - array of floats
- *
- * @return float
- */
+// calculate the RMS of a set (array) of float numbers
 H_MATH_INLINE
 float h_RMS(register const unsigned int n, register const float* ar)
 {
@@ -1198,18 +847,7 @@ float h_RMS(register const unsigned int n, register const float* ar)
   return h_Sqrt(numr/n);
 }
 
-/**
- * calculate the RMS of a set (array) of int numbers
- * example:
- * \code
- * int ar[] = { 1, -2, 3, 4, 5 };
- * int result = h_RMS(5, ar);
- * \endcode
- * @param[in] n unsigned int - size of the array
- * @param[in] ar int* - array of integers
- *
- * @return float
- */
+// calculate the RMS of a set (array) of int numbers
 H_MATH_INLINE
 int h_RMSi(register const unsigned int n, register const int* ar)
 {
@@ -1223,11 +861,7 @@ int h_RMSi(register const unsigned int n, register const int* ar)
   return (int)(h_Sqrt((float)(numr/n)));
 }
 
-/**
- * conversation from bandwidth (octaves) to q factor
- * @param[in] n float - length in octaves
- * @return q_factor float
- */
+// conversation from bandwidth (octaves) to q factor
 H_MATH_INLINE
 float h_Octaves2Q(const float n)
 {
@@ -1235,22 +869,14 @@ float h_Octaves2Q(const float n)
   return -h_SqrtF(_pow2n) / (1.f - _pow2n);
 }
 
-/**
- * conversation from q factor to bandwidth (octaves)
- * @param[in] q float - q factor
- * @return octaves float
- */
+// conversation from q factor to bandwidth (octaves)
 H_MATH_INLINE
 float h_Q2Octaves(const float q)
 {
   return 1.4426950408889634f * h_SinhF(0.5f * (q));
 }
 
-/**
- * denormalize input value
- * @param[in] n float
- * @return n float denormalized value
- */
+// denormalize input value
 H_MATH_INLINE
 float h_Denorm(register float n)
 {
@@ -1264,93 +890,27 @@ float h_Denorm(register float n)
   return n;
 }
 
-/**
- * converts linear value to decibel
- * \code
- * float dc_signal = 1.f;
- * float amp_half = 0.5f;
- * dc_signal *= amp_half;                  // half the amplitude
- * float amp_db = h_Lin2DB(amp_half);      // amp_db = -6dbFS
- * \endcode
- * @param[in] lin float
- * @return result float
- */
-#define h_Lin2DB(lin) ( LOG2DB*h_LogF( (lin) ) )
-
-/**
- * converts decibel value to linear
- * \code
- * float amp_db = 20.f;         // 20 decibels
- * signal *= h_DB2Lin(amp_db);  // *= ~10.079
- * \endcode
- * @param[in] dB float
- * @return result float
- */
-#define h_DB2Lin(dB) ( h_ExpF( DB2LOG*(dB) ) )
-
-/**
- * sums a set (array) of dBFS values
- * \code
- * float ar[] = {-6.f, -12.f, -18.f, -30.f};    // dBFS values
- * float result = h_SumDB(4, ar);               // -0.852114 dBFS
- * \endcode
- * @param[in] n unsigned integer - array length
- * @param[in] ar float* - array of floats
- * @return result float
- */
+// decibel to linear
 H_MATH_INLINE
-float h_SumDB(unsigned int n, const float* ar)
+float h_Lin2Db(const float x)
+{
+  return LIN2DB*h_LogF(x); 
+}
+
+// linear to decibel
+H_MATH_INLINE
+float h_Db2Lin(const float x)
+{
+  return h_ExpF(DB2LIN*x); 
+}
+
+// sums a set (array) of dBFS values
+H_MATH_INLINE
+float h_SumDb(unsigned int n, const float* ar)
 {
   float sum = 0.f;
-  for (unsigned int i=0; i<n; i++) sum += h_DB2Lin(ar[i]);
-  return h_LogF(sum)*LOG2DB;
+  for (unsigned int i=0; i<n; i++) sum += h_Db2Lin(ar[i]);
+  return h_LogF(sum)*LIN2DB;
 }
 
 #endif /* h_Math_included */
-
-
-
-/*
-// http://iquilezles.org/www/articles/sfrand/sfrand.htm
-// returns a random float within the range of -1 to 1
-float h_RandFloat(int* a_Seed)
-{
-  float res;
-  *a_Seed *= 16807;
-  // warning: dereferencing type-punned pointer will break strict-aliasing rules|
-  // warning: dereferencing pointer ‘res.89’ does break strict-aliasing rules|
-  *((unsigned int *)&res) = ( ( (unsigned int)a_Seed[0])>>9 ) | 0x40000000;
-  // warning: ‘res’ is used uninitialized in this function|
-  return (res-3.0f);
-}
-
-// http://bits.stephan-brumme.com/inverse.html
-// returns 1/x
-float h_Inverse(float x)
-{
-  unsigned int *i = (unsigned int*)&x; // re-interpret as a 32 bit integer
-  // warning: dereferencing pointer ‘i’ does break strict-aliasing rules|
-  *i = 0x7F000000 - *i; // adjust exponent
-  // *i = 0x7EEEEEEE - *i;
-  return x;
-}
-
-// http://bits.stephan-brumme.com/invSquareRoot.html
-float h_InvSqrt(float x)
-{
-  float xHalf = 0.5f*x;                 // for Newton iteration
-  unsigned int *i = (unsigned int*) &x; // same as above
-  // warning: dereferencing pointer ‘i’ does break strict-aliasing rules|
-  *i = 0x5F375A86 - (*i>>1);            // one Newton iteration, repeating further improves precision
-  return x * (1.5f - xHalf*x*x);
-}
-
-float h_InvSqrtFast(float x)
-{
-  unsigned int *i = (unsigned int*) &x; // access float with integer logic
-  // warning: dereferencing pointer ‘i’ does break strict-aliasing rules|
-  *i = 0x5F375A86 - (*i>>1); // approximation with empirically found "magic number"
-  return x;
-}
-
-*/

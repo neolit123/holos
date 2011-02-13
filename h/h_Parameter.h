@@ -62,17 +62,18 @@ class h_Parameter
     h_String  m_Name;
     h_String  m_Label;
     int       m_Flags;
-    float     m_Value;   // 0..1
-//    float     m_Pow;
-//    char**    m_Strings;
-    //h_ParameterListener* m_Listener;
-  //public:
-  //  int       m_Id;
-  //  void*     m_Ptr;
+    float     m_Value;
+    float     (*m_Ptr)(float);
+    float     (*m_InvPtr)(float);
 
   public:
 
-    h_Parameter(h_String a_Name, h_String a_Label, int a_Flags = 0, float a_Value=0 )
+    h_Parameter(h_String a_Name,
+                h_String a_Label,
+                int a_Flags = 0,
+                float a_Value = 0,
+                float (*a_Ptr)(float) = H_NULL,
+                float (*a_InvPtr)(float) = H_NULL)
       {
         m_Connect = -1;
         m_Index = -1;
@@ -81,10 +82,8 @@ class h_Parameter
         m_Flags = a_Flags;
         m_Value = a_Value;
         m_Default = m_Value;
-        //m_Pow = 1;
-        //m_Strings = H_NULL;
-        //m_Id = 0;
-        //m_Ptr = H_NULL;
+        m_Ptr = a_Ptr;
+        m_InvPtr = a_InvPtr;
       }
 
     virtual ~h_Parameter()
@@ -108,14 +107,7 @@ class h_Parameter
     virtual int       getConnect(void)            { return m_Connect; }
 };
 
-typedef h_Array<h_Parameter*> h_Parameters;
-
 //----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
 class h_ParFloat : public h_Parameter
 {
   private:
@@ -124,33 +116,45 @@ class h_ParFloat : public h_Parameter
     float m_NumSteps;
     float m_StepSize;
     float m_HalfStep;
-  private:
-    float m_Min, m_Max, m_Step;
+    float m_Min;
+    float m_Max;
+    float m_Step;
+    float (*m_Ptr)(float);
+    float (*m_InvPtr)(float);
 
   public:
-
     h_ParFloat( const h_String a_Name,
                 const h_String a_Label = "",
                 const int a_Flags = 0,
                 const float a_Value = 0.f,
                 const float a_Min = 0.f,
                 const float a_Max = 1.f,
-                const float a_Step = 0.f)
-    : h_Parameter(a_Name, a_Label, a_Flags)
+                const float a_Step = 0.f,
+                float (*a_Ptr)(float) = H_NULL,
+                float (*a_InvPtr)(float) = H_NULL)
+    : h_Parameter(a_Name, a_Label, a_Flags, a_Value, a_Ptr, a_InvPtr)
     {
-      setup(a_Value, a_Min, a_Max, a_Step);
+      setup(a_Value, a_Min, a_Max, a_Step, a_Ptr, a_InvPtr);
     }
-    
-    ~h_ParFloat() {}
 
-    void setup(float a_Value, float a_Min, float a_Max, float a_Step)
+    void setup( float a_Value,
+                float a_Min,
+                float a_Max,
+                float a_Step,
+                float (*a_Ptr)(float),
+                float (*a_InvPtr)(float) )
       {
-        m_Value    = a_Value;
-        m_Min      = a_Min;
-        m_Max      = a_Max;
+        m_Ptr      = a_Ptr;
+        m_InvPtr   = a_InvPtr;
+        
+        m_Value  = a_Value;
+        m_Min    = a_Min;
+        m_Max    = a_Max;
+        
         m_Step     = a_Step;
         m_Range    = m_Max - m_Min;
-        m_InvRange = 1 / m_Range;
+        m_InvRange = 1 / m_Range;        
+        
         if(m_Step > 0)
         {
           m_NumSteps = 1 + (m_Range / m_Step);
@@ -168,15 +172,18 @@ class h_ParFloat : public h_Parameter
 
     virtual void  setValue(const float a_Value)
       {
-        m_Value = ((a_Value - m_Min) * m_InvRange);
+        if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
+          m_Value = ((a_Value - m_Min) * m_InvRange);
+        else
+          m_Value = m_InvPtr((a_Value - m_Min) * m_InvRange);
       }
 
-    virtual float getValue(void)
+    virtual float getValueDefault(void)
       {
         if(m_Step > 0)
         {
           const float n = m_Value * m_NumSteps;
-          const int st = h_Mini(n, (m_NumSteps - 1));
+          const int st = h_Mini(n, (m_NumSteps - 1));          
           return m_Min + (st * m_Step);
         }
         else
@@ -184,11 +191,38 @@ class h_ParFloat : public h_Parameter
           return m_Min + (m_Value * m_Range);
         }
       }
-
+    
+    virtual float getValue(void)
+      {
+        if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
+          return getValueDefault();
+        else
+          return m_Ptr(getValueDefault());
+      }
 };
 
 //----------------------------------------------------------------------
+class h_ParDb : public h_ParFloat
+{
+  private:
+    float m_Range;
+    float m_Min;
+    float m_Max;
+    float m_Step;
 
+  public:
+    h_ParDb(const h_String a_Name,
+            const int a_Flags = 0,
+            const float a_Value = 0.f,
+            const float a_Min = 0.f,
+            const float a_Max = 1.f,
+            const float a_Step = 0.f)                
+    : h_ParFloat( a_Name, "dB", a_Flags, a_Value, a_Min, a_Max, a_Step)
+    {}
+};
+
+
+//----------------------------------------------------------------------
 class h_ParInt : public h_Parameter
 {
   private:
@@ -197,146 +231,115 @@ class h_ParInt : public h_Parameter
     float         m_NumSteps;
     float         m_StepSize;
     float         m_HalfStep;
-    const char**  m_Strings;
-
-  private:
-    int           m_Min, m_Max, m_Step;
+    int           m_Min;
+    int           m_Max;
+    int           m_Step;
+    float         (*m_Ptr)(float);
+    float         (*m_InvPtr)(float);
 
   public:
-
     h_ParInt( const h_String a_Name,
               const h_String a_Label = "",
               const int a_Flags = 0,
               const int a_Value = 0,
               const int a_Min = 0,
               const int a_Max = 1,
-              const char** a_Strings = NULL)
-      : h_Parameter(a_Name, a_Label, a_Flags)
+              float (*a_Ptr)(float) = H_NULL,
+              float (*a_InvPtr)(float) = H_NULL)
+      : h_Parameter(a_Name, a_Label, a_Flags, a_Value, a_Ptr, a_InvPtr)
       {
-        setup(a_Value, a_Min, a_Max, a_Strings);
+        setup(a_Value, a_Min, a_Max, a_Ptr, a_InvPtr);
       }
-      
-    ~h_ParInt() {}
 
     void setup( const int a_Value,
                 const int a_Min,
                 const int a_Max,
-                const char** a_Strings)
+                float (*a_Ptr)(float),
+                float (*a_InvPtr)(float))
       {
-        m_Strings = a_Strings;
         m_Min       = a_Min;
         m_Max       = a_Max;
         m_Range     = m_Max - m_Min + 1;
         m_InvRange  = 1/m_Range;
         m_HalfStep  = (m_InvRange)*0.5;
+        m_Ptr       = a_Ptr;
+        m_InvPtr    = a_InvPtr;
+        
         setInt(a_Value);
       }
 
-    virtual void setInt(int a_Value)
+    virtual void setInt(const int a_Value)
       {
         m_Value = (float)(a_Value - m_Min) * m_InvRange;
-        //m_Value += m_HalfStep;
+        m_Value += m_HalfStep;
       }
 
     virtual int getInt(void)
       {
-        const float n = h_Floor (m_Value * m_Range );
+        const float n = h_Floor(m_Value * m_Range);
         return (m_Min + h_Mini(n, (m_Range - 1)));
       }
 
-    virtual void  setValue(const float a_Value)
+    virtual void setValue(const float a_Value)
       {
-        setInt((int)a_Value);
+        if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
+          setInt((int)a_Value);
+        else
+          return setInt((int)m_InvPtr(a_Value));
       }
 
     virtual float getValue(void)
       {
-        return (float)getInt();
+        if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
+          return (float)getInt();
+        else
+          return m_Ptr((float)getInt());
       }
 
-    virtual void  doGetDisplay(char* buf)
+    virtual void doGetDisplay(char* buf)
       {
         const int i = getInt();
-        if (m_Strings) h_Strcpy(buf, m_Strings[i]);
-        else h_Itoa(buf, i);
-      }
-
-};
-
-
-class h_ParText : public h_Parameter
-{
-  private:
-    float         m_Range;
-    float         m_InvRange;
-    float         m_NumSteps;
-    float         m_StepSize;
-    float         m_HalfStep;
-    const char**  m_Strings;
-
-  private:
-    int           m_Min, m_Max, m_Step;
-
-  public:
-
-    h_ParText( const h_String a_Name,
-              const h_String a_Label = "",
-              const int a_Flags = 0,
-              const int a_Value = 0,
-              const int a_Min = 0,
-              const int a_Max = 1,
-              const char** a_Strings = NULL)
-      : h_Parameter(a_Name, a_Label, a_Flags)
-      {
-        setup(a_Value, a_Min, a_Max, a_Strings);
-      }
-      
-    ~h_ParText() {}
-
-    void setup( const int a_Value,
-                const int a_Min,
-                const int a_Max,
-                const char** a_Strings)
-      {
-        m_Strings = a_Strings;
-        m_Min       = a_Min;
-        m_Max       = a_Max;
-        m_Range     = m_Max - m_Min + 1;
-        m_InvRange  = 1/m_Range;
-        m_HalfStep  = (m_InvRange)*0.5;
-        setInt(a_Value);
-      }
-
-    virtual void setInt(int a_Value)
-      {
-        m_Value = (float)(a_Value - m_Min) * m_InvRange;
-        //m_Value += m_HalfStep;
-      }
-
-    virtual int getInt(void)
-      {
-        const float n = h_Floor (m_Value * m_Range );
-        return (m_Min + h_Mini(n, (m_Range - 1)));
-      }
-
-    virtual void  setValue(const float a_Value)
-      {
-        setInt((int)a_Value);
-      }
-
-    virtual float getValue(void)
-      {
-        return (float)getInt();
-      }
-
-    virtual void  doGetDisplay(char* buf)
-      {
-        const int i = getInt();
-        if (m_Strings) h_Strcpy(buf, m_Strings[i]);
-        else h_Itoa(buf, i);
+        h_Itoa(buf, i);
       }
 
 };
 
 //----------------------------------------------------------------------
+class h_ParText : public h_ParInt
+{
+  private:
+    const char**  m_Strings;
+   
+  public:
+
+    h_ParText( const h_String a_Name,
+              const h_String a_Label = "",
+              const int a_Flags = 0,
+              const int a_Value = 0,              
+              const int a_Max = 1,
+              const char** a_Strings = NULL)
+      : h_ParInt(a_Name, a_Label, a_Flags, a_Value, 0, a_Max - 1)
+      {
+        setup(a_Strings);
+      }
+      
+    void setup(const char** a_Strings)
+      {
+        m_Strings = a_Strings;
+      }
+    
+    virtual void getDisplay(char* buf)
+      {
+        const int i = getInt();
+        if (m_Strings)
+          h_Strcpy(buf, m_Strings[i]);
+        else
+          h_Itoa(buf, i);
+      }
+};
+
+//----------------------------------------------------------------------
+
+typedef h_Array<h_Parameter*> h_Parameters;
+
 #endif /* h_Parameter_included */
