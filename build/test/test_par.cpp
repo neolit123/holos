@@ -42,9 +42,9 @@ class desc : public h_Descriptor
       appendParameter
         (new h_ParDb("parDb", H_NULL, 0, -24, 24, 0.001));
       appendParameter
-        (new h_ParInt("parInt", "", H_NULL, 4, 0, 40, &pow2, &inv_pow2));      
+        (new h_ParInt("parInt", "", H_NULL, 4, 0, 40, &pow2, &inv_pow2));
       appendParameter
-        (new h_ParText("parText", "", H_NULL, 2, 4, strings));      
+        (new h_ParText("parText", "", H_NULL, 2, 4, strings));
     }
 };
 

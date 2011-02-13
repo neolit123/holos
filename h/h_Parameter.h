@@ -153,7 +153,7 @@ class h_ParFloat : public h_Parameter
         
         m_Step     = a_Step;
         m_Range    = m_Max - m_Min;
-        m_InvRange = 1 / m_Range;        
+        m_InvRange = 1 / m_Range;
         
         if(m_Step > 0)
         {
@@ -167,13 +167,18 @@ class h_ParFloat : public h_Parameter
           m_StepSize = 1;
           m_HalfStep = 0;
         }
-        setValue(m_Value);
+        setValueDefault(m_Value);
+      }
+      
+    virtual void  setValueDefault(const float a_Value)
+      {
+        m_Value = ((a_Value - m_Min) * m_InvRange);
       }
 
     virtual void  setValue(const float a_Value)
       {
         if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
-          m_Value = ((a_Value - m_Min) * m_InvRange);
+          setValueDefault(a_Value);
         else
           m_Value = m_InvPtr((a_Value - m_Min) * m_InvRange);
       }
