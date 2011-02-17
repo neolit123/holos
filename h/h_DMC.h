@@ -28,6 +28,9 @@
 // - good compression ratio
 // - not widely implemented
 
+#include "h_Defines.h"
+#include "h_Memory.h"
+
 #ifndef h_EOF
   #define h_EOF -1
 #endif
@@ -47,6 +50,9 @@ struct h_dmc_node
 };
 
 //----------------------------------------------------------------------
+
+#include "h/h_Defines.h"
+#include "h/h_Memory.h"
 
 class h_DMC
 {
@@ -72,7 +78,7 @@ class h_DMC
 
     h_DMC()
       {
-        rbuf = NULL;
+        rbuf = H_NULL;//NULL;
         rbufsize = 0;
         rbufpos = 0;
         wbuf = NULL;

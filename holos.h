@@ -67,7 +67,10 @@
   #include "h/h_Format_Vst.h"
 #endif
 
-#include "h/h_Editor.h"
+#ifndef H_NOGUI
+  #include "h/h_Editor.h"
+#endif
+
 //#include "h/h_Main.h"
 
 //----------------------------------------------------------------------

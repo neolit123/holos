@@ -180,9 +180,9 @@ class h_Window : public h_Window_Impl
 
     void redrawUpdates(void)
       {
+        beginPaint();
         h_Rect rect;
         int num = m_WidgetUpdates.size();
-        //trace("redrawUpdates: " << num);
         for( int i=0; i<num; i++ )
         {
           h_Widget* widget = m_WidgetUpdates[i].m_Widget;
@@ -192,7 +192,11 @@ class h_Window : public h_Window_Impl
           rect.combine( wr.x, wr.y, wr.w, wr.h );
         }
         clearUpdates();
-        redraw(rect);
+        endPaint();
+        // TODO: fix this..
+        //#if defined H_LINUX && defined H_VST
+        //  redraw(rect);
+        //#endif
       }
 
     //#endif // H_WIDGET_NOUPDATELIST

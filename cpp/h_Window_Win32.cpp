@@ -369,8 +369,6 @@ class h_Window_Win32 : public h_Widget,
         //UpdateWindow(mWindow);
       }
 
-    //----------
-
     // The BeginPaint function prepares the specified window for painting
     // and fills a PAINTSTRUCT structure with information about the painting
     //
@@ -386,8 +384,6 @@ class h_Window_Win32 : public h_Widget,
       {
         /*mPaintDC = */BeginPaint(m_WinHandle,&m_WinPS);
       }
-
-    //----------
 
     virtual void endPaint(void)
       {
@@ -539,7 +535,6 @@ class h_Window_Win32 : public h_Widget,
             }
             m_WinClickedButton = b;
             do_MouseDown(x,y,b,remapKey(wParam));
-            //if (m_CapturedWidget) grabCursor();
             if (getCapture()) grabCursor();
             break;
 
@@ -558,7 +553,6 @@ class h_Window_Win32 : public h_Widget,
             }
             m_WinClickedButton = bu_None;
             do_MouseUp(x,y,b,remapKey(wParam));
-            //if (!mCapturedWidget) releaseCursor();
             if (!getCapture()) releaseCursor();
             break;
 
@@ -628,19 +622,6 @@ class h_Window_Win32 : public h_Widget,
         return result;
       }
 
-    //----------------------------------------
-    // widget listener
-    //----------------------------------------
-
-//    // stop messages auto-bubbling upwards
-//    virtual void on_Change(h_Widget* a_Widget) {}
-//    virtual void on_Redraw(h_Widget* a_Widget) {}
-//    virtual void on_Cursor(int a_Cursor) {}
-//
-//    virtual void on_Hint(h_String a_Text) {}
-//    virtual void on_Size(h_Widget* a_Widget, int a_DeltaX, int a_DeltaY, int a_Mode) {}
-//    virtual void on_Modal(bool a_Modal, h_Widget* a_Widget) {}
-
 };
 
 //----------------------------------------------------------------------
@@ -657,8 +638,6 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
 {
   //h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLong(hWnd,GWL_USERDATA);
   h_Window_Win32* wnd = (h_Window_Win32*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
-
-	//if (wnd==0) return DefWindowProc(hWnd,message,wParam,lParam);
 	if (!wnd) return DefWindowProc(hWnd,message,wParam,lParam);
   return wnd->eventHandler(hWnd, message, wParam, lParam);
 }
@@ -668,98 +647,98 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 
 
+/*
 
+    //internal
+    void getWindowSize(HWND pWnd, int* pW, int* pH)
+      {
+        if (pWnd)
+        {
+          RECT r;
+          GetWindowRect(pWnd, &r);
+          *pW = r.right - r.left;
+          *pH = r.bottom - r.top;
+        }
+        else
+        {
+          *pW = *pH = 0;
+        }
+      }
 
-//    //internal
-//    void getWindowSize(HWND pWnd, int* pW, int* pH)
-//      {
-//        if (pWnd)
-//        {
-//          RECT r;
-//          GetWindowRect(pWnd, &r);
-//          *pW = r.right - r.left;
-//          *pH = r.bottom - r.top;
-//        }
-//        else
-//        {
-//          *pW = *pH = 0;
-//        }
-//      }
-//
-//    //----------
-//
-//    //internal
-//    bool isChildWindow(HWND pWnd)
-//      {
-//        if (pWnd)
-//        {
-//          int style = GetWindowLong(pWnd, GWL_STYLE);
-//          int exStyle = GetWindowLong(pWnd, GWL_EXSTYLE);
-//          return ((style & WS_CHILD) && !(exStyle & WS_EX_MDICHILD));
-//        }
-//        return false;
-//      }
+    //----------
 
-//    //----------
-//
-//    #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
-//
-//    virtual void setParentSize(int aWidth, int aHeight)
-//      {
-//        int dw = aWidth - mRect.w, dh = aHeight - mRect.h;
-//        HWND pParent = 0, pGrandparent = 0;
-//        int w=0, h=0, parentW=0, parentH=0, grandparentW=0, grandparentH=0;
-//        getWindowSize(mWindow,&w,&h);
-//        if (isChildWindow(mWindow))
-//        {
-//          pParent = GetParent(mWindow);
-//          getWindowSize(pParent, &parentW, &parentH);
-//          if (isChildWindow(pParent))
-//          {
-//            pGrandparent = GetParent(pParent);
-//            getWindowSize(pGrandparent, &grandparentW, &grandparentH);
-//          }
-//        }
-//        SetWindowPos(mWindow, 0, 0, 0, w + dw, h + dh, SETPOS_FLAGS);
-//        if (pParent)
-//        {
-//          SetWindowPos(pParent, 0, 0, 0, parentW + dw, parentH + dh, SETPOS_FLAGS);
-//        }
-//        if (pGrandparent)
-//        {
-//          SetWindowPos(pGrandparent, 0, 0, 0, grandparentW + dw, grandparentH + dh, SETPOS_FLAGS);
-//        }
-//      }
-//
-//    #undef SETPOS_FLAGS
-//
-//    //----------
-//
-//    virtual void resizeBuffer(int aWidth, int aHeight)
-//      {
-//        //trace("axWindowWin32.resizeBuffer: " << aWidth << "," << aHeight);
-//        //if( aWidth!=mRect.w || aHeight!=mRect.h )
-//        //{
-//          if (mWinFlags&AX_WIN_BUFFERED)
-//          {
-//            //mSurfaceMutex.lock();
-//            axSurface* srf;
-//            if (mSurface)
-//            {
-//              srf = mSurface;
-//              mSurface = NULL;
-//              delete srf;
-//            }
-//            //srf = new axSurface(aWidth,aHeight/*,mWinFlags*/);
-//            srf = createSurface(aWidth,aHeight,32);
-//            mSurface = srf;
-//            //mSurfaceMutex.unlock();
-//          }
-//          //mRect.w = aWidth;
-//          //mRect.h = aHeight;
-//          //doSetSize(aWidth,aHeight);
-//        //} //newsize
-//      }
+    //internal
+    bool isChildWindow(HWND pWnd)
+      {
+        if (pWnd)
+        {
+          int style = GetWindowLong(pWnd, GWL_STYLE);
+          int exStyle = GetWindowLong(pWnd, GWL_EXSTYLE);
+          return ((style & WS_CHILD) && !(exStyle & WS_EX_MDICHILD));
+        }
+        return false;
+      }
 
+    //----------
 
+    #define SETPOS_FLAGS SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE
+
+    virtual void setParentSize(int aWidth, int aHeight)
+      {
+        int dw = aWidth - mRect.w, dh = aHeight - mRect.h;
+        HWND pParent = 0, pGrandparent = 0;
+        int w=0, h=0, parentW=0, parentH=0, grandparentW=0, grandparentH=0;
+        getWindowSize(mWindow,&w,&h);
+        if (isChildWindow(mWindow))
+        {
+          pParent = GetParent(mWindow);
+          getWindowSize(pParent, &parentW, &parentH);
+          if (isChildWindow(pParent))
+          {
+            pGrandparent = GetParent(pParent);
+            getWindowSize(pGrandparent, &grandparentW, &grandparentH);
+          }
+        }
+        SetWindowPos(mWindow, 0, 0, 0, w + dw, h + dh, SETPOS_FLAGS);
+        if (pParent)
+        {
+          SetWindowPos(pParent, 0, 0, 0, parentW + dw, parentH + dh, SETPOS_FLAGS);
+        }
+        if (pGrandparent)
+        {
+          SetWindowPos(pGrandparent, 0, 0, 0, grandparentW + dw, grandparentH + dh, SETPOS_FLAGS);
+        }
+      }
+
+    #undef SETPOS_FLAGS
+
+    //----------
+
+    virtual void resizeBuffer(int aWidth, int aHeight)
+      {
+        //trace("axWindowWin32.resizeBuffer: " << aWidth << "," << aHeight);
+        //if( aWidth!=mRect.w || aHeight!=mRect.h )
+        //{
+          if (mWinFlags&AX_WIN_BUFFERED)
+          {
+            //mSurfaceMutex.lock();
+            axSurface* srf;
+            if (mSurface)
+            {
+              srf = mSurface;
+              mSurface = NULL;
+              delete srf;
+            }
+            //srf = new axSurface(aWidth,aHeight);
+            srf = createSurface(aWidth,aHeight,32);
+            mSurface = srf;
+            //mSurfaceMutex.unlock();
+          }
+          //mRect.w = aWidth;
+          //mRect.h = aHeight;
+          //doSetSize(aWidth,aHeight);
+        //} //newsize
+      }
+
+*/
 

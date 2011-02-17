@@ -24,21 +24,7 @@
 #include "h/h_Defines.h"
 #include "h/h_Stdlib.h"
 
-/*
-^ h_Stdlib.h is nedeed for h_Strcat()
-to remove this dependency h_CpuCapsString() has to be removed as well
-*/
-
 //----------------------------------------------------------------------
-
-//// check for little endian
-//__axutils_inline unsigned int axLittleEndian (void)
-//  { const int i = 1; return  (*(char*)&i); }
-//
-//// check for big endian
-//__axutils_inline unsigned int axBigEndian (void)
-//  { const int i = 1; return !(*(char*)&i); }
-
 
 // http://bits.stephan-brumme.com/endianess.html
 bool h_IsLittleEndian(void)

@@ -70,7 +70,6 @@
 class h_PaintSource
 {
   public:
-    //virtual HDC getDC(void) { return 0; }
     virtual Drawable getSourceDrawable(void) { return NULL; }
     //virtual XImage*  getSourceImage(void) { return NULL; }
     #ifdef H_ALPHA
@@ -112,35 +111,23 @@ class h_Painter_Linux
     Drawable      m_Drawable;
     GC            m_GC;
     XFontStruct*  m_Font;
-//    #ifdef H_ALPHA
-//    Picture       m_Picture;
-//    #endif
+    //#ifdef H_ALPHA
+    //Picture       m_Picture;
+    //#endif
     h_Rect        m_ClipRect;
     h_Point       m_Pos;
 
   public:
 
 
-  // if a_Ptr=NULL : window-painter, else surface-painter
-
-    //h_Painter(h_PaintTarget* a_PaintTarget)
+    // if a_Ptr=NULL: drawable = root window (desktop)
+    // NULL window-painter
+    // else surface-painter
 
     h_Painter_Linux(Display* a_Display, Drawable a_Drawable)
       {
-
-        // !!!!!!!!!!
-
-        //m_Display = static_Core.m_Platform->m_WinDisplay;
         m_Display = a_Display;
         m_Drawable  = a_Drawable;
-
-        // !!!!!!!!!!
-
-//        if (window) m_Drawable = (Drawable)window;
-//        else m_Drawable = static_Core.m_Platform->m_WinRoot;
-
-
-        //if (!m_Drawable) m_Drawable = static_Core.m_Platform->m_WinRoot;
         if (!m_Drawable) m_Drawable = XDefaultRootWindow(m_Display);
         m_GC        = XCreateGC(m_Display,m_Drawable,0,NULL);
         m_Font      = XQueryFont(m_Display,XGContextFromGC(m_GC));
@@ -164,16 +151,16 @@ class h_Painter_Linux
     // internal
     //----------------------------------------
 
-//    h_Color color(int a_Red, int a_Green, int a_Blue)
-//      {
-//        XColor xcol;
-//        xcol.red   = a_Red << 8;
-//        xcol.green = a_Green << 8;
-//        xcol.blue  = a_Blue << 8;
-//        xcol.flags = (DoRed or DoGreen or DoBlue);
-//        XAllocColor(m_Display,H_INTERFACE->getColormap(),&xcol);
-//        return h_Color(xcol.pixel);
-//      }
+    //h_Color color(int a_Red, int a_Green, int a_Blue)
+    //  {
+    //    XColor xcol;
+    //    xcol.red   = a_Red << 8;
+    //    xcol.green = a_Green << 8;
+    //    xcol.blue  = a_Blue << 8;
+    //    xcol.flags = (DoRed or DoGreen or DoBlue);
+    //    XAllocColor(m_Display,H_INTERFACE->getColormap(),&xcol);
+    //    return h_Color(xcol.pixel);
+    //  }
 
     //----------------------------------------
     // get, set
@@ -224,11 +211,9 @@ class h_Painter_Linux
     //    setColor( color(a_Red,a_Green,a_Blue) );
     //  }
 
-    //----------------------------------------
-
     void setPenWidth(int a_Width)
       {
-        //mPenWidth = aWidth;
+        //m_PenWidth = a_Width;
         XSetLineAttributes(m_Display,m_GC,a_Width,LineSolid,CapRound,JoinRound);
       }
 
@@ -242,7 +227,6 @@ class h_Painter_Linux
       }
 
     #ifdef H_ALPHA
-    /*virtual*/
     void setPicture(Picture a_Picture)
       {
         m_Picture = a_Picture;
@@ -255,29 +239,20 @@ class h_Painter_Linux
 
     void setClipRect(int aX1, int aY1, int aX2, int aY2)
       {
-        //mClipRect.set(aX1,aY1,(aX2-aX1+1),(aY2-aY1+1));
         XRectangle r;
         r.x      = aX1;
         r.y      = aY1;
         r.width  = (aX2-aX1)+2; // xlib seems to cut off one pixel to the right & bottom... ?
         r.height = (aY2-aY1)+2; // so we compensate by adding another pixel
         XSetClipRectangles(m_Display,m_GC,0,0,&r,1,Unsorted);
-        //m_ClipX1 = aX1;
-        //m_ClipY1 = aY1;
-        //m_ClipX2 = aX2;
-        //m_ClipY2 = aY2;
         m_ClipRect = h_Rect(aX1,aY1,aX2,aY2);
       }
-
-    //----------
 
     void resetClipRect(void)
       {
         //clearClipRect();
         setClipRect(m_ClipRect.x,m_ClipRect.y,m_ClipRect.x2(),m_ClipRect.y2());
       }
-
-    //----------
 
     void clearClipRect(void)
       {
@@ -293,31 +268,22 @@ class h_Painter_Linux
         XDrawPoint(m_Display,m_Drawable,m_GC,aX,aY);
       }
 
-    //----------
-
     void drawPoint(int aX, int aY, h_Color a_Color)
       {
         XSetForeground(m_Display,m_GC,a_Color);
         XDrawPoint(m_Display,m_Drawable,m_GC,aX,aY);
       }
 
-    //----------
-
     void drawLine(int aX1, int aY1, int aX2, int aY2)
       {
         XDrawLine(m_Display,m_Drawable,m_GC,aX1,aY1,aX2,aY2);
       }
-
-    //----------
 
     void drawRect(int aX1, int aY1, int aX2, int aY2)
       {
         XDrawRectangle(m_Display,m_Drawable,m_GC,aX1,aY1,aX2-aX1,aY2-aY1);
       }
 
-    //----------
-
-    /*virtual*/
     void fillRect(int x, int y, int x2, int y2)
       {
         //XFillRectangle(m_Display,m_Drawable,m_GC,x,y,w,h);
@@ -332,21 +298,14 @@ class h_Painter_Linux
         XDrawArc(m_Display,m_Drawable,m_GC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       }
 
-    //----------
-
     void fillCircle(int aX1, int aY1, int aX2, int aY2)
       {
         XFillArc(m_Display,m_Drawable,m_GC,aX1,aY1,aX2-aX1,aY2-aY1,0*64,360*64);
       }
 
-    //----------
-
-    // angle 1 = start angle, relative to 3 o'clock
-    // angle 2 = 'distance' 0..1, counter-clockwise
     void drawArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        //if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( h_Abs(aAngle2) >= 0.01 ) // fabs
         {
           // start angle = 12 o'clock
           float a1 = -aAngle1 + 0.25;
@@ -356,14 +315,9 @@ class h_Painter_Linux
         }
       }
 
-    //----------
-
-    // angle 1 = start angle, relative to 3 o'clock
-    // angle 2 = 'distance' 0..1, counter-clockwise
     void fillArc(int aX1, int aY1, int aX2, int aY2, float aAngle1, float aAngle2)
       {
-        //if( axAbs(aAngle2) >= 0.01/*EPSILON*/ )
-        if( fabs(aAngle2) >= 0.01/*EPSILON*/ )
+        if( h_Abs(aAngle2) >= 0.01 ) // fabs
         {
           // start angle = 12 o'clock
           float a1 = -aAngle1 + 0.25;
@@ -379,30 +333,23 @@ class h_Painter_Linux
 
     void setTextSize(int aSize)
       {
+        // TODO
       }
-
-    //----------
 
     int textWidth(char* a_Text)
       {
         return XTextWidth(m_Font, a_Text, h_Strlen(a_Text));
       }
 
-    //----------
-
     int textHeight(char* a_Text)
       {
         return m_Font->ascent + m_Font->descent;
       }
 
-    //----------
-
     void drawText(int a_Xpos, int a_Ypos, char* a_Text)
       {
         XDrawString(m_Display,m_Drawable,m_GC,a_Xpos,a_Ypos+m_Font->ascent,a_Text,h_Strlen(a_Text));
       }
-
-    //--------
 
     virtual void drawText(int a_X1, int a_Y1, int a_X2, int a_Y2, char* a_Text, int a_Align)
       {
@@ -417,78 +364,28 @@ class h_Painter_Linux
         XDrawString(m_Display,m_Drawable,m_GC,x,y,a_Text,h_Strlen(a_Text));
       }
 
-    //void setTextSize(int aSize)
-    //  {
-    //  }
-
-    //----------
-
-    //int textWidth(axString aText)
-    //  {
-    //    return XTextWidth(m_Font, aText.ptr(), aText.length());
-    //  }
-
-    //----------
-
-    //int textHeight(axString aText)
-    //  {
-    //    return m_Font->ascent + mFont->descent;
-    //  }
-
-    //----------
-
-    //void drawText(int aX, int aY, axString aText)
-    //  {
-    //    XDrawString(m_Display,m_Drawable,m_GC,aX,aY+m_Font->ascent,aText.ptr(),aText.length());
-    //  }
-
-    //----------
-
-    //void drawText(int x, int y, char* txt)
-    //  {
-    //    XDrawString(m_Display,m_Drawable,m_GC,x,y,txt,h_Strlen(txt));
-    //  }
-
-    //--------
-
-    //void drawText(int aX1, int aY1, int aX2, int aY2, char* aText, int aAlign)
-    //  {
-    //    int x,y;
-    //    if (aAlign & ta_Top) y = aY1 + m_Font->ascent;
-    //    else if (aAlign & ta_Bottom) y = aY2 - m_Font->descent;
-    //    else y = aY1 + ((m_Font->ascent)>>1) + ((aY2-aY1)>>1);
-    //    int width = textWidth(aText);
-    //    if (aAlign & ta_Left) x = aX1;
-    //    else if (aAlign & ta_Right) x = aX2 - width;
-    //    else x = aX1 + ((aX2 - aX1) >> 1) - ( width >> 1);
-    //    XDrawString(m_Display,m_Drawable,m_GC,x,y,aText.ptr(),aText.length());
-    //  }
-
     //----------------------------------------
     // bitmaps
     //----------------------------------------
 
-
-
     virtual void drawBitmap(h_Bitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //void paint(h_Image* a_Image, int x, int y, int srcx, int srcy, int srcw, int srch)
       {
-//        XPutImage(m_Display,m_Drawable,m_GC,a_Image->getImage(),srcx,srcy,x,y,srcw,srch);
+        // TODO
+        XPutImage(m_Display,m_Drawable,m_GC,aBitmap->getImage(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
       }
 
     //----------
 
 
     virtual void drawSurface(h_PaintSource* aSource, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //void paint(h_PaintSource* a_PaintSource, int x, int y, int srcx, int srcy, int srcw, int srch)
       {
-//        XCopyArea(m_Display,a_PaintSource->getSourceDrawable(),m_Drawable,m_GC,srcx,srcy,srcw,srch,x,y);
+        // TODO
+        //XCopyArea(m_Display,a_PaintSource->getSourceDrawable(),m_Drawable,m_GC,srcx,srcy,srcw,srch,x,y);
       }
 
     //----------
 
     virtual void blendSurface( h_PaintSource* aSource,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //void blend(h_PaintSource* a_PaintSource, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef H_ALPHA
           int op = PictOpOver;
@@ -501,7 +398,6 @@ class h_Painter_Linux
     //----------
 
     virtual void stretchSurface( h_PaintSource* aSource, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
-    //void stretch(h_PaintSource* a_PaintSource, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef H_ALPHA
         if (aW > 0)
@@ -524,8 +420,8 @@ class h_Painter_Linux
             XRenderSetPictureTransform(m_Display, pic, &xform );
             int op = PictOpOver;
             // hmmm.. is srcx, srcy transformed by the matrix too?
-            float x = /*axFloor*/floorf( (float)aSrcX / xs );
-            float y = /*axFloor*/floorf( (float)aSrcY / ys );
+            float x = h_Floor( (float)aSrcX / xs ); // floorf
+            float y = h_Floor( (float)aSrcY / ys ); // floorf
             XRenderComposite(m_Display,op,pic,None,m_Picture,(int)x,(int)y,0,0,aX,aY,aW,aH);
             XRenderSetPictureTransform(m_Display, pic, &h_alpha_mat_ident );
           } //h>0

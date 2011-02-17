@@ -1,6 +1,11 @@
 #ifndef __ISAAC_HPP
 #define __ISAAC_HPP
 
+#ifndef NULL
+  #define NULL 0
+#endif
+
+#include "stdlib.h"
 
 /*
 

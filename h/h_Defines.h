@@ -29,13 +29,13 @@
 
 // version to string
 // -----------------------------------------------------------------------------
-#define _h_StrExpand(x) #x
-#define _h_Str(x) h_StrExpand(x)
+#define h_StrExpand(x) #x
+#define h_Str(x) h_StrExpand(x)
 
 #define H_VERSION_STRING  \
-  _h_Str(H_MAJOR_VERSION)"." \
-  _h_Str(H_MINOR_VERSION)"." \
-  _h_Str(H_SUB_VERSION)
+  h_Str(H_MAJOR_VERSION)"." \
+  h_Str(H_MINOR_VERSION)"." \
+  h_Str(H_SUB_VERSION)
 
 #define H_HOLOS_TEXT \
   "powered by Holos v" H_VERSION_STRING " (http://holos.googlecode.com/)"

@@ -5,6 +5,10 @@
 //#define H_DEBUG_CON_NOTOP
 //#define H_DEBUG_CON_NORESIZE
 
+#define H_DEBUG_MEM
+#define H_DEBUG_MEM_PRINT
+#define H_DEBUG_NEW
+
 #include "holos.h"
 #include "h/h_SkinDefault.h"
 #include "h/h_WdgBackground.h"
@@ -13,6 +17,11 @@
 #include "h/h_WdgButton.h"
 #include "h/h_WdgValue.h"
 #include "h/h_WdgSlider.h"
+
+#include "h/h_BasePath.h"
+#include "h/h_BitmapLoader.h"
+
+#include <stdio.h>  // fopen
 
 //----------------------------------------------------------------------
 
@@ -23,6 +32,39 @@ class my_Widget : public h_Widget
     my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
+
+        // bitmap loader testing...
+        // todo: move most of this into the h_BitmapLoader class
+
+// --- test png loader ---
+
+//        char temp[H_MAX_STRINGSIZE];
+//        temp[0] = 0;
+//        char* path = (char*)h_GetBasePath(temp);
+//        h_Strcat(path,(char*)"../extern/mverb/background.png");
+//        trace("path: " << path);
+//
+//        FILE* fp = fopen(path,"rb");
+//        fseek(fp,0,SEEK_END);
+//        int size = ftell(fp);
+//        trace("size: " << size);
+//        fseek(fp,0,SEEK_SET);
+//        char* buffer = (char*)h_Malloc(size);
+//        int num = fread(buffer,1,size,fp);
+//        trace("num: " << num);
+//        //if (num!=size) trace("bitmap size mismatch!");
+//        fclose(fp);
+//
+//        h_BitmapLoader bmpload;
+//        bmpload.decode(buffer,size);
+//        trace("width:  " << bmpload.getWidth());
+//        trace("height: " << bmpload.getHeight());
+//        trace("depth:  " << bmpload.getDepth());
+//
+//        h_Free(buffer);
+
+// --- ---
+
       }
 
     //virtual ~my_Widget()
@@ -90,6 +132,7 @@ class my_Instance : public h_Instance,
         m_Editor = H_NULL;
         m_Skin   = H_NULL;
         transferParameters();
+
       }
 
     //----------
@@ -104,7 +147,7 @@ class my_Instance : public h_Instance,
       {
         char buf[H_MAX_STRINGSIZE];
         a_Parameter->getDisplay(buf);
-        trace("do_HandleParameter(" << a_Parameter->getName().ptr() << ") = " << buf );
+        trace("param: " << a_Parameter->getName().ptr() << " = " << buf );
         //trace("  index: " << a_Parameter->getIndex());
         //trace("  connect: " << a_Parameter->getConnect());
         //trace("  value: " << a_Parameter->getValue());
@@ -118,10 +161,15 @@ class my_Instance : public h_Instance,
         //trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
         //m_Window = new h_Window(this,rect,ptr);
         m_Editor = new h_Editor(this,rect,ptr);
+
+        //h_Bitmap* bmp = m_Editor->createBitmap(64,64,24);
+        //bmp->prepare();
+
         m_Editor->setBorders(10,10,5,5);
         m_Skin = new skin_Default();
         m_Editor->applySkin(m_Skin);
         m_Editor->appendWidget( new h_WdgBackground(this) );
+
         h_Widget* wdg;
         h_Widget* wdg2;
 
@@ -137,11 +185,7 @@ class my_Instance : public h_Instance,
           wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
 
         h_Parameter* par = m_Parameters->item(2);
-        //trace("par name: " << par->getName().ptr());
-        //m_Editor->connect( m_Parameters->item(0), wdg2 );
         m_Editor->connect( par, wdg2 );
-        //trace("par connect: " << par->getConnect());
-        //trace("par index: " << par->getIndex());
 
         // not needed for standalone?
         // it will get a size-event and we realign there..
@@ -149,6 +193,10 @@ class my_Instance : public h_Instance,
         #ifdef H_LIB
           m_Editor->do_Realign();
         #endif
+
+        //h_Painter* pnt = m_Editor->getPainter();
+        //trace(pnt);
+        //pnt->drawBitmap(bmp,0,0,0,0,100,100);
 
         m_Editor->show();
         //m_Window->setCursor(cu_Finger);

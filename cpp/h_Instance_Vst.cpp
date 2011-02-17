@@ -971,7 +971,9 @@ void h_Instance::vst_setParameter(VstInt32 index, float value)
     h_Parameter* par = m_Parameters->item(index);
     par->setInternal(value);
     do_HandleParameter(par);
+    #ifndef H_NOGUI
     if (m_Editor && m_EditorIsOpen) m_Editor->notifyParameter_fromInstance(par);
+    #endif
     //trace("todo: update editor");
   }
 

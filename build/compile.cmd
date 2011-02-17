@@ -1,4 +1,5 @@
 :: compile.cmd
+:: compile script for lib holos / win32
 ::
 :: Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 :: This file is part of the Holos Library.
@@ -17,12 +18,15 @@
 
 @echo off
 
+:: ######### NOTE #########
+:: set paths without the \ (or /) at the end
+
 :: -----------------------------------------------------------------------------
 :: *** user settings here
 :: -----------------------------------------------------------------------------
 :: set path to holos headers
 :: e.g: c:\holos\ (or relative to the compile.cmd) - location of Holos.h
-set hpath=..\
+set hpath=..
 
 :: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
 set vstpath=..\..\vstsdk24
@@ -99,7 +103,7 @@ set infile=%infile:###=%
 if not "%infile:~-4%"=="%srcext%" goto nocpp
 
 :: check includes
-if not exist %hpath% goto noholos
+if not exist %hpath%\holos.h goto noholos
 
 :: check for additional params
 if not [%2]==[] (if not [%2]==[-v] (if not [%2]==[-d] (if not [%2]==[-g] (if not [%2]==[-ladspa] (if not [%2]==[-vst] (if not [%2]==[-exe] (if not [%2]==[-ts] (if not [%2]==[-nogui] (if not [%2]==[-nmv] (if not [%2]==[-64] (if not [%2]==[-32] set ext_p2= %2)))))))))))
@@ -240,7 +244,7 @@ goto getformat
 
 :: format is ladspa
 :ladspatarget
-if not exist %ladspapath% goto noladspa
+if not exist %ladspapath%\ladspa.h goto noladspa
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set suffix=-ladspa
 set ext=.dll
@@ -251,7 +255,7 @@ goto begin
 
 :: format is vst
 :vsttarget
-if not exist %vstpath% goto novstsdk
+if not exist %vstpath%\pluginterfaces\vst2.x\aeffect.h goto novstsdk
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set suffix=-vst
 set ext=.dll
@@ -329,16 +333,18 @@ if exist %target% del %target%
 :: echo settings
 for /f "tokens=*" %%i in ('%mgwpath% -dumpversion') do set gccversion=%%i
 echo * compiling windows binary for '%infile%'...
-if not [%v%]==[] echo.
-if not [%v%]==[] echo * compiler is: GCC %gccversion%
-if not [%v%]==[] echo * target binary format is:%libfmt% %ext%
-if not [%v%]==[] echo * target platform is: %mpltsx%
-if not [%v%]==[] echo * lib debug is: %dstatus%
-if not [%v%]==[] echo * gcc debug is: %gccdstatus%
-if not [%v%]==[] if "%noguisx%" == "-nogui" echo * gui is: OFF
-if not [%v%]==[] if exist %hpath% echo * found holos path '%hpath%'
-if not [%v%]==[] if "%libfmt%" == " VST" echo * found vst sdk path '%vstpath%'
-if not [%v%]==[] if "%libfmt%" == " LADSPA" echo * found ladpsa sdk path '%ladspapath%'
+if not [%v%]==[] (
+  echo.
+  echo * compiler is: GCC %gccversion%
+  echo * target binary format is:%libfmt% %ext%
+  echo * target platform is: %mpltsx%
+  echo * lib debug is: %dstatus%
+  echo * gcc debug is: %gccdstatus%
+  if "%noguisx%" == "-nogui" echo * gui is: OFF
+  echo * found holos main '%hpath%'
+  if "%libfmt%" == " VST" echo * found vst sdk main '%vstpath%'
+  if "%libfmt%" == " LADSPA" echo * found ladpsa sdk path '%ladspapath%'
+)
 
 :compile
 if not [%v%]==[] echo.
@@ -380,17 +386,17 @@ goto end
 :: ----------------------------------------------------------------------------
 :noholos
 echo.
-echo ### ERR: cannot find holos path '%hpath%'
+echo ### ERR: cannot find holos main '%hpath%\holos.h'
 goto end
 :: ----------------------------------------------------------------------------
 :novstsdk
 echo.
-echo ### ERR: cannot find vst sdk path '%vstpath%'
+echo ### ERR: cannot find vst sdk main '%vstpath%\pluginterfaces\vst2.x\aeffect.h'
 goto end
 :: ----------------------------------------------------------------------------
 :noladspa
 echo.
-echo ### ERR: cannot find ladspa sdk path '%ladspapath%'
+echo ### ERR: cannot find ladspa sdk main '%ladspapath%\ladspa.h'
 goto end
 :: ----------------------------------------------------------------------------
 :nores

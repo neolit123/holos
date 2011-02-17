@@ -36,6 +36,9 @@ void* h_linux_timerProc(void* data);
 
 //----------------------------------------------------------------------
 
+// x freezes with this
+//#define H_WAITFORNOTIFY
+
 // mouse buttons and mod keys
 #define bu_None    0
 #define bu_Left    1
@@ -79,7 +82,11 @@ void* h_linux_timerProc(void* data);
 #define ts_Timer 667
 
 //int h_winfbconfig_attr[] =
-//  { GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT|GLX_PIXMAP_BIT|GLX_PBUFFER_BIT, None };
+//{
+//  GLX_DRAWABLE_TYPE,
+//  GLX_WINDOW_BIT|GLX_PIXMAP_BIT|GLX_PBUFFER_BIT,
+//  None
+//};
 
 int h_window_attr[] =
 {
@@ -112,33 +119,18 @@ static char noData[] = { 0,0,0,0,0,0,0,0 };
 
 //----------------------------------------------------------------------
 
-// there's some weird problems with energy xt2, where sometimes, not always,
-// the window comes up, but no painting is done. could be a case of xlib
-// not having finished the window creation yet? (x11 is async)
-
-// ---
-
-// this seems to freeze x if we have ext2 on monitor #2, and tries to
-// open a window.. perhaps because all those XGetDefaultScreen, etc,
-// reads data from default screen (0) ???
-
-
+#ifdef H_WAITFORNOTIFY
 static Bool h_WaitForNotify(Display* d, XEvent* e, char* arg)
   {
     return (e->type==MapNotify) & (e->xmap.window==(Window)arg);
   }
+#endif
 
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
-
-//class h_Window : public h_Widget,
-//                 //public h_WidgetListener,
-//                 public h_PaintSource,
-//                 public h_PaintTarget,
-//                 public h_RenderTarget
 
 class h_Window_Linux : public h_Widget,
                        public h_PaintSource
@@ -146,7 +138,6 @@ class h_Window_Linux : public h_Widget,
 
   friend void* h_linux_threadProc(void* data);
   friend void* h_linux_timerProc(void* data);
-  //friend class axFormatVst;
 
   private:
 
@@ -156,13 +147,6 @@ class h_Window_Linux : public h_Widget,
     Window      m_Parent;
     Window      m_Window;
     h_Painter*  m_Painter;
-    #ifdef H_ALPHA
-    Picture     m_Picture;
-    #endif
-    #ifdef H_OPENGL
-    GLXWindow   m_GLXWindow;
-    h_Renderer* m_Renderer;
-    #endif
     pthread_t   m_EventThread;
     pthread_t   m_TimerThread;
     bool        m_TimerRunning;
@@ -171,7 +155,6 @@ class h_Window_Linux : public h_Widget,
     Cursor      m_InvisibleCursor;
     Pixmap      m_BitmapNoData;
     XColor      m_Black;
-
     bool        m_Embedded;
     //int         m_Width;
     //int         m_Height;
@@ -181,58 +164,36 @@ class h_Window_Linux : public h_Widget,
     int         m_Depth;
     Colormap    m_Colormap;
     Window      m_Root;
+    #ifdef H_ALPHA
+    Picture     m_Picture;
+    #endif
+    #ifdef H_OPENGL
+    GLXWindow   m_GLXWindow;
+    h_Renderer* m_Renderer;
+    #endif
 
   public:
-
-    // accessors
-
     inline h_Painter* getPainter(void) { return m_Painter; }
     //inline h_Renderer* getRenderer(void) { return m_Renderer; }
-    // h_PaintSource:
-    virtual Drawable getSourceDrawable(void) { return m_Window; }
     #ifdef H_ALPHA
     virtual Picture  getSourcePicture(void)   { return m_Picture; }
     #endif
-    // h_PaintTarget
-    virtual Drawable getTargetDrawable(void) { return m_Window; }
-    // h_RenderTarget
+
+    virtual Drawable getSourceDrawable(void) { return m_Window; } // h_PaintSource:
+    virtual Drawable getTargetDrawable(void) { return m_Window; } // h_PaintTarget
     #ifdef H_OPENGL
-    virtual GLXDrawable getTargetGLXDrawable(void) { return m_GLXWindow; }
+    virtual GLXDrawable getTargetGLXDrawable(void) { return m_GLXWindow; } // h_RenderTarget
     #endif
-
-  public:
-
-    //----------------------------------------
-
-    // h_Widget:
-
-    //virtual void do_SetPos(int a_Xpos, int a_Ypos) {}
-    //virtual void do_SetSize(int a_Width, int a_Height) {}
-    //virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect) {}
-    //virtual void do_MouseDown(int a_Xpos, int a_Ypos, int a_Button, int a_State) {}
-    //virtual void do_MouseUp(int a_Xpos, int a_Ypos, int a_Button, int a_State) {}
-    //virtual void do_MouseMove(int a_Xpos, int a_Ypos, int a_State) {}
-    //virtual void do_KeyDown(int a_Ypos, int a_State) {}
-    //virtual void do_KeyUp(int a_Ypos, int a_State) {}
-    //virtual void do_Timer() {}
-
-    // h_WidgetListener:
-
-    //virtual void on_Change(h_Widget* a_Widget) {}
-
-    //----------------------------------------
 
   public:
 
     // if a_Parent == H_NULL, a standalone window is created,
     // else a_Parent is the parent window (embedded)
-    //
 
     h_Window_Linux(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
     : h_Widget(a_Listener,a_Rect)
       {
 
-        //m_Display = static_Core.m_Platform->m_WinDisplay;
         m_Display = static_Core.m_Platform->openDisplay();
 
         if (a_Parent)
@@ -243,38 +204,28 @@ class h_Window_Linux : public h_Widget,
         else
         {
           m_Embedded = false;
-          //m_Parent = static_Core.m_Platform->m_WinRoot;
           m_Parent = XDefaultRootWindow(m_Display);
         }
 
-        //int screen = H_INTERFACE->getScreen();
-        //trace("m_Display: " << m_Display);
+        //#ifdef H_OPENGL
 
-//        #ifdef H_OPENGL
+        //  int fbcount;
+        //  GLXFBConfig *fbc = glXChooseFBConfig(m_Display,H_INTERFACE->getScreen(),h_window_gl_attr,&fbcount);
+        //  XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display,fbc[0]);
+        //  Visual*  visual    = vi->visual;
+        //  int      depth    = vi->depth;
+        //  Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
 
-//          int fbcount;
-//          GLXFBConfig *fbc = glXChooseFBConfig(m_Display,H_INTERFACE->getScreen(),h_window_gl_attr,&fbcount);
-//          //dump_config(m_Display,fbc,0/*fbcount)*/);
-//          XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display,fbc[0]);
-//          Visual*  visual    = vi->visual;
-//          int      depth    = vi->depth;
-//          Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
-
-//        #else
-
-          trace("getting some default value from x");
+        //#else
 
           m_Root      = XDefaultRootWindow(m_Display);
-          m_Screen    = XDefaultScreen(m_Display);                // the default screen number referenced by the XOpenDisplay() function
+          m_Screen    = XDefaultScreen(m_Display); // the default screen number referenced by the XOpenDisplay() function
           m_Visual    = XDefaultVisual(m_Display,m_Screen);
           m_Depth     = XDefaultDepth(m_Display,m_Screen);
           m_Colormap  = XCreateColormap(m_Display,m_Root,m_Visual,AllocNone);
 
-//        #endif
+        //#endif
 
-        trace("ok, we have the variables...");
-
-        //Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
         long m_WinEventMask = ExposureMask
                             | ButtonPressMask
                             | ButtonReleaseMask
@@ -286,43 +237,35 @@ class h_Window_Linux : public h_Widget,
                             | ClientMessage;
 
         XSetWindowAttributes  swa;
-        swa.event_mask        = m_WinEventMask;//StructureNotifyMask;
+        swa.event_mask        = m_WinEventMask;
         swa.background_pixmap = None;
         swa.border_pixel      = 0;
         swa.colormap          = m_Colormap;
-//        swa.override_redirect = true;
-
-        //CWBackPixmap, CWBackPixel
-        //CWBorderPixmap, CWBorderPixel, CWBitGravity, CWWinGravity, CWBackingStore
-        //CWBackingPlanes, CWBackingPixel, CWOverrideRedirect, CWSaveUnder,
-        //CWDontPropagate, CWCursor
+        //swa.override_redirect = true;
 
         // http://tronche.com/gui/x/xlib/window/attributes/
-
         unsigned long swa_mask  = CWEventMask
                                 | CWBackPixmap
                                 | CWBorderPixel
                                 | CWColormap;
-//                                | CWOverrideRedirect;
-
-        trace("creating window");
+                                //| CWOverrideRedirect;
 
         m_Window = XCreateWindow(
           m_Display,
-          m_Parent,//H_INTERFACE->getRoot(),
+          m_Parent,
           a_Rect.x, a_Rect.y,
-          a_Rect.w, a_Rect.h,//100,100,
+          a_Rect.w, a_Rect.h,
           0, // border width
-          m_Depth,//vi->depth,
+          m_Depth,
           InputOutput,
-          m_Visual,//vi->visual,
-          swa_mask,//CWBorderPixel|CWColormap|CWEventMask,
+          m_Visual,
+          swa_mask,
           &swa
         );
 
         if (m_Embedded)
         {
-          // --- remove title-bar, borders ---
+          // remove title-bar, borders
           #define MWM_HINTS_DECORATIONS (1L << 1)
           #define PROP_MOTIF_WM_HINTS_ELEMENTS  5
           typedef struct
@@ -343,12 +286,12 @@ class h_Window_Linux : public h_Widget,
         }
         else
         {
-          // --- WM_DELETE_WINDOW ClientMessage ---
+          // WM_DELETE_WINDOW ClientMessage
           m_DeleteWindowAtom = XInternAtom(m_Display,"WM_DELETE_WINDOW",True);
           XSetWMProtocols(m_Display,m_Window,&m_DeleteWindowAtom,1);
         }
 
-        m_Painter  = new h_Painter(m_Display,m_Window);       /// ?????
+        m_Painter  = new h_Painter(m_Display,m_Window);
 
         //#ifdef H_ALPHA
         //  XWindowAttributes winattralpha;
@@ -385,8 +328,7 @@ class h_Window_Linux : public h_Widget,
           pthread_create(&m_EventThread,NULL,&h_linux_threadProc,this);
         }
 
-        trace("..and the constructor seems to be ok");
-
+        flush(); // ???
       }
 
     //----------
@@ -431,61 +373,63 @@ class h_Window_Linux : public h_Widget,
     //
     //----------------------------------------
 
+    h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth)
+      {
+        return new h_Bitmap(m_Display,a_Width,a_Height,a_Depth);
+      }
+
+    h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
+      {
+        return new h_Bitmap(m_Display,a_Width,a_Height,a_Depth,a_Buffer);
+      }
+
+    //----------------------------------------
+    //
+    //----------------------------------------
+
     virtual void flush(void)
       {
         XFlush(m_Display);
       }
-
-    //----------
 
     virtual void sync(void)
       {
         XSync(m_Display,false);
       }
 
-    //----------
-
     virtual void lock(void)
       {
         XLockDisplay(m_Display);
       }
-
-    //----------
 
     virtual void unlock(void)
       {
         XUnlockDisplay(m_Display);
       }
 
-    //----------
-
-    // x frezes if we wait for such an event on a second monitor,
-    // in certain settings... investigate this.. i have a suspicion
-    // it's related to the Display*, event handler queue, the a
-    // window being reparented to a window with a different thread or
-    // Display*
+    //----------------------------------------
+    //
+    //----------------------------------------
 
     virtual void show(void)
       {
-        trace("show window...");
-        trace("  m_Display: " << m_Display);
-        trace("  m_Window: " << m_Window);
         XMapWindow(m_Display,m_Window);
-        trace("  WaitForNotify");
-//        XEvent event;
-//        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window);
-        //XIfEvent(m_Display,&event,h_WaitForNotify,(char*)m_Window);
-        trace("show window ok...");
+        XFlush(m_Display);
+        // freezing x in certain situations (in a dual monitor setup)
+        #ifdef H_WAITFORNOTIFY
+        XEvent event;
+        XIfEvent(m_Display,&event,h_WaitForNotify,(XPointer)m_Window); // (char*)m_Window
+        #endif
       }
-
-    //----------
 
     virtual void hide(void)
       {
         XUnmapWindow(m_Display,m_Window);
       }
 
-    //----------
+    //----------------------------------------
+    // set
+    //----------------------------------------
 
     virtual void setPos(int a_Xpos, int a_Ypos)
       {
@@ -496,15 +440,11 @@ class h_Window_Linux : public h_Widget,
         //XFlush(m_Display);
       }
 
-    //----------
-
     virtual void setSize(int a_Width, int a_Height)
       {
         XResizeWindow(m_Display,m_Window,a_Width,a_Height);
         //XFlush(m_Display);
       }
-
-    //----------
 
     // valgrind reports memory leak here ('definitely lost')
     // XStringListToTextProperty, malloc
@@ -512,8 +452,6 @@ class h_Window_Linux : public h_Widget,
     // lii:
     // there could be malloc() in XStringListToTextProperty(),
     // so 'free(window_title);' might be needed after XFlush(..); ?
-
-    //-----
 
     // XStringListToTextProperty docs:
     // "To free the storage for the value field, use XFree()."
@@ -534,68 +472,8 @@ class h_Window_Linux : public h_Widget,
       }
 
     //----------------------------------------
-    //
-    //----------------------------------------
-
-    virtual void beginPaint(void)
-      {
-      }
-
-    //----------
-
-    virtual void endPaint(void)
-      {
-        // todo: check if actually needed...
-        flush();
-      }
-
-    // http://tronche.com/gui/x/xlib/window-and-session-manager/XReparentWindow.html
-
-    /*
-
-    A BadMatch error results if:
-    - The new parent window is not on the same screen as the old parent window.
-
-    */
-
-    virtual void reparent(void* a_Parent)
-      {
-        trace("reparent window...");
-        m_Parent = (Window)a_Parent;
-        XReparentWindow(m_Display,m_Window,m_Parent,0,0);
-        //XFlush(m_Display);
-        trace("reparent window ok");
-      }
-
-    //----------
-
-    virtual void invalidate(int aX, int aY, int aW, int aH)
-      {
-        static XExposeEvent ev;
-        ev.type     = Expose;
-        ev.display  = m_Display;
-        ev.window   = m_Window; // mParent;
-        ev.x        = aX;
-        ev.y        = aY;
-        ev.width    = aW;
-        ev.height   = aH;
-        ev.count    = 0;
-        XSendEvent(m_Display,m_Window,false,ExposureMask,(XEvent*)&ev);
-        //XFlush(m_Display);
-      }
-
-    //----------------------------------------
     // mouse cursor
     //----------------------------------------
-
-    virtual void resetCursor(void)
-      {
-        XUndefineCursor(m_Display,m_Window);
-        XFreeCursor(m_Display,m_CurrentCursor);
-        m_CurrentCursor = -1;
-      }
-
-    //----------
 
     virtual void setCursor(int a_Cursor)
       {
@@ -609,13 +487,16 @@ class h_Window_Linux : public h_Widget,
         }
       }
 
-    //----------
+    virtual void resetCursor(void)
+      {
+        XUndefineCursor(m_Display,m_Window);
+        XFreeCursor(m_Display,m_CurrentCursor);
+        m_CurrentCursor = -1;
+      }
 
     virtual void setCursorPos(int a_Xpos, int a_Ypos)
       {
       }
-
-    //----------
 
     virtual void showCursor(void)
       {
@@ -667,8 +548,87 @@ class h_Window_Linux : public h_Widget,
       }
 
     //----------------------------------------
+    // painting
+    //----------------------------------------
+
+    virtual void invalidate(int aX, int aY, int aW, int aH)
+      {
+        static XExposeEvent ev;
+        ev.type     = Expose;
+        ev.display  = m_Display;
+        ev.window   = m_Window; // mParent;
+        ev.x        = aX;
+        ev.y        = aY;
+        ev.width    = aW;
+        ev.height   = aH;
+        ev.count    = 0;
+        XSendEvent(m_Display,m_Window,false,ExposureMask,(XEvent*)&ev);
+        //XFlush(m_Display);
+      }
+
+    virtual void beginPaint(void)
+      {
+      }
+
+    virtual void endPaint(void)
+      {
+        // todo: check if actually needed...
+        flush();
+      }
+
+    //----------------------------------------
+    // hierarchy
+    //----------------------------------------
+
+    // http://tronche.com/gui/x/xlib/window-and-session-manager/XReparentWindow.html
+    // A BadMatch error results if: The new parent window is not on the same
+    // screen as the old parent window.
+
+    virtual void reparent(void* a_Parent)
+      {
+        trace("reparent window...");
+        m_Parent = (Window)a_Parent;
+        XReparentWindow(m_Display,m_Window,m_Parent,0,0);
+        //XFlush(m_Display);
+        trace("reparent window ok");
+      }
+
+    //----------------------------------------
     // events
     //----------------------------------------
+
+    void sendEvent(unsigned int a_Value=0)
+      {
+        static XClientMessageEvent event;
+        h_Memset(&event,0,sizeof(event));
+        event.type          = ClientMessage;
+        event.message_type  = m_CustomEventAtom;
+        event.display       = m_Display;
+        event.window        = m_Window;
+        event.format        = 32;
+        event.data.l[0]     = a_Value;
+        XSendEvent(m_Display,m_Window,False,NoEventMask,(XEvent*)&event);
+        XFlush(m_Display);
+      }
+
+    // todo: check if the event is really meant for us???
+    // do we need to handle the various windows ourselves?
+    // or should we have a separate Display* connection for each window?
+
+    virtual void eventLoop(void)
+      {
+        XEvent ev;
+        while (1)
+        {
+          XNextEvent(m_Display,&ev);
+          //if (ev.xany.window == m_Window)
+          //{
+            unsigned int data = ev.xclient.data.l[0];
+            if (ev.type==ClientMessage && data==m_DeleteWindowAtom) { break; }
+            else eventHandler(&ev);
+          //}
+        }
+      }
 
     // internal
     int remapButton(int a_Button)
@@ -697,47 +657,10 @@ class h_Window_Linux : public h_Widget,
         return ret;
       }
 
-
-    //virtual
-    void sendEvent(unsigned int a_Value=0)
-      {
-        static XClientMessageEvent event;
-        h_Memset(&event,0,sizeof(event));
-        event.type          = ClientMessage;
-        event.message_type  = m_CustomEventAtom;
-        event.display       = m_Display;
-        event.window        = m_Window;
-        event.format        = 32;
-        event.data.l[0]     = a_Value;
-        XSendEvent(m_Display,m_Window,False,NoEventMask,(XEvent*)&event);
-        XFlush(m_Display);
-      }
-
-    //----------
-
-    // todo: check if the event is really meant for us???
-    // do we need to handle the various windows ourselves?
-    // or should we have a separate Display* connection for each window?
-
-    virtual void eventLoop(void)
-      {
-        XEvent ev;
-        while (1)
-        {
-          XNextEvent(m_Display,&ev);
-          //if (ev.xany.window == m_Window)
-          //{
-            unsigned int data = ev.xclient.data.l[0];
-            if (ev.type==ClientMessage && data==m_DeleteWindowAtom) { break; }
-            else eventHandler(&ev);
-          //}
-        }
-      }
-
     //----------------------------------------
+    // event handler
     //----------------------------------------
 
-    //virtual
     void eventHandler(XEvent* a_Event)
       {
         switch (a_Event->type)
@@ -835,10 +758,6 @@ class h_Window_Linux : public h_Widget,
         } // switch
 
       }
-
-    //----------------------------------------
-    //
-    //----------------------------------------
 
 };
 

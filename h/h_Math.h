@@ -865,7 +865,7 @@ int h_RMSi(register const unsigned int n, register const int* ar)
 H_MATH_INLINE
 float h_Octaves2Q(const float n)
 {
-  const float _pow2n = h_PowF(2.f, n);
+  const float _pow2n = h_Pow(2.f, n);
   return -h_SqrtF(_pow2n) / (1.f - _pow2n);
 }
 

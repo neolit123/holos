@@ -188,7 +188,7 @@ class h_ParFloat : public h_Parameter
         if(m_Step > 0)
         {
           const float n = m_Value * m_NumSteps;
-          const int st = h_Mini(n, (m_NumSteps - 1));          
+          const int st = h_Mini((int)n, (int)(m_NumSteps - 1));          
           return m_Min + (st * m_Step);
         }
         else
@@ -282,7 +282,7 @@ class h_ParInt : public h_Parameter
     virtual int getInt(void)
       {
         const float n = h_Floor(m_Value * m_Range);
-        return (m_Min + h_Mini(n, (m_Range - 1)));
+        return (m_Min + h_Mini((int)n, (int)(m_Range - 1)));
       }
 
     virtual void setValue(const float a_Value)

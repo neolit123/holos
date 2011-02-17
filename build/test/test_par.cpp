@@ -27,7 +27,7 @@ class desc : public h_Descriptor
     desc() : h_Descriptor()
     {
       test_Parameters = m_Parameters;
-      
+
       m_Name        = "test_par";
       m_Author      = "na";
       m_Product     = "holos test plugin";
@@ -58,7 +58,7 @@ class inst : public h_Instance
     }
 
     virtual void do_HandleParameter(h_Parameter* a_Parameter)
-    {      
+    {
       trace(a_Parameter->getIndex() << ":" << a_Parameter->getValue());
     }
 };

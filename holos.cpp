@@ -64,7 +64,11 @@
   //#include "cpp/h_Parameter.cpp"
   #include "cpp/h_Descriptor.cpp"
   //#include "cpp/h_Instance.cpp"
-  #include "cpp/h_Editor.cpp"
+
+  #ifndef H_NOGUI
+    #include "cpp/h_Editor.cpp"
+  #endif
+
   //#include "cpp/h_Main.cpp"
 
   //----------

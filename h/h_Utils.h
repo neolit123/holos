@@ -16,75 +16,40 @@
   You should have received a copy of the Holos Library License
   If not, see <http://holos.googlecode.com/>.
 */
+
 //----------------------------------------------------------------------
 #ifndef h_Utils_included
 #define h_Utils_included
 //----------------------------------------------------------------------
 
-#ifdef H_HOT_INLINE_UTILS
-  #define __h_utils_inline __hotinline
+#ifdef H_UTILS_USE_INLINE
+  #define H_UTILS_INLINE inline
 #else
-  #define __h_utils_inline inline
+  #define H_UTILS_INLINE
 #endif
 
-//#include "lib/h_Stdlib.h"
 #include "h/h_Stdlib.h"
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+// convert to boolean
+#define h_Bool(x)         (!(!(x)))
+// get bit
+#define h_BitGet(x, bit)  ( 1  &  ((x)  >> (bit)))
+// set bit
+#define h_BitSet(x, bit)  ((x) |  (1    << (bit)))
+// clear bit
+#define h_BitClr(x, bit)  ((x) & ~(1    << (bit)))
+// flip bit
+#define h_BitFlp(x, bit)  ((x) ^  (1    << (bit)))
 
-/**
- * swap the values of two variables <br>
- \code
- * origin: http://graphics.stanford.edu/~seander/bithacks.html
- * note: type of first variable is used
- * float x = 5.f;
- * float y = 3.f;
- * h_Swap(x, y);
- * \endcode
- * @param[in] x type-unsafe
- * @param[in] y type-unsafe
- * @return void
- */
-
+// swap two values
 #define h_Swap(x,y) { typeof(x) tmp = (x); (x) = (y); (y) = (tmp); }
 
-//----------
-
-/**
- * h_GetArrSize() helper function
- */
-
+// size of array
 template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
-
-/**
- * returns the size of an array <br>
- * \code
- * char a[15];
- * int b[h_GetArrSize(a) + 1];
- * unsigned int j = h_GetArrSize(b);    // j = 16
- * // ----------------
- * // NOTE: passing a pointer will not work
- * int ar[21];
- * int* ptr = ar;
- * unsigned int j = h_GetArrSize(ptr); // <- will not work
- * \endcode
- * @param[in] x array type-unsafe
- * @return unsigned int
- */
-
 #define h_GetArrSize(x) (sizeof(x)/sizeof(decay_array_to_subtype(x)))
 
-//----------------------------------------------------------------------
-//
-//
-////----------------------------------------------------------------------
-
-// h_Strrchr
-
+// strip path
+H_UTILS_INLINE
 const char* h_StripPath(const char* a_Path)
   {
     if (a_Path)
@@ -98,9 +63,24 @@ const char* h_StripPath(const char* a_Path)
     return (char*)"NULL";
   }
 
-//----------
+// bit reverse
+H_UTILS_INLINE
+unsigned long h_BitReverse(unsigned long v)
+  {
+    unsigned long r = v;
+    int s = sizeof(v) * CHAR_BIT - 1;
+    for (v >>= 1; v; v >>= 1)
+    {
+      r <<= 1;
+      r |= v & 1;
+      s--;
+    }
+    r <<= s;
+    return r;
+  }
 
 // ptr to (reversed) hex
+H_UTILS_INLINE
 void h_CreateUniqueName(char* a_Buffer, char* a_Prefix, void* a_Ptr)
   {
     static char h_int2hex[17] = "0123456789abcdef";       // +'\0' = 17
@@ -116,17 +96,8 @@ void h_CreateUniqueName(char* a_Buffer, char* a_Prefix, void* a_Ptr)
     *a_Buffer++ = '\0';
   }
 
-//----------
-
-/**
- * radix algorithm
- * @param[in] source long*
- * @param[in] dest long*
- * @param[in] N long
- * @param[in] byte int
- */
-
-__h_utils_inline
+// radix
+H_UTILS_INLINE
 void h_Radix(long *source, long *dest, unsigned long N, int byte)
   {
     unsigned int i;

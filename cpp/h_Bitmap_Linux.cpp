@@ -21,101 +21,110 @@
 #define h_Bitmap_Linux_cpp_included
 //----------------------------------------------------------------------
 
+// TODO
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 class h_Bitmap_Linux
 {
+
+  friend class h_Window_Linux;
+
   private:
 
-//    Display*  m_Display;
-//    XImage*   m_Image;
-//    h_Bitmap* m_Bitmap;
-//    bool      m_BitmapAllocated;
-//    int       m_Width;
-//    int       m_Height;
-//    int       m_Depth;
+    Display*  m_Display;
+    XImage*   m_Image;
+    int       m_Width;
+    int       m_Height;
+    int       m_Depth;
+    char*     m_Buffer;
+    bool      m_Allocated;
+    bool      m_Prepared;
 
   public:
 
-//    // accessors
-//    inline XImage*    getImage(void)  { return m_Image; }
-//    inline h_Bitmap*  getBitmap(void) { return m_Bitmap; }
-//    inline int        getWidth(void)  { return m_Bitmap->getWidth(); }
-//    inline int        getHeight(void) { return m_Bitmap->getHeight(); }
-//    inline int        getDepth(void)  { return m_Bitmap->getDepth(); }
-//    inline char*      getBuffer(void) { return m_Bitmap->getBuffer(); }
+    // accessors
+    inline XImage*    getImage(void)  { return m_Image; }
+    inline int        getWidth(void)  { return m_Width; }
+    inline int        getHeight(void) { return m_Height; }
+    inline int        getDepth(void)  { return m_Depth; }
+    inline char*      getBuffer(void) { return m_Buffer; }
 
     // h_PaintSource
     //virtual XImage* getImage(void)  { return m_Image; }
 
+  //public:
+  private:
+  //must be created from h_Window
+
+    h_Bitmap_Linux(Display* a_Display, int a_Width, int a_Height, int a_Depth)
+      {
+        m_Display   = a_Display;
+        m_Width     = a_Width;
+        m_Height    = a_Height;
+        m_Depth     = a_Depth;
+        m_Buffer    = H_NULL;
+        m_Prepared  = false;
+        m_Allocated = false;
+        allocate();
+        prepare();
+      }
+
+    h_Bitmap_Linux(Display* a_Display, int a_Width, int a_Height, int a_Depth, char* a_Buffer)
+      {
+        m_Display   = a_Display;
+        m_Width     = a_Width;
+        m_Height    = a_Height;
+        m_Depth     = a_Depth;
+        m_Buffer    = (char*)a_Buffer;
+        m_Prepared  = false;
+        m_Allocated = false;
+        allocate();
+        //prepare();
+      }
+
   public:
 
-    h_Bitmap_Linux(int a_Width, int a_Height, int a_Depth)
+    //virtual
+    ~h_Bitmap_Linux()
       {
-//        m_Display = H_INTERFACE->getDisplay();
-//        m_Width   = a_Width;
-//        m_Height  = a_Height;
-//        m_Depth   = a_Depth;
-//        m_Bitmap  = new h_Bitmap(a_Width,a_Height,a_Depth);
-//        m_BitmapAllocated = true;
-//        //create_image();
-//        m_Image   = XCreateImage(
-//          m_Display,
-//          H_INTERFACE->getVisual(),
-//          m_Depth,                // depth
-//          ZPixmap,                // format
-//          0,                      // offset
-//          m_Bitmap->getBuffer(),  // data
-//          m_Width, m_Height,      // size
-//          32,                     // pad
-//          0                       // bytes per line
-//        );
+        if (m_Prepared)
+        {
+          m_Image->data = H_NULL;    // we want to delete it ourselves...
+          XDestroyImage(m_Image);
+        }
+        if (m_Allocated) delete m_Buffer;
       }
 
     //----------
 
-    h_Bitmap_Linux(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
+    void prepare(void)
       {
-//        m_Display = H_INTERFACE->getDisplay();
-//        m_Width   = a_Width;
-//        m_Height  = a_Height;
-//        m_Depth   = a_Depth;
-//        m_Bitmap  = new h_Bitmap(a_Width,a_Height,a_Depth,a_Buffer);
-//        m_BitmapAllocated = true;
-//        //create_image();
-//        m_Image   = XCreateImage(
-//          m_Display,
-//          H_INTERFACE->getVisual(),
-//          m_Depth,                // depth
-//          ZPixmap,                // format
-//          0,                      // offset
-//          m_Bitmap->getBuffer(),  // data
-//          m_Width, m_Height,      // size
-//          32,                     // pad
-//          0                       // bytes per line
-//        );
-      }
-
-    //----------
-
-    virtual ~h_Bitmap_Linux()
-      {
-//        if (m_BitmapAllocated) delete m_Bitmap;
-//        m_Image->data = NULL;    // we want to delete it ourselves...
-//        XDestroyImage(m_Image);
-      }
-
-    //----------
-
-    void prepare(/*int a_Width, int a_Height*/)
-      {
+        if (m_Prepared) return;
+        int screen = XDefaultScreen(m_Display);
+        Visual* visual = XDefaultVisual(m_Display,screen);
+        m_Image = XCreateImage(
+          m_Display,
+          visual,
+          m_Depth,                // depth
+          ZPixmap,                // format
+          0,                      // offset
+          m_Buffer,               // data
+          m_Width, m_Height,      // size
+          32,                     // pad
+          0                       // bytes per line
+        );
+        m_Prepared = true;
       }
 
     //----------
 
     void allocate(void)
       {
+        if (m_Buffer || m_Allocated) return;
+        m_Buffer = new char[m_Width*m_Height];  // 32bit rgba
+        m_Allocated = true;
       }
 
 };

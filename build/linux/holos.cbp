@@ -8,6 +8,7 @@
 		<Build>
 			<Target title="linux exe debug">
 				<Option output="../../bin/holos_debug" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../bin/" />
 				<Option object_output="obj/debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -25,6 +26,7 @@
 			</Target>
 			<Target title="linux exe release">
 				<Option output="../../bin/holos" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../bin/" />
 				<Option object_output="obj/release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -43,6 +45,7 @@
 			</Target>
 			<Target title="win32 exe debug">
 				<Option output="../../bin/holos_debug.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../bin/" />
 				<Option object_output="obj/debug/" />
 				<Option type="1" />
 				<Option compiler="ming32" />
@@ -58,6 +61,7 @@
 			</Target>
 			<Target title="win32 exe release">
 				<Option output="../../bin/holos.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../../bin/" />
 				<Option object_output="obj/release/" />
 				<Option type="1" />
 				<Option compiler="ming32" />
@@ -155,6 +159,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/test_gui.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/test_mem.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -287,6 +295,7 @@
 		<Unit filename="../../h/h_AudioGraph.h" />
 		<Unit filename="../../h/h_BasePath.h" />
 		<Unit filename="../../h/h_Bitmap.h" />
+		<Unit filename="../../h/h_BitmapLoader.h" />
 		<Unit filename="../../h/h_BitmapUtils.h" />
 		<Unit filename="../../h/h_Color.h" />
 		<Unit filename="../../h/h_Compiler.h" />
@@ -334,9 +343,6 @@
 		<Unit filename="../../h/h_Memory.h" />
 		<Unit filename="../../h/h_Mutex.h" />
 		<Unit filename="../../h/h_Painter.h" />
-		<Unit filename="../../h/h_ParDb.h" />
-		<Unit filename="../../h/h_ParFloat.h" />
-		<Unit filename="../../h/h_ParInteger.h" />
 		<Unit filename="../../h/h_Parameter.h" />
 		<Unit filename="../../h/h_Pattern.h" />
 		<Unit filename="../../h/h_Platform_Linux.h" />

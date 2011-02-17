@@ -78,9 +78,9 @@ class h_Bitmap_Win32// : public h_Bitmap_Base
 
     //----------
 
-    void prepare(/*int a_Width, int a_Height*/)
+    void prepare(void)
       {
-        if (/*m_Buffer ||*/ m_Prepared) return;// false;
+        if (m_Prepared) return;
         BITMAPINFO bmi;
         h_Memset(&bmi,0,sizeof(BITMAPINFO));
         bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
