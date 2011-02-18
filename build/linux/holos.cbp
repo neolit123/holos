@@ -355,6 +355,7 @@
 		<Unit filename="../../h/h_RayTracer.h" />
 		<Unit filename="../../h/h_Rect.h" />
 		<Unit filename="../../h/h_Renderer.h" />
+		<Unit filename="../../h/h_RingBuffer.h" />
 		<Unit filename="../../h/h_Script.h" />
 		<Unit filename="../../h/h_Skin.h" />
 		<Unit filename="../../h/h_SkinDefault.h" />

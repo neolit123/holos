@@ -21,29 +21,12 @@
 #define h_Surface_included
 //----------------------------------------------------------------------
 
-/*
-
-class h_Surface_Base
-{
-  public:
-    h_Surface_Base(int a_Width, int a_Height, int a_Depth);
-    h_Painter* getPainter(void);
-    //HDC getDC(void); // win32
-
-};
-
-*/
-
-//----------------------------------------------------------------------
-
 #ifdef H_WIN32
-  //#include "gui/impl/h_Surface_Win32.h"
-  #include "h/h_Surface_Win32.h"
+  #include "cpp/h_Surface_Win32.cpp"
 #endif
 
 #ifdef H_LINUX
-  //#include "gui/impl/h_Surface_Linux.h"
-  #include "h/h_Surface_Linux.h"
+  #include "cpp/h_Surface_Linux.cpp"
 #endif
 
 //----------------------------------------------------------------------

@@ -21,21 +21,6 @@
 #define h_Bitmap_included
 //----------------------------------------------------------------------
 
-/*
-
-class h_Bitmap_Base
-{
-  public:
-    h_Bitmap_Base(int a_Width, int a_Height, int a_Depth);
-    h_Bitmap_Base(int a_Width, int a_Height, int a_Depth, unsigned long* a_Buffer)
-    void prepare()
-    void allocate(void)
-};
-
-*/
-
-//----------------------------------------------------------------------
-
 #ifdef H_WIN32
   #include "cpp/h_Bitmap_Win32.cpp"
 #endif

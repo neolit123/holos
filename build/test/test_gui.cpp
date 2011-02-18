@@ -5,9 +5,9 @@
 //#define H_DEBUG_CON_NOTOP
 //#define H_DEBUG_CON_NORESIZE
 
-#define H_DEBUG_MEM
-#define H_DEBUG_MEM_PRINT
-#define H_DEBUG_NEW
+//#define H_DEBUG_MEM
+//#define H_DEBUG_MEM_PRINT
+//#define H_DEBUG_NEW
 
 #include "holos.h"
 #include "h/h_SkinDefault.h"
@@ -18,8 +18,11 @@
 #include "h/h_WdgValue.h"
 #include "h/h_WdgSlider.h"
 
-#include "h/h_BasePath.h"
-#include "h/h_BitmapLoader.h"
+//#include "h/h_BasePath.h"
+//#include "h/h_BitmapLoader.h"
+
+#include "h/h_Bitmap.h"
+#include "h/h_Surface.h"
 
 #include <stdio.h>  // fopen
 
@@ -28,43 +31,14 @@
 class my_Widget : public h_Widget
 {
   public:
+    h_Bitmap*  m_Bitmap;
+    h_Surface* m_Surface;
+
+  public:
 
     my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
-
-        // bitmap loader testing...
-        // todo: move most of this into the h_BitmapLoader class
-
-// --- test png loader ---
-
-//        char temp[H_MAX_STRINGSIZE];
-//        temp[0] = 0;
-//        char* path = (char*)h_GetBasePath(temp);
-//        h_Strcat(path,(char*)"../extern/mverb/background.png");
-//        trace("path: " << path);
-//
-//        FILE* fp = fopen(path,"rb");
-//        fseek(fp,0,SEEK_END);
-//        int size = ftell(fp);
-//        trace("size: " << size);
-//        fseek(fp,0,SEEK_SET);
-//        char* buffer = (char*)h_Malloc(size);
-//        int num = fread(buffer,1,size,fp);
-//        trace("num: " << num);
-//        //if (num!=size) trace("bitmap size mismatch!");
-//        fclose(fp);
-//
-//        h_BitmapLoader bmpload;
-//        bmpload.decode(buffer,size);
-//        trace("width:  " << bmpload.getWidth());
-//        trace("height: " << bmpload.getHeight());
-//        trace("depth:  " << bmpload.getDepth());
-//
-//        h_Free(buffer);
-
-// --- ---
-
       }
 
     //virtual ~my_Widget()
@@ -81,6 +55,10 @@ class my_Widget : public h_Widget
         a_Painter->setPenWidth(5);
         a_Painter->drawArc(x1,y1,x2,y2,0,0.75);
         a_Painter->resetPen();
+
+        a_Painter->drawBitmap( m_Bitmap,   0,0,  0,0,64,64 );
+        a_Painter->drawSurface( m_Surface, 70,0, 0,0,64,64 );
+
       }
 
 };
@@ -119,27 +97,28 @@ class my_Instance : public h_Instance,
                     public h_WidgetListener
 {
   private:
-    //h_Window*       m_Window;
     h_Editor*       m_Editor;
     h_Skin*         m_Skin;
+    h_Bitmap* bmp;
+    h_Surface* srf;
 
   public:
 
     my_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host,a_Descriptor)
       {
-        //m_Window = H_NULL;
         m_Editor = H_NULL;
         m_Skin   = H_NULL;
         transferParameters();
-
+        bmp = H_NULL;
+        srf = H_NULL;
       }
 
     //----------
 
-    //virtual ~my_Instance()
-    //  {
-    //  }
+    virtual ~my_Instance()
+      {
+      }
 
     //----------
 
@@ -148,9 +127,6 @@ class my_Instance : public h_Instance,
         char buf[H_MAX_STRINGSIZE];
         a_Parameter->getDisplay(buf);
         trace("param: " << a_Parameter->getName().ptr() << " = " << buf );
-        //trace("  index: " << a_Parameter->getIndex());
-        //trace("  connect: " << a_Parameter->getConnect());
-        //trace("  value: " << a_Parameter->getValue());
       }
 
     //----------
@@ -158,12 +134,28 @@ class my_Instance : public h_Instance,
     virtual void* do_OpenEditor(void* ptr)
       {
         h_Rect rect = getEditorRect();
-        //trace("editor rect: " << rect.x <<","<< rect.y <<","<< rect.w <<","<< rect.h);
-        //m_Window = new h_Window(this,rect,ptr);
         m_Editor = new h_Editor(this,rect,ptr);
 
-        //h_Bitmap* bmp = m_Editor->createBitmap(64,64,24);
-        //bmp->prepare();
+        bmp = m_Editor->createBitmap(64,64,24);
+        bmp->prepare();
+        unsigned char* p = (unsigned char*)bmp->getBuffer();
+        for (int y=0; y<64; y++)
+        {
+          for (int x=0; x<64; x++)
+          {
+            *p++ = 0;     // b
+            *p++ = y * 4; // g
+            *p++ = x * 4; // r
+            *p++ = 0;
+          }
+        }
+
+        srf = m_Editor->createSurface(64,64,24);
+        h_Painter* paint = srf->getPainter();
+        paint->setFillColor( H_DARK_CYAN );
+        paint->fillRect(0,0,63,63);
+        paint->setDrawColor( H_CYAN );
+        paint->drawCircle(0,0,63,63);
 
         m_Editor->setBorders(10,10,5,5);
         m_Skin = new skin_Default();
@@ -172,16 +164,19 @@ class my_Instance : public h_Instance,
 
         h_Widget* wdg;
         h_Widget* wdg2;
+        my_Widget* w2;
 
-        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect(128, 0),wa_Left ));
-        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect(  0,64),wa_Top ));
-        m_Editor->appendWidget(       new h_WdgPanel(m_Editor,h_Rect( 64, 0),wa_Right ));
+        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect(128, 0),wa_Left ));
+        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect(  0,64),wa_Top ));
+        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect( 64, 0),wa_Right ));
         m_Editor->appendWidget( wdg = new h_WdgPanel(m_Editor,H_NULL_RECT,   wa_Client ));
           wdg->setBorders(20,20,10,10);
-          wdg->appendWidget(        new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
-          wdg->appendWidget(        new h_WdgLabel( wdg, h_Rect(100,20),wa_StackedVert, "label") );
-          wdg->appendWidget(        new h_WdgButton(wdg, h_Rect(100,20),wa_StackedVert, "button") );
-          wdg->appendWidget(        new h_WdgValue( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+          wdg->appendWidget( w2 = new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
+            w2->m_Bitmap = bmp;
+            w2->m_Surface = srf;
+          wdg->appendWidget( new h_WdgLabel( wdg, h_Rect(100,20),wa_StackedVert, "label") );
+          wdg->appendWidget( new h_WdgButton(wdg, h_Rect(100,20),wa_StackedVert, "button") );
+          wdg->appendWidget( new h_WdgValue( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
           wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
 
         h_Parameter* par = m_Parameters->item(2);
@@ -194,12 +189,7 @@ class my_Instance : public h_Instance,
           m_Editor->do_Realign();
         #endif
 
-        //h_Painter* pnt = m_Editor->getPainter();
-        //trace(pnt);
-        //pnt->drawBitmap(bmp,0,0,0,0,100,100);
-
         m_Editor->show();
-        //m_Window->setCursor(cu_Finger);
         return (void*)m_Editor;
       }
 
@@ -208,10 +198,17 @@ class my_Instance : public h_Instance,
     virtual void do_CloseEditor(void)
       {
         m_Editor->hide();
+
+        delete bmp;
+        delete srf;
+
         delete m_Editor;
         m_Editor = H_NULL;
         delete m_Skin;
         // widgets are automatically deleted
+
+
+
       }
 
     //----------
@@ -283,7 +280,6 @@ class my_Instance : public h_Instance,
 
 //----------------------------------------------------------------------
 
-//#include "holos_impl.h"
 #include "holos.cpp"
 
 

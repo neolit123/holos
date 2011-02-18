@@ -26,6 +26,9 @@
 #include <pthread.h>
 //#include <string.h>
 
+#include "h/h_Bitmap.h"
+#include "h/h_Surface.h"
+
 #include "h/h_Widget.h"
 #include "h/h_Painter.h"
 #include "h/h_Skin.h"
@@ -381,6 +384,11 @@ class h_Window_Linux : public h_Widget,
     h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
       {
         return new h_Bitmap(m_Display,a_Width,a_Height,a_Depth,a_Buffer);
+      }
+
+    h_Surface* createSurface(int a_Width, int a_Height, int a_Depth)
+      {
+        return new h_Surface(m_Display,a_Width,a_Height,a_Depth);
       }
 
     //----------------------------------------

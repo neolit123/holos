@@ -32,6 +32,12 @@
 // -I../../extern/ladspa_sdk_1.13 build.cpp
 // -o ../../bin/holos_debug_ladspa.so
 
+//----------
+//
+// some interesting things:
+// http://eli.thegreenplace.net/2011/02/17/the-many-faces-of-operator-new-in-c/
+//
+
 #include "h/h_Memory.h"
 //#include "h/h_Stdlib.h"
 

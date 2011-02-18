@@ -94,7 +94,7 @@ class h_Bitmap_Linux
           m_Image->data = H_NULL;    // we want to delete it ourselves...
           XDestroyImage(m_Image);
         }
-        if (m_Allocated) delete m_Buffer;
+        if (m_Allocated) delete[] m_Buffer;
       }
 
     //----------
@@ -123,7 +123,7 @@ class h_Bitmap_Linux
     void allocate(void)
       {
         if (m_Buffer || m_Allocated) return;
-        m_Buffer = new char[m_Width*m_Height];  // 32bit rgba
+        m_Buffer = new char[m_Width*m_Height*4];  // 32bit rgba
         m_Allocated = true;
       }
 

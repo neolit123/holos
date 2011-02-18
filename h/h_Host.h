@@ -21,7 +21,6 @@
 #define h_Host_included
 //----------------------------------------------------------------------
 
-//#include "lib/h_String.h"
 #include "h/h_String.h"
 
 class h_Host_Base

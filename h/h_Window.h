@@ -21,47 +21,6 @@
 #define h_Window_included
 //----------------------------------------------------------------------
 
-/*
-
-class h_Window_Base
-{
-  public:
-    h_Window_Base(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
-    void flush(void)
-    void sync(void)
-    void lock(void)
-    void unlock(void)
-    void show(void)
-    void hide(void)
-    void setPos(int a_Xpos, int a_Ypos)
-    void setSize(int a_Width, int a_Height)
-    void setTitle(char* a_Title)
-    void beginPaint(void)
-    void endPaint(void)
-    void reparent(void* a_Parent)
-    void invalidate(int aX, int aY, int aW, int aH)
-    void resetCursor(void)
-    void setCursor(int a_Cursor)
-    void setCursorPos(int a_Xpos, int a_Ypos)
-    void showCursor(void)
-    void hideCursor(void)
-    void grabCursor(void)
-    void releaseCursor(void)
-    void startTimer(int a_Speed)
-    void stopTimer(void)
-    void sendEvent(unsigned int a_Value=0)
-    void eventLoop(void)
-    h_Painter* getPainter(void);
-    //Drawable getSourceDrawable(void); // linux
-    //Picture  getSourcePicture(void); // linux
-    //Drawable getTargetDrawable(void); // linux
-    //GLXDrawable getTargetGLXDrawable(void); // linux
-};
-
-*/
-
-//----------------------------------------------------------------------
-
 #ifdef H_WIN32
   #include "cpp/h_Window_Win32.cpp"
 #endif
@@ -89,7 +48,7 @@ typedef h_Array<h_WidgetUpdateInfo> h_WidgetUpdates;
 //#define H_WIDGET_QUEUE_SIZE 256
 //typedef h_Queue<h_WidgetUpdateInfo,H_WIDGET_QUEUE_SIZE> m_WidgetUpdates;
 
-//----------
+//----------------------------------------------------------------------
 
 class h_Window : public h_Window_Impl
 {
@@ -112,13 +71,6 @@ class h_Window : public h_Window_Impl
     //----------------------------------------
 
     //virtual
-    void redraw(void)
-      {
-        invalidate( m_Rect.x, m_Rect.y, m_Rect.w, m_Rect.h );
-        flush();
-      }
-
-    //virtual
     void redraw(h_Rect a_Rect)
       {
         invalidate( a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h );
@@ -126,32 +78,16 @@ class h_Window : public h_Window_Impl
       }
 
     //virtual
-    void redraw(h_Widget* a_Widget)
+    void redraw(void)
       {
-        redraw(a_Widget);
-        flush();
+        redraw(m_Rect);
       }
 
-    //----------------------------------------
-    // modal
-    //----------------------------------------
-
-    //virtual void goModal(h_Widget* a_Widget)
-    //  {
-    //    m_ModalWidget = a_Widget;
-    //    m_ModalIndex = appendWidget(m_ModalWidget);
-    //    redrawAll();
-    //  }
-
-    //----------
-
-    //void unModal(void)
-    //  {
-    //    removeWidget(m_ModalIndex);
-    //    delete m_ModalWidget;
-    //    m_ModalWidget = NULL;
-    //    redrawAll();
-    //  }
+    //virtual
+    void redraw(h_Widget* a_Widget)
+      {
+        redraw(a_Widget->getRect());
+      }
 
     //----------------------------------------
     // cached widget updates
@@ -166,15 +102,11 @@ class h_Window : public h_Window_Impl
         //mutex_dirty.unlock();
       }
 
-    //----------
-
     void appendUpdate(h_Widget* a_Widget, int a_Mode)
       {
         //for( int i=0; i<m_WidgetUpdates.size(); i++ ) if( m_WidgetUpdates[i].m_Widget==a_Widget ) return;
         m_WidgetUpdates.append( h_WidgetUpdateInfo(a_Widget,a_Mode));
       }
-
-    //----------
 
     //TODO: consider threads, idleeditor, widget tweaking (do_MouseDown) ...
 
@@ -202,6 +134,25 @@ class h_Window : public h_Window_Impl
     //#endif // H_WIDGET_NOUPDATELIST
 
     //----------------------------------------
+    // modal
+    //----------------------------------------
+
+    //virtual void goModal(h_Widget* a_Widget)
+    //  {
+    //    m_ModalWidget = a_Widget;
+    //    m_ModalIndex = appendWidget(m_ModalWidget);
+    //    redrawAll();
+    //  }
+
+    //void unModal(void)
+    //  {
+    //    removeWidget(m_ModalIndex);
+    //    delete m_ModalWidget;
+    //    m_ModalWidget = NULL;
+    //    redrawAll();
+    //  }
+
+    //----------------------------------------
     // do...
     //----------------------------------------
 
@@ -211,10 +162,6 @@ class h_Window : public h_Window_Impl
         m_Rect.setSize(a_Width,a_Height);
         if (m_Flags&wf_Align) do_Realign();
       }
-
-    //----------------------------------------
-    // modal (do..)
-    //----------------------------------------
 
     // if we're in a modal state, send these events only to
     // the modal widget (popup, etc)

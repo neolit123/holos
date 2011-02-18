@@ -37,6 +37,13 @@ class h_BitmapLoader
     unsigned char*  m_Buffer;
 
   public:
+    int   getWidth(void)  { return m_Width; }
+    int   getHeight(void) { return m_Height; }
+    int   getDepth(void)  { return m_Depth; }
+    void* getBuffer(void) { return m_Buffer; }
+
+
+  public:
 
     h_BitmapLoader()
       {
@@ -59,12 +66,50 @@ class h_BitmapLoader
         m_Depth = comp*8;
       }
 
-    int   getWidth(void)  { return m_Width; }
-    int   getHeight(void) { return m_Height; }
-    int   getDepth(void)  { return m_Depth; }
-    void* getBuffer(void) { return m_Buffer; }
+    void load(char* filename)
+      {
+        FILE* fp = fopen(filename,"rb");
+        fseek(fp,0,SEEK_END);
+        int size = ftell(fp);
+        fseek(fp,0,SEEK_SET);
+        char* buffer = (char*)h_Malloc(size);
+        int num = fread(buffer,1,size,fp);
+        fclose(fp);
+        decode(buffer,size);
+        h_Free(buffer);
+      }
+
 };
 
 //----------------------------------------------------------------------
 #endif
 
+// --- test png loader ---
+/*
+
+char temp[H_MAX_STRINGSIZE];
+temp[0] = 0;
+char* path = (char*)h_GetBasePath(temp);
+h_Strcat(path,(char*)"../extern/mverb/background.png");
+trace("path: " << path);
+
+FILE* fp = fopen(path,"rb");
+fseek(fp,0,SEEK_END);
+int size = ftell(fp);
+trace("size: " << size);
+fseek(fp,0,SEEK_SET);
+char* buffer = (char*)h_Malloc(size);
+int num = fread(buffer,1,size,fp);
+trace("num: " << num);
+//if (num!=size) trace("bitmap size mismatch!");
+fclose(fp);
+
+h_BitmapLoader bmpload;
+bmpload.decode(buffer,size);
+trace("width:  " << bmpload.getWidth());
+trace("height: " << bmpload.getHeight());
+trace("depth:  " << bmpload.getDepth());
+
+h_Free(buffer);
+
+*/

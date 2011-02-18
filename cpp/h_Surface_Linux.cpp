@@ -36,45 +36,45 @@
 class h_Surface_Linux : public h_PaintSource
 {
   private:
-//    Display*    m_Display;
-//    Drawable    m_Drawable;
-//    Pixmap      m_Pixmap;
-//    int         m_Width;
-//    int         m_Height;
-//    int         m_Depth;
+    Display*    m_Display;
+    Drawable    m_Drawable;
+    Pixmap      m_Pixmap;
+    int         m_Width;
+    int         m_Height;
+    int         m_Depth;
     h_Painter*  m_Painter;
-//    #ifdef H_ALPHA
-//    Picture     m_Picture;
-//    #endif
-//    #ifdef H_OPENGL
-//    #endif
+    //#ifdef H_ALPHA
+    //Picture     m_Picture;
+    //#endif
+    //#ifdef H_OPENGL
+    //#endif
 
   public:
 
     // accessors
-//    inline Pixmap     getPixmap(void)   { return m_Pixmap; }
+    //inline Pixmap     getPixmap(void)  { return m_Pixmap; }
     inline h_Painter* getPainter(void) { return m_Painter; }
 
-//    // h_PaintSource:
-//    virtual Drawable getSourceDrawable(void) { return m_Pixmap; }
-//    #ifdef H_ALPHA
-//    virtual Picture  getSourcePicture(void)  { return m_Picture; }
-//    #endif
-//    // h_PaintTarget:
-//    virtual Drawable getTargetDrawable(void) { return m_Pixmap; }
+    // h_PaintSource:
+    virtual Drawable getSourceDrawable(void) { return m_Pixmap; }
+    #ifdef H_ALPHA
+    virtual Picture  getSourcePicture(void)  { return m_Picture; }
+    #endif
+    // h_PaintTarget:
+    //virtual Drawable getTargetDrawable(void) { return m_Pixmap; }
 
   public:
 
     //h_Surface(h_PaintTarget* a_PaintTarget, int a_Width, int a_Height, int a_Depth)
-    h_Surface_Linux(int a_Width, int a_Height, int a_Depth)
+    h_Surface_Linux(Display* a_Display, int a_Width, int a_Height, int a_Depth)
       {
-        m_Display   = static_Core.m_Platform->m_WinDisplay;
-        //m_Drawable  = static_Core.m_Platform->m_WinRoot;
+        m_Display   = a_Display;
+        m_Drawable  = XDefaultRootWindow(m_Display);
         m_Width     = a_Width;
         m_Height    = a_Height;
         m_Depth     = a_Depth;
-        m_Pixmap    = XCreatePixmap(m_Display, static_Core.m_Platform->m_WinScreen/*m_Drawable*/,m_Width,m_Height,m_Depth);
-        m_Painter   = new h_Painter(this);
+        m_Pixmap    = XCreatePixmap(m_Display,m_Drawable,m_Width,m_Height,m_Depth);
+        m_Painter   = new h_Painter(m_Display,m_Pixmap);
 
         #ifdef H_ALPHA
           XRenderPictFormat* fmt;
@@ -94,15 +94,17 @@ class h_Surface_Linux : public h_PaintSource
         #endif
       }
 
-    virtual ~h_Surface_Linux()
+    ~h_Surface_Linux()
       {
 //        #ifdef H_OPENGL
 //        #endif
 //        #ifdef H_ALPHA
 //          XRenderFreePicture(m_Display,m_Picture);
 //        #endif
-//        delete m_Painter;
-//        XFreePixmap(m_Display,m_Pixmap);
+
+        delete m_Painter;
+        XFreePixmap(m_Display,m_Pixmap);
+
       }
 };
 

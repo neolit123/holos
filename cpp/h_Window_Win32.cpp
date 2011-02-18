@@ -29,6 +29,9 @@
 
 #include <windows.h>
 
+#include "h/h_Bitmap.h"
+#include "h/h_Surface.h"
+
 #include "h/h_Widget.h"
 #include "h/h_Painter.h"
 #include "h/h_Skin.h"
@@ -196,6 +199,25 @@ class h_Window_Win32 : public h_Widget,
       {
         delete m_WinPainter;
         DestroyWindow(m_WinHandle);
+      }
+
+    //----------------------------------------
+    //
+    //----------------------------------------
+
+    h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth)
+      {
+        return new h_Bitmap(a_Width,a_Height,a_Depth);
+      }
+
+    h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
+      {
+        return new h_Bitmap(a_Width,a_Height,a_Depth,a_Buffer);
+      }
+
+    h_Surface* createSurface(int a_Width, int a_Height, int a_Depth)
+      {
+        return new h_Surface(a_Width,a_Height,a_Depth);
       }
 
     //----------------------------------------

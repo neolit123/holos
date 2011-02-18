@@ -370,26 +370,29 @@ class h_Painter_Linux
 
     virtual void drawBitmap(h_Bitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
-        // TODO
-        XPutImage(m_Display,m_Drawable,m_GC,aBitmap->getImage(),aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
+        XImage* img = aBitmap->getImage();
+        trace("drawBitmap: " << img);
+        XPutImage(m_Display,m_Drawable,m_GC,img,aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
       }
 
     //----------
 
 
-    virtual void drawSurface(h_PaintSource* aSource, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void drawSurface(h_PaintSource* a_Source, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         // TODO
-        //XCopyArea(m_Display,a_PaintSource->getSourceDrawable(),m_Drawable,m_GC,srcx,srcy,srcw,srch,x,y);
+        Drawable src = a_Source->getSourceDrawable();
+        XCopyArea(m_Display,src,m_Drawable,m_GC,aSrcX,aSrcY,aSrcW,aSrcH,aX,aY);
       }
 
     //----------
 
-    virtual void blendSurface( h_PaintSource* aSource,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void blendSurface( h_PaintSource* a_Source,  int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef H_ALPHA
           int op = PictOpOver;
-          XRenderComposite(m_Display,op,a_PaintSource->getSourcePicture(),None,m_Picture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
+          Picture pic = a_Source->getSourcePicture();
+          XRenderComposite(m_Display,op,pic,None,m_Picture,aSrcX,aSrcY,0,0,aX,aY,aSrcW,aSrcH);
         //#else
         //  paint(a_Paintable,aX,aY,aSrcX,aSrcY,aSrcW,aSrcH);
         #endif
