@@ -74,8 +74,8 @@ class h_Instance_Base
     virtual int     getCurrentProgram(void) { return 0; }
   public:
     virtual void    transferParameters(void) {}
-    virtual void    notifyParameter_fromEditor(h_Parameter* a_Parameter) {}
-    virtual void    notifyResize_fromEditor(int aWidth, int aHeight) {}
+    virtual void    notifyParameter(h_Parameter* a_Parameter) {}
+    virtual void    notifyResize(int aWidth, int aHeight) {}
     virtual void    updateTime(void) {}
     virtual void    sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3) {}
 };

@@ -41,6 +41,17 @@ class h_Core
 
 //----------
 
+/*
+  since this is static, it will be shared among all instances of our plugin,
+  and the constructor will be called just after the dll/exe is loaded, during
+  static variable initialization, before any other functions is called
+  (like main,DllMain,..)
+  and the desctructor is called when it's unloading from memory.. after
+  everything else.
+  and it's available anywhere, and gives access to the platfomr and format
+  specific classes for the rest of the library code..
+*/
+
 static h_Core static_Core;
 
 //----------------------------------------------------------------------

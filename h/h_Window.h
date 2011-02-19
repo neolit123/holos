@@ -31,29 +31,8 @@
 
 //----------------------------------------------------------------------
 
-struct h_WidgetUpdateInfo
-{
-  h_Widget* m_Widget;
-  int       m_Mode;
-  h_WidgetUpdateInfo(h_Widget* a_Widget, int a_Mode)
-    {
-      m_Widget = a_Widget;
-      m_Mode = a_Mode;
-    }
-};
-
-typedef h_Array<h_WidgetUpdateInfo> h_WidgetUpdates;
-
-//#include "h/h_Queue.h"
-//#define H_WIDGET_QUEUE_SIZE 256
-//typedef h_Queue<h_WidgetUpdateInfo,H_WIDGET_QUEUE_SIZE> m_WidgetUpdates;
-
-//----------------------------------------------------------------------
-
 class h_Window : public h_Window_Impl
 {
-  private:
-    h_WidgetUpdates m_WidgetUpdates;
 
   public:
 
@@ -67,162 +46,29 @@ class h_Window : public h_Window_Impl
       }
 
     //----------------------------------------
-    // drawing
-    //----------------------------------------
-
-    //virtual
-    void redraw(h_Rect a_Rect)
-      {
-        invalidate( a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h );
-        flush();
-      }
-
-    //virtual
-    void redraw(void)
-      {
-        redraw(m_Rect);
-      }
-
-    //virtual
-    void redraw(h_Widget* a_Widget)
-      {
-        redraw(a_Widget->getRect());
-      }
-
-    //----------------------------------------
-    // cached widget updates
-    //----------------------------------------
-
-    //#ifndef H_WIDGET_NOUPDATELIST
-
-    void clearUpdates(void)
-      {
-        //mutex_dirty.lock();
-        m_WidgetUpdates.clear(false);
-        //mutex_dirty.unlock();
-      }
-
-    void appendUpdate(h_Widget* a_Widget, int a_Mode)
-      {
-        //for( int i=0; i<m_WidgetUpdates.size(); i++ ) if( m_WidgetUpdates[i].m_Widget==a_Widget ) return;
-        m_WidgetUpdates.append( h_WidgetUpdateInfo(a_Widget,a_Mode));
-      }
-
-    //TODO: consider threads, idleeditor, widget tweaking (do_MouseDown) ...
-
-    void redrawUpdates(void)
-      {
-        beginPaint();
-        h_Rect rect;
-        int num = m_WidgetUpdates.size();
-        for( int i=0; i<num; i++ )
-        {
-          h_Widget* widget = m_WidgetUpdates[i].m_Widget;
-          int mode = m_WidgetUpdates[i].m_Mode;
-          h_Rect wr = widget->getRect();
-          widget->do_Paint( getPainter(), wr, mode );
-          rect.combine( wr.x, wr.y, wr.w, wr.h );
-        }
-        clearUpdates();
-        endPaint();
-        // TODO: fix this..
-        //#if defined H_LINUX && defined H_VST
-        //  redraw(rect);
-        //#endif
-      }
-
-    //#endif // H_WIDGET_NOUPDATELIST
-
-    //----------------------------------------
-    // modal
-    //----------------------------------------
-
-    //virtual void goModal(h_Widget* a_Widget)
-    //  {
-    //    m_ModalWidget = a_Widget;
-    //    m_ModalIndex = appendWidget(m_ModalWidget);
-    //    redrawAll();
-    //  }
-
-    //void unModal(void)
-    //  {
-    //    removeWidget(m_ModalIndex);
-    //    delete m_ModalWidget;
-    //    m_ModalWidget = NULL;
-    //    redrawAll();
-    //  }
-
-    //----------------------------------------
     // do...
     //----------------------------------------
 
     virtual void do_SetSize(int a_Width, int a_Height)
       {
-        //trace("do_SetSize");
         m_Rect.setSize(a_Width,a_Height);
         if (m_Flags&wf_Align) do_Realign();
       }
 
-    // if we're in a modal state, send these events only to
-    // the modal widget (popup, etc)
-
-    //virtual void do_MouseDown(int aXpos, int aYpos, int aButton)
-    //  {
-    //    if (m_ModalWidget) m_ModalWidget->do_MouseDown(aXpos,aYpos,aButton);
-    //    else h_Widget::do_MouseDown(aXpos,aYpos,aButton);
-    //  }
-
-    //virtual void do_MouseUp(int aXpos, int aYpos, int aButton)
-    //  {
-    //    if (m_ModalWidget) m_ModalWidget->do_MouseUp(aXpos,aYpos,aButton);
-    //    else h_Widget::do_MouseUp(aXpos,aYpos,aButton);
-    //  }
-
-    //virtual void do_MouseMove(int aXpos, int aYpos, int aButton)
-    //  {
-    //    if (mModalWidget) mModalWidget->doMouseMove(aXpos,aYpos,aButton);
-    //    else axWidget::doMouseMove(aXpos,aYpos,aButton);
-    //  }
-
-    //virtual void do_KeyDown(int aKeyCode, int aState)
-    //  {
-    //    if (mModalWidget) mModalWidget->doKeyDown(aKeyCode,aState);
-    //    else axWidget::doKeyDown(aKeyCode,aState);
-    //  }
-
-    //virtual void do_KeyUp(int aKeyCode, int aState)
-    //  {
-    //    if (mModalWidget) mModalWidget->doKeyUp(aKeyCode,aState);
-    //    else axWidget::doKeyUp(aKeyCode,aState);
-    //  }
-
     //----------------------------------------
-    // on..
+    // on...
     //----------------------------------------
-
-    //virtual void on_Change(h_Widget* a_Widget)
-    //  {
-    //    redrawWidget(a_Widget);
-    //  }
-
-
-    // a widget says it needs to be redrawn..
-
-    // when we tweak a widget, we want to redraw immediately, so the
-    // response feels smooth...
 
     virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
-        appendUpdate(a_Widget,a_Mode);
-        // this should be done in do_IdleEditor() if vst,
-        // or timer thread if exe
-        // NOT per widget redraw!
-        redrawUpdates();
-
+        // we're tweaking a widget, so redraw it directly
+        // and if buffered, blit to screen
+        beginPaint();
+        a_Widget->do_Paint(getPainter(),a_Widget->getRect(),a_Mode);
+        endPaint();
       }
 
     // a widget want to change the mouse cursor
-
     virtual void on_Cursor(int a_Cursor)
       {
         setCursor(a_Cursor);
@@ -249,3 +95,17 @@ class h_Window : public h_Window_Impl
 
 //----------------------------------------------------------------------
 #endif
+
+/*
+
+double buffering:
+- the window keeps a h_Surface as a background buffer. we draw directly into
+  this whenever we need to, and either blit this part directly to the screen,
+  or invalidate the area, so we get a paint message later..
+
+resizing the window means that we have to resize the h_Surface too, and doing
+this per pixel could be slow (?),
+so we might keep a larger surface than we really need, and just use the part
+we need to fill the window/editor size..
+
+*/

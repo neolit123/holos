@@ -122,12 +122,12 @@ void h_Instance::transferParameters(void)
 // and call do_HandleParameter
 
 
-void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
+void h_Instance::notifyParameter(h_Parameter* a_Parameter)
   {
-    //h_Instance_Base::notifyParameter_fromEditor(a_Parameter);
+    //h_Instance_Base::notifyParameter(a_Parameter);
     int index = a_Parameter->getIndex();
     float value = a_Parameter->getInternal();//getValue();
-    //trace("h_Instance::notifyParameter_fromEditor(" << index << "," << value <<  ")");
+    //trace("h_Instance::notifyParameter(" << index << "," << value <<  ")");
     m_Host->vst_Automate(index,value); // setParameterAutomated();
     do_HandleParameter(a_Parameter);
   }
@@ -136,9 +136,9 @@ void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
 
 // called when we want the host to resize the window
 
-void h_Instance::notifyResize_fromEditor(int a_Width, int a_Height)
+void h_Instance::notifyResize(int a_Width, int a_Height)
   {
-    //h_Instance_Base::notifyResize_fromEditor(a_Width,a_Height);
+    //h_Instance_Base::notifyResize(a_Width,a_Height);
     //m_EditorRect.w = aWidth;
     //m_EditorRect.h = aHeight;
     //host_SizeWindow(aWidth, aHeight); // vst
@@ -972,7 +972,7 @@ void h_Instance::vst_setParameter(VstInt32 index, float value)
     par->setInternal(value);
     do_HandleParameter(par);
     #ifndef H_NOGUI
-    if (m_Editor && m_EditorIsOpen) m_Editor->notifyParameter_fromInstance(par);
+    if (m_Editor && m_EditorIsOpen) m_Editor->notifyParameter(par);
     #endif
     //trace("todo: update editor");
   }

@@ -22,6 +22,15 @@
 //#ifdef h_Core_included
 //----------------------------------------------------------------------
 
+/*
+  this is called once, just after the dll/exe has been loaded into memory,
+  during initialization of static variables (static_Core)
+  we don't do much here, because the order of initialization for static
+  variables can be a little uncertain, and we need to be sure that some
+  other functions have been called (DllMain), so we have everything we
+  need to proceed..
+*/
+
 h_Core::h_Core()
   {
     m_Initialized = false;
@@ -31,16 +40,26 @@ h_Core::h_Core()
 
 //----------
 
+/*
+  this is also called once, as ome of the last things happening, when the
+  exe/dll is unloaded from memory.
+*/
+
 h_Core::~h_Core()
   {
     if (m_Initialized)
     {
-      /*if (m_Platform)*/  delete m_Platform;
-      /*if (m_Format)*/ delete m_Format;
+      if (m_Platform)  delete m_Platform;
+      if (m_Format) delete m_Format;
     }
   }
 
 //----------
+
+/*
+  this is where we set everything in motion. this can be called multiple times,
+  each time a new instance is created (vst).
+*/
 
 void h_Core::initialize(void)
   {

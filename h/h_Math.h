@@ -91,6 +91,10 @@ naming scheme:
 #define h_Sqr(x) ((x)*(x))
 #define h_Cube(x) ((x)*(x)*(x))
 
+// order of polynomial
+#define h_PolyOrder(x) \
+  (sizeof(x) / sizeof(*(x)) - 1)
+
 // inverse of x
 #define h_Inverse(x) (1/(x))
 

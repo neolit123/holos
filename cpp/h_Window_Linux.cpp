@@ -194,7 +194,8 @@ class h_Window_Linux : public h_Widget,
     // else a_Parent is the parent window (embedded)
 
     h_Window_Linux(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
-    : h_Widget(a_Listener,a_Rect)
+    : h_Widget(H_NULL,a_Rect)
+    //: h_Widget(a_Listener,a_Rect)
       {
 
         m_Display = static_Core.m_Platform->openDisplay();
@@ -294,6 +295,19 @@ class h_Window_Linux : public h_Widget,
           XSetWMProtocols(m_Display,m_Window,&m_DeleteWindowAtom,1);
         }
 
+        // timer
+        m_TimerRunning = false;
+        m_TimerSleep = 30; // 30 ms between each timer signal
+
+        // (invisible) mouse cursor
+        m_BitmapNoData  = XCreateBitmapFromData(m_Display,m_Window,noData,8,8);
+        m_CurrentCursor = -1;
+        m_Black.red     = 0;
+        m_Black.green   = 0;
+        m_Black.blue    = 0;
+        m_Black.flags   = (DoRed or DoGreen or DoBlue);
+        XAllocColor(m_Display,m_Colormap,&m_Black);
+
         m_Painter  = new h_Painter(m_Display,m_Window);
 
         //#ifdef H_ALPHA
@@ -311,19 +325,6 @@ class h_Window_Linux : public h_Widget,
         //  m_Renderer = new h_Renderer(this);
         //  //m_Renderer->setRenderTarget(this);
         //#endif
-
-        // timer
-        m_TimerRunning = false;
-        m_TimerSleep = 30; // 30 ms between each timer signal
-
-        // (invisible) mouse cursor
-        m_BitmapNoData  = XCreateBitmapFromData(m_Display,m_Window,noData,8,8);
-        m_CurrentCursor = -1;
-        m_Black.red     = 0;
-        m_Black.green   = 0;
-        m_Black.blue    = 0;
-        m_Black.flags   = (DoRed or DoGreen or DoBlue);
-        XAllocColor(m_Display,m_Colormap,&m_Black);
 
         // event handler thread
         if (m_Embedded)

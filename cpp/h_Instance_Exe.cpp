@@ -50,12 +50,12 @@ void h_Instance::transferParameters(void)
     }
   }
 
-void h_Instance::notifyParameter_fromEditor(h_Parameter* a_Parameter)
+void h_Instance::notifyParameter(h_Parameter* a_Parameter)
   {
     do_HandleParameter(a_Parameter);
   }
 
-void h_Instance::notifyResize_fromEditor(int a_Width, int a_Height)
+void h_Instance::notifyResize(int a_Width, int a_Height)
   {
   }
 

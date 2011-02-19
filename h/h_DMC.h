@@ -28,8 +28,8 @@
 // - good compression ratio
 // - not widely implemented
 
-#include "h_Defines.h"
-#include "h_Memory.h"
+#include "h/h_Defines.h"
+#include "h/h_Memory.h"
 
 #ifndef h_EOF
   #define h_EOF -1

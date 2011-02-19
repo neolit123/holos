@@ -124,7 +124,8 @@ class h_Window_Win32 : public h_Widget,
   public:
 
     h_Window_Win32(h_WidgetListener* a_Listener, h_Rect a_Rect, void* a_Parent)
-    : h_Widget(a_Listener,a_Rect)
+    : h_Widget(H_NULL,a_Rect)
+    //: h_Widget(a_Listener,a_Rect)
       {
         //m_WinParent = (HWND)a_Parent;
         m_WinCursor = LoadCursor(NULL,IDC_ARROW);

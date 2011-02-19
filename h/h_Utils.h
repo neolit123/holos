@@ -46,7 +46,7 @@
 
 // size of array
 template<class T, size_t N> T decay_array_to_subtype(T (&a)[N]);
-#define h_GetArrSize(x) (sizeof(x)/sizeof(decay_array_to_subtype(x)))
+#define h_ArraySize(x) (sizeof(x)/sizeof(decay_array_to_subtype(x)))
 
 // strip path
 H_UTILS_INLINE

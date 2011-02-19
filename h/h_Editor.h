@@ -38,21 +38,158 @@ typedef h_Array<h_Connection*> h_Connections;
 
 //----------------------------------------------------------------------
 
+/*
+  if there are rapid automation of a parameter from the host, there would be a
+  cpu hit for all the redrawing, that might even happen too fast to notice.
+  we cache the widget that needs to be redrawn, and paint them all in
+  in IdleEditor (vst), or from a timer.
+  also, we check if the widget is already in the update list, and only
+  keep the last update (no point drawing the in-betweens).
+*/
+
+struct h_WidgetUpdateInfo
+{
+  h_Widget* m_Widget;
+  int       m_Mode;
+  h_WidgetUpdateInfo(h_Widget* a_Widget, int a_Mode)
+    {
+      m_Widget = a_Widget;
+      m_Mode = a_Mode;
+    }
+};
+
+typedef h_Array<h_WidgetUpdateInfo> h_WidgetUpdates;
+
+//#include "h/h_Queue.h"
+//#define H_WIDGET_QUEUE_SIZE 256
+//typedef h_Queue<h_WidgetUpdateInfo,H_WIDGET_QUEUE_SIZE> m_WidgetUpdates;
+
+//----------------------------------------------------------------------
+
 class h_Editor : public h_Window
 {
   //private:
   protected:
     h_Instance*   m_Instance;
     h_Connections m_Connections;
+    h_WidgetUpdates m_WidgetUpdates;
+    h_Rect          m_WidgetUpdateRect;
 
   public:
 
-    h_Editor(h_Instance* a_Instance, h_Rect a_Rect, void* a_Parent);
-    virtual ~h_Editor();
-    virtual void connect(h_Parameter* a_Parameter, h_Widget* a_Widget);
-    virtual void deleteConnections(void);
-    virtual void notifyParameter_fromInstance(h_Parameter* a_Parameter);
-    virtual void on_Change(h_Widget* a_Widget);
+    h_Editor(h_Instance* a_Instance, h_Rect a_Rect, void* a_Parent)
+    : h_Window(this,a_Rect,a_Parent)
+      {
+        m_Instance = a_Instance;
+      }
+
+    virtual ~h_Editor()
+      {
+        #ifndef H_NOAUTODELETE
+          deleteConnections();
+        #endif
+      }
+
+    //----------------------------------------
+
+    #ifdef H_BUFWDGUPDATES
+
+    void clearUpdates(void)
+      {
+        //mutex_dirty.lock();
+        m_WidgetUpdates.clear(false);
+        m_WidgetUpdateRect.set(0,0,0,0);
+        //mutex_dirty.unlock();
+      }
+
+    void appendUpdate(h_Widget* a_Widget, int a_Mode)
+      {
+        //for( int i=0; i<m_WidgetUpdates.size(); i++ ) if( m_WidgetUpdates[i].m_Widget==a_Widget ) return;
+        m_WidgetUpdates.append( h_WidgetUpdateInfo(a_Widget,a_Mode));
+        m_WidgetUpdateRect.combine( a_Widget->getRect() );
+      }
+
+    //TODO: consider threads, idleeditor, widget tweaking (do_MouseDown) ...
+    // be careful so this doesn't crash with idle or wm_paint/expose events
+
+    void redrawUpdates(void)
+      {
+        beginPaint();
+        h_Rect rect = m_WidgetUpdateRect;
+        int num = m_WidgetUpdates.size();
+        for( int i=0; i<num; i++ )
+        {
+          h_Widget* widget = m_WidgetUpdates[i].m_Widget;
+          int mode = m_WidgetUpdates[i].m_Mode;
+          widget->do_Paint( getPainter(), rect, mode );
+        }
+        clearUpdates();
+        endPaint();
+      }
+
+    #endif // H_BUFWDGUPDATES
+
+    //----------
+
+    virtual void idle(void)
+      {
+        #ifdef H_BUFWDGUPDATES
+          redrawUpdates();
+        #endif
+      }
+
+    virtual void connect(h_Parameter* a_Parameter, h_Widget* a_Widget)
+      {
+        int conn = m_Connections.size();
+        a_Widget->setConnect(conn);
+        a_Parameter->setConnect(conn);
+        m_Connections.append( new h_Connection(a_Parameter,a_Widget) );
+      }
+
+    virtual void deleteConnections(void)
+      {
+        for (int i=0; i<m_Connections.size(); i++) delete m_Connections[i];
+      }
+
+    /*
+    called from h_Instance [vst only, at the moment, in vst_setParameter}
+    after value in parameter has been updated, do_HandleParameter() has been
+    called, and if editor is open..
+    */
+
+    virtual void notifyParameter(h_Parameter* a_Parameter)
+      {
+        int conn = a_Parameter->getConnect();
+        if (conn>=0)
+        {
+          h_Widget* wdg = m_Connections[conn]->m_Widget;
+          wdg->setInternal( a_Parameter->getInternal() );
+          #ifdef H_BUFWDGUPDATES
+            appendUpdate(wdg,0);
+            //redrawUpdates(); //TODO: in idle (or timer)
+          #else
+            on_Redraw(wdg,0);
+          #endif
+        }
+      }
+
+    /*
+    widget value has changed (from editor)
+    if widget connected to a parameter:
+    - update parameter value (from widget)
+    - notify instance
+    */
+
+    virtual void on_Change(h_Widget* a_Widget)
+      {
+        int conn = a_Widget->getConnect();
+        if (conn>=0)
+        {
+          h_Parameter* par = m_Connections[conn]->m_Parameter;
+          par->setInternal( a_Widget->getInternal() );
+          m_Instance->notifyParameter(par);
+        }
+      }
 
 };
 

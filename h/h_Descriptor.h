@@ -47,13 +47,70 @@ class h_Descriptor
     h_Rect        m_EditorRect;
     h_Parameters  m_Parameters;
     //h_Programs    m_Programs;
+
   public:
-    h_Descriptor();
-    virtual ~h_Descriptor(void);
-    virtual h_Parameter*  getParameter(int a_Index);
-    virtual h_Parameters* getParameters(void);
-    virtual void appendParameter(h_Parameter* a_Parameter);
-    virtual void deleteParameters(void);
+
+    //h_Descriptor();
+    //virtual ~h_Descriptor(void);
+    //virtual h_Parameter*  getParameter(int a_Index);
+    //virtual h_Parameters* getParameters(void);
+    //virtual void appendParameter(h_Parameter* a_Parameter);
+    //virtual void deleteParameters(void);
+
+    h_Descriptor()
+      {
+        m_Name        = "no name";
+        m_Author      = "no author";
+        m_Product     = "holos test plugin";
+        m_Version     = 0;
+        m_UniqueId    = H_MAGIC;
+        m_Flags       = df_None;
+        m_NumInputs   = 2;
+        m_NumOutputs  = 0;
+        m_EditorRect  = h_Rect(256,256);
+        m_Parameters.clear();
+      }
+
+    //h_Descriptor(h_ParamDescr* a_Params)
+    //  {
+    //  }
+
+    virtual ~h_Descriptor()
+      {
+        #ifndef H_NOAUTODELETE
+          deleteParameters();
+        #endif
+      }
+
+    // ---------- parameters ----------
+
+    h_Parameters* getParameters(void)
+      {
+        return &m_Parameters;
+      }
+
+    //----------
+
+    h_Parameter*  getParameter(int a_Index)
+      {
+        return m_Parameters[a_Index];
+      }
+
+    //----------
+
+    void appendParameter(h_Parameter* a_Parameter)
+      {
+        int index = m_Parameters.size();
+        a_Parameter->setIndex(index);
+        m_Parameters.append(a_Parameter);
+      }
+
+    //----------
+
+    void deleteParameters(void)
+      {
+        for (int i=0; i<m_Parameters.size(); i++) { delete m_Parameters[i]; };
+      }
 
 };
 

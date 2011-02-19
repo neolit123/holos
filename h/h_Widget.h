@@ -254,8 +254,17 @@ class h_Widget : public h_WidgetBase,
     // layout
     //----------------------------------------
 
-    inline bool intersects(h_Rect a_Rect)        { return m_Rect.intersects(a_Rect); }
-    inline bool contains(int a_Xpos, int a_Ypos) { return m_Rect.contains(a_Xpos,a_Ypos); }
+    inline
+    bool intersects(h_Rect a_Rect)
+      {
+        return m_Rect.intersects(a_Rect);
+      }
+
+    inline
+    bool contains(int a_Xpos, int a_Ypos)
+      {
+        return m_Rect.contains(a_Xpos,a_Ypos);
+      }
 
     //----------
 
@@ -284,9 +293,16 @@ class h_Widget : public h_WidgetBase,
     virtual
     void applySkin(h_Skin* a_Skin, bool a_Sub=false, bool a_OnlyIfNull=false)
       {
-        if (a_OnlyIfNull) { if (!m_Skin) m_Skin=a_Skin; }
+        if (a_OnlyIfNull)
+        {
+          if (!m_Skin) m_Skin=a_Skin;
+        }
         else m_Skin = a_Skin;
-        if (a_Sub) { for (int i=0; i<m_Children.size(); i++) m_Children[i]->applySkin(a_Skin,a_Sub,a_OnlyIfNull); }
+        if (a_Sub)
+        {
+          for (int i=0; i<m_Children.size(); i++)
+            m_Children[i]->applySkin(a_Skin,a_Sub,a_OnlyIfNull);
+        }
       }
 
 

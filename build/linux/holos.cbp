@@ -186,14 +186,6 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../cpp/h_Descriptor.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="../../cpp/h_Editor.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
 		<Unit filename="../../cpp/h_Format_Exe.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -215,10 +207,6 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../../cpp/h_Host_Vst.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="../../cpp/h_Instance.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -318,6 +306,7 @@
 		<Unit filename="../../h/h_DspRC.h" />
 		<Unit filename="../../h/h_DspRMS.h" />
 		<Unit filename="../../h/h_DspSVF.h" />
+		<Unit filename="../../h/h_DurandKerner.h" />
 		<Unit filename="../../h/h_Editor.h" />
 		<Unit filename="../../h/h_Events.h" />
 		<Unit filename="../../h/h_File.h" />
@@ -325,6 +314,7 @@
 		<Unit filename="../../h/h_Format_Ladspa.h" />
 		<Unit filename="../../h/h_Format_Vst.h" />
 		<Unit filename="../../h/h_Globals.h" />
+		<Unit filename="../../h/h_Horner.h" />
 		<Unit filename="../../h/h_Host.h" />
 		<Unit filename="../../h/h_Host_Exe.h" />
 		<Unit filename="../../h/h_Host_Ladspa.h" />

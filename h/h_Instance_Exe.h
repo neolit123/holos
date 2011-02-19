@@ -45,8 +45,8 @@ class h_Instance : public h_Instance_Base
     inline h_Rect getEditorRect(void) { return m_EditorRect; }
 
     virtual void  transferParameters(void);
-    virtual void  notifyParameter_fromEditor(h_Parameter* aParameter);
-    virtual void  notifyResize_fromEditor(int aWidth, int aHeight);
+    virtual void  notifyParameter(h_Parameter* aParameter);
+    virtual void  notifyResize(int aWidth, int aHeight);
     virtual void  updateTime(void);
     virtual void  sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
 };

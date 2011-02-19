@@ -75,11 +75,11 @@ class skin_Default : public h_Skin
         m_SliderSkin.m_ValueColor   = H_RGB(144,144,144);
         m_SliderSkin.m_ActiveColor  = H_RGB(160,160,160);
 
-        m_ValueSkin.m_FillColor    = H_RGB(112,112,112);
-        m_ValueSkin.m_BorderColor  = H_RGB( 64, 64, 64);
-        m_ValueSkin.m_ValueColor   = H_RGB(144,144,144);
-        m_ValueSkin.m_ActiveColor  = H_RGB(160,160,160);
-        m_ValueSkin.m_TextColor    = H_RGB(160,160,160);
+        m_ValueSkin.m_FillColor     = H_RGB(112,112,112);
+        m_ValueSkin.m_BorderColor   = H_RGB( 64, 64, 64);
+        m_ValueSkin.m_ValueColor    = H_RGB(144,144,144);
+        m_ValueSkin.m_ActiveColor   = H_RGB(160,160,160);
+        m_ValueSkin.m_TextColor     = H_RGB(160,160,160);
       }
 
     //--------------------------------------------------

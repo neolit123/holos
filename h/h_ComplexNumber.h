@@ -17,8 +17,8 @@
   If not, see <http://holos.googlecode.com/>.
 */
 
-#ifndef _H_COMPLEX_NUMBER_
-#define _H_COMPLEX_NUMBER_
+#ifndef _H_COMPLEX_NUMBER_included
+#define _H_COMPLEX_NUMBER_included
 
 #include "h/h_Math.h"
 
@@ -362,4 +362,4 @@ cnum_s cnum_pow(const cnum_s x, const cnum_t n)
 #define cnum_acoth(x) \
   cnum_atanh(cnum_inv(x))
 
-#endif /* _H_COMPLEX_NUMBER_ */
+#endif /* _H_COMPLEX_NUMBER_included */
