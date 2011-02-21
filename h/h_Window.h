@@ -51,21 +51,29 @@ class h_Window : public h_Window_Impl
 
     virtual void do_SetSize(int a_Width, int a_Height)
       {
+        //trace("setsize: " << a_Width << "," << a_Height);
         m_Rect.setSize(a_Width,a_Height);
         if (m_Flags&wf_Align) do_Realign();
+        paintBuffer(m_Rect);
+        //blitBuffer(m_Rect);
       }
 
     //----------------------------------------
     // on...
     //----------------------------------------
 
+    // we're tweaking a widget, so redraw it directly
+    // and if buffered, blit to screen
+
     virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
-        // we're tweaking a widget, so redraw it directly
-        // and if buffered, blit to screen
-        beginPaint();
-        a_Widget->do_Paint(getPainter(),a_Widget->getRect(),a_Mode);
-        endPaint();
+        h_Rect rect = a_Widget->getRect();
+        //trace("redraw: " << rect.x << "," << rect.y << ", " << rect.w << "," << rect.h );
+        h_Painter* painter = getSurface()->getPainter();
+        a_Widget->do_Paint(painter,rect,a_Mode);
+        //beginPaint();
+        blitBuffer(rect);
+        //endPaint();
       }
 
     // a widget want to change the mouse cursor

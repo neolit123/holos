@@ -104,15 +104,18 @@ class h_Window_Win32 : public h_Widget,
   //holos
     //h_Rect      m_WinRect;
     h_Painter*  m_WinPainter;
+    h_Surface*  m_Surface;
   //other
     bool        m_WinEmbedded;
     int         m_WinAdjustHeight;
     int         m_WinAdjustWidth;
     int         m_WinClickedButton;
     int         m_WinPrevCursor;
+    int m_Depth;
 
   public:
     inline h_Painter* getPainter(void)  { return m_WinPainter; }
+    inline h_Surface* getSurface(void)  { return m_Surface; }
     //inline h_Rect     getWinRect(void)  { return m_WinRect; }
     // h_PaintSource
     virtual HDC getDC(void) { return m_WinPainter->getDC(); }
@@ -131,6 +134,7 @@ class h_Window_Win32 : public h_Widget,
         m_WinCursor = LoadCursor(NULL,IDC_ARROW);
         m_WinPrevCursor = 0;
         m_WinClickedButton = bu_None;
+        m_Depth = 32;
         RECT rc = {a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2()}; // left, top, right, bottom
         if (a_Parent) // --- embedded ---
         {
@@ -162,8 +166,6 @@ class h_Window_Win32 : public h_Widget,
           AdjustWindowRectEx(&rc,WS_OVERLAPPEDWINDOW,FALSE,WS_EX_OVERLAPPEDWINDOW);
           const unsigned int adjx = ((GetSystemMetrics(SM_CXSCREEN)-a_Rect.w)>>1) + rc.left;
           const unsigned int adjy = ((GetSystemMetrics(SM_CYSCREEN)-a_Rect.h)>>1) + rc.top;
-          //trace("adjx: " << adjx);
-          //trace("adjy: " << adjy);
           m_WinHandle = CreateWindowEx(
             WS_EX_OVERLAPPEDWINDOW,   // dwExStyle
             static_Core.m_Platform->m_WinClassName,    // lpClassName
@@ -180,16 +182,22 @@ class h_Window_Win32 : public h_Widget,
           );
           SetFocus(m_WinHandle);
         } // windowed
+
         //trace("m_Rect: " << m_Rect.x <<","<< m_Rect.y <<","<< m_Rect.w <<","<< m_Rect.h );
         //trace("rc: " << rc.left <<","<< rc.top <<","<< rc.right-rc.left+1 <<","<< rc.bottom-rc.top+1 );
         m_WinAdjustWidth  = (rc.right - rc.left + 1) - a_Rect.w;
         m_WinAdjustHeight = (rc.bottom - rc.top + 1) - a_Rect.h;
+
         //trace("m_WinAdjustWidth: " << m_WinAdjustWidth);
         //trace("m_WinAdjustHeight: " << m_WinAdjustHeight);
+
         //SetWindowLong(m_WinHandle,GWL_USERDATA,(int)this);
         SetWindowLongPtr(m_WinHandle,GWLP_USERDATA,(LONG_PTR)this);
         //DragAcceptFiles(m_WinHandle,true);
+
         m_WinPainter = new h_Painter(m_WinHandle);
+        createBuffer();
+
         //TODO:
         //if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
       }
@@ -198,12 +206,15 @@ class h_Window_Win32 : public h_Widget,
 
     virtual ~h_Window_Win32()
       {
+
+        //if (m_Surface) delete m_Surface;
+        deleteBuffer();
         delete m_WinPainter;
         DestroyWindow(m_WinHandle);
       }
 
     //----------------------------------------
-    //
+    // factory
     //----------------------------------------
 
     h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth)
@@ -219,6 +230,45 @@ class h_Window_Win32 : public h_Widget,
     h_Surface* createSurface(int a_Width, int a_Height, int a_Depth)
       {
         return new h_Surface(a_Width,a_Height,a_Depth);
+      }
+
+    //----------------------------------------
+    // buffer
+    //----------------------------------------
+
+    void createBuffer(void)
+      {
+        m_Surface = createSurface(m_Rect.w,m_Rect.h,m_Depth);
+        //m_Surface->getPainter()->setFillColor( H_DARK_CYAN );
+        //m_Surface->getPainter()->fillRect(m_Rect.x,m_Rect.y,m_Rect.x2(),m_Rect.y2());
+      }
+
+    void deleteBuffer(void)
+      {
+        delete m_Surface;
+        m_Surface = H_NULL;
+      }
+
+    void resizeBuffer(int a_Width, int a_Height)
+      {
+        //trace("resizeBuffer: " << a_Width << "," << a_Height );
+        deleteBuffer();
+        m_Surface = createSurface(a_Width,a_Height,m_Depth);
+        //trace(":: surface content is gone!");
+      }
+
+    void paintBuffer(h_Rect a_Rect)
+      {
+        //trace("paintBuffer: " << a_Rect.x << "," << a_Rect.y << ", " << a_Rect.w << "," << a_Rect.h );
+        do_Paint(m_Surface->getPainter(),a_Rect,0);
+      }
+
+    void blitBuffer(h_Rect a_Rect)
+      {
+        //trace("blitBuffer: " << a_Rect.x << "," << a_Rect.y << ", " << a_Rect.w << "," << a_Rect.h );
+        //beginPaint();
+        m_WinPainter->drawSurface( m_Surface, a_Rect.x,a_Rect.y, a_Rect.x,a_Rect.y,a_Rect.w,a_Rect.h );
+        //endPaint();
       }
 
     //----------------------------------------
@@ -482,15 +532,19 @@ class h_Window_Win32 : public h_Widget,
 
             w = short(LOWORD(lParam));
             h = short(HIWORD(lParam));
-            if (!m_WinEmbedded)
-            {
-              w += m_WinAdjustWidth;
-              h += m_WinAdjustHeight;
-            }
+
+            //trace("resize event: " << w << "," << h);
+
+
+//            if (!m_WinEmbedded)
+//            {
+//              w += m_WinAdjustWidth;
+//              h += m_WinAdjustHeight;
+//            }
 
             //if (w!=m_WinRect.w || h!=m_WinRect.h)
             //{
-            //// hack: ignore this if there is other WM_SIZE messages in the queue
+            // hack: ignore this if there is other WM_SIZE messages in the queue
             //if ( PeekMessage(&msg2,mWindow,WM_SIZE,WM_SIZE,PM_NOREMOVE) )
             //{
             //  trace("there are oher WN_SIZE messages in the queue, so we're ignoring this one\n");
@@ -501,7 +555,12 @@ class h_Window_Win32 : public h_Widget,
             //if (m_Root) m_Root->do_SetSize(w,h);
             //resizeWindow(w,h);
 
-            do_SetSize(w,h);
+            if ( (w!=m_Rect.w) || (h!=m_Rect.h) )
+            {
+              resizeBuffer(w,h);
+              do_SetSize(w,h);
+            }
+
             //do_Realign();
             //}
             result = 0;
@@ -512,8 +571,11 @@ class h_Window_Win32 : public h_Widget,
             beginPaint();
             rc = h_Rect(  m_WinPS.rcPaint.left,
                           m_WinPS.rcPaint.top,
-                          m_WinPS.rcPaint.right -  m_WinPS.rcPaint.left + 2,
-                          m_WinPS.rcPaint.bottom - m_WinPS.rcPaint.top  + 2);
+                          m_WinPS.rcPaint.right -  m_WinPS.rcPaint.left /*+ 2*/,
+                          m_WinPS.rcPaint.bottom - m_WinPS.rcPaint.top  /*+ 2*/);
+
+            //trace("paint event:" << rc.x << "," << rc.y << ", " << rc.w << "," << rc.h );
+
 
             ////m_Canvas->setClipRect(rc.x,rc.y,rc.x2(),rc.y2());
             //if ((m_WinFlags&AX_WIN_BUFFERED) && m_Surface )
@@ -534,7 +596,11 @@ class h_Window_Win32 : public h_Widget,
             // assume this is already updated by the widgets themselves
             //if (m_Root) m_Root->do_Paint(m_Painter,rc);
 
-            do_Paint(m_WinPainter,rc,0);
+            //do_Paint(m_WinPainter,rc,0);
+
+            //do_Paint(m_Surface->getPainter(),rc,0);
+            blitBuffer(rc);
+
 
             //  m_Painter->clearClipRect();
             //}

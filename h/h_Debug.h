@@ -159,7 +159,6 @@ static h_Debug static_Debug;
   #include "h/h_MemTracer.h"
 #endif
 
-
 //----------------------------------------------------------------------
 #endif
 

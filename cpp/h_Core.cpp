@@ -49,7 +49,7 @@ h_Core::~h_Core()
   {
     if (m_Initialized)
     {
-      if (m_Platform)  delete m_Platform;
+      if (m_Platform) delete m_Platform;
       if (m_Format) delete m_Format;
     }
   }

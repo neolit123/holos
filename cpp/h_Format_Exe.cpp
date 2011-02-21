@@ -57,10 +57,8 @@ int h_Format::entrypoint(void* a_Ptr)
     #ifndef H_NOGUI
     if (descriptor->m_Flags & df_HasEditor)
     {
-      //h_Window* win = (h_Window*)instance->do_OpenEditor(a_Ptr);
-      //win->eventLoop();
       h_Editor* editor = (h_Editor*)instance->do_OpenEditor(a_Ptr);
-      editor->eventLoop();
+      editor->/*getWindow()->*/eventLoop();
       instance->do_CloseEditor();
     }
     #endif

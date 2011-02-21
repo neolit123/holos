@@ -12,4 +12,5 @@
 #include "build/test/test_gui.cpp"
 //#include "build/test/test_par.cpp"
 //#include "build/test/test_mem.cpp"
+//#include "build/test/test_gfx.cpp"
 

@@ -53,7 +53,7 @@ h_Instance* h_Format::createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor)
 
 AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
   {
-    trace("h_Format::entrypoint");
+    //trace("h_Format::entrypoint");
     AEffect*      effect  = (AEffect*)h_Malloc( sizeof(AEffect) );
     h_Host*       host    = new h_Host(audioMaster,effect);
     //h_Descriptor* desc    = getDescriptor();
@@ -87,7 +87,7 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
     effect->initialDelay            = 0;
     if (desc->m_Flags & df_HasEditor) effect->flags |= effFlagsHasEditor;
     if (desc->m_Flags & df_IsSynth)   effect->flags |= effFlagsIsSynth;
-    trace("...entrypoint ok");
+    //trace("...entrypoint ok");
     return effect;
   }
 

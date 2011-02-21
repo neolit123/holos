@@ -174,8 +174,10 @@ class h_Window_Linux : public h_Widget,
     GLXWindow   m_GLXWindow;
     h_Renderer* m_Renderer;
     #endif
+    h_Surface*  m_Surface;
 
   public:
+    inline h_Surface* getSurface(void) { return m_Surface; }
     inline h_Painter* getPainter(void) { return m_Painter; }
     //inline h_Renderer* getRenderer(void) { return m_Renderer; }
     #ifdef H_ALPHA
@@ -309,22 +311,23 @@ class h_Window_Linux : public h_Widget,
         XAllocColor(m_Display,m_Colormap,&m_Black);
 
         m_Painter  = new h_Painter(m_Display,m_Window);
+        createBuffer();
 
-        //#ifdef H_ALPHA
-        //  XWindowAttributes winattralpha;
-        //  XGetWindowAttributes(m_Display,m_Window,&winattralpha );
-        //  XRenderPictFormat *format = XRenderFindVisualFormat(m_Display,winattralpha.visual);
-        //  XRenderPictureAttributes pictattralpha;
-        //  m_Picture = XRenderCreatePicture(m_Display,m_Window,format,None,&pictattralpha);
-        //  m_Painter->setPicture( m_Picture );
-        //  //bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
-        //#endif
+        #ifdef H_ALPHA
+          XWindowAttributes winattralpha;
+          XGetWindowAttributes(m_Display,m_Window,&winattralpha );
+          XRenderPictFormat *format = XRenderFindVisualFormat(m_Display,winattralpha.visual);
+          XRenderPictureAttributes pictattralpha;
+          m_Picture = XRenderCreatePicture(m_Display,m_Window,format,None,&pictattralpha);
+          m_Painter->setPicture( m_Picture );
+          //bool hasAlpha  = ( format->type == PictTypeDirect && format->direct.alphaMask );
+        #endif
 
-        //#ifdef H_OPENGL
-        //  m_GLXWindow = glXCreateWindow(m_Display,fbc[0],m_Window,0);
-        //  m_Renderer = new h_Renderer(this);
-        //  //m_Renderer->setRenderTarget(this);
-        //#endif
+        #ifdef H_OPENGL
+          m_GLXWindow = glXCreateWindow(m_Display,fbc[0],m_Window,0);
+          m_Renderer = new h_Renderer(this);
+          //m_Renderer->setRenderTarget(this);
+        #endif
 
         // event handler thread
         if (m_Embedded)
@@ -351,30 +354,37 @@ class h_Window_Linux : public h_Widget,
           void* ret;
           pthread_join(m_TimerThread,&ret);
         }
-        #ifdef H_OPENGL
-          // delete glxwindow
-          //XFree(fbc); // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
-        #endif
-        #ifdef H_ALPHA
-          XRenderFreePicture(m_Display,m_Picture);
-        #endif
-        if (m_Painter) delete m_Painter;
+
+        //#ifdef H_OPENGL
+        //  // delete glxwindow
+        //  //XFree(fbc); // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
+        //#endif
+        //#ifdef H_ALPHA
+        //  XRenderFreePicture(m_Display,m_Picture);
+        //#endif
+
         //if (m_Surface) delete m_Surface;
+        deleteBuffer();
+        if (m_Painter) delete m_Painter;
+
         XFreePixmap(m_Display, m_BitmapNoData);
         if (m_CurrentCursor>=0) XFreeCursor(m_Display,m_CurrentCursor);
 
         // http://tronche.com/gui/x/xlib/window/XDestroyWindow.html
-        // The XDestroyWindow() function destroys the specified window as well as all of its subwindows
-        // (whihc means that a window is automatically destroyed when a host closes the editor?)
-
+        /*
+          The XDestroyWindow() function destroys the specified window as well
+          as all of its subwindows.If the window specified by the w argument is
+          mapped, it is unmapped automatically.
+        */
         if (!m_Embedded) XDestroyWindow(m_Display,m_Window);
-
+        //trace("calling closeDisplay");
+        // this crashes...
         static_Core.m_Platform->closeDisplay(m_Display);
 
       }
 
     //----------------------------------------
-    //
+    // factory
     //----------------------------------------
 
     h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth)
@@ -389,7 +399,46 @@ class h_Window_Linux : public h_Widget,
 
     h_Surface* createSurface(int a_Width, int a_Height, int a_Depth)
       {
-        return new h_Surface(m_Display,a_Width,a_Height,a_Depth);
+        return new h_Surface(m_Display,m_Window,a_Width,a_Height,a_Depth);
+      }
+
+    //----------------------------------------
+    // buffer
+    //----------------------------------------
+
+    void createBuffer(void)
+      {
+        m_Surface = createSurface(m_Rect.w,m_Rect.h,m_Depth);
+        //m_Surface->getPainter()->setFillColor( H_DARK_CYAN );
+        //m_Surface->getPainter()->fillRect(m_Rect.x,m_Rect.y,m_Rect.x2(),m_Rect.y2());
+      }
+
+    void deleteBuffer(void)
+      {
+        delete m_Surface;
+        m_Surface = H_NULL;
+      }
+
+    void resizeBuffer(int a_Width, int a_Height)
+      {
+        //trace("resizeBuffer: " << a_Width << "," << a_Height );
+        deleteBuffer();
+        m_Surface = createSurface(a_Width,a_Height,m_Depth);
+        //trace(":: surface content is gone!");
+      }
+
+    void paintBuffer(h_Rect a_Rect)
+      {
+        //trace("paintBuffer: " << a_Rect.x << "," << a_Rect.y << ", " << a_Rect.w << "," << a_Rect.h );
+        do_Paint(m_Surface->getPainter(),a_Rect,0);
+      }
+
+    void blitBuffer(h_Rect a_Rect)
+      {
+        //trace("blitBuffer: " << a_Rect.x << "," << a_Rect.y << ", " << a_Rect.w << "," << a_Rect.h );
+        //beginPaint();
+        m_Painter->drawSurface( m_Surface, a_Rect.x,a_Rect.y, a_Rect.x,a_Rect.y,a_Rect.w,a_Rect.h );
+        //endPaint();
       }
 
     //----------------------------------------
@@ -595,11 +644,11 @@ class h_Window_Linux : public h_Widget,
 
     virtual void reparent(void* a_Parent)
       {
-        trace("reparent window...");
+        //trace("reparent window...");
         m_Parent = (Window)a_Parent;
         XReparentWindow(m_Display,m_Window,m_Parent,0,0);
         //XFlush(m_Display);
-        trace("reparent window ok");
+        //trace("reparent window ok");
       }
 
     //----------------------------------------
@@ -677,7 +726,6 @@ class h_Window_Linux : public h_Widget,
           case ClientMessage:
             {
               int v = a_Event->xclient.data.l[0];
-              //printf("ClientMessage: %i\n",v); //dtrace("ClientMessage: " << v);
               if (v==ts_Timer) do_Timer();
             }
             break;
@@ -685,8 +733,13 @@ class h_Window_Linux : public h_Widget,
             {
               int w = a_Event->xconfigure.width;
               int h = a_Event->xconfigure.height;
-              //printf("ConfigureNotify: %i,%i\n",w,h);
-              do_SetSize(w,h);
+              if ( (w!=m_Rect.w) || (h!=m_Rect.h) )
+              {
+                //trace("resize event: " << w << "," << h);
+                resizeBuffer(w,h);
+                do_SetSize(w,h);
+              }
+              //else trace("[ignored] resize event: " << w << "," << h);
             }
             break;
           case PropertyNotify:
@@ -697,20 +750,22 @@ class h_Window_Linux : public h_Widget,
             break;
           case Expose:
             {
-              beginPaint();
+              //beginPaint();
               h_Rect rc;
               rc.x = a_Event->xexpose.x;
               rc.y = a_Event->xexpose.y;
               rc.w = a_Event->xexpose.width;
               rc.h = a_Event->xexpose.height;
-              //while (XCheckTypedWindowEvent(m_Display, a_Event->xexpose.window, Expose, a_Event))
-              //  rc.combine(a_Event->xexpose.x,
-              //             a_Event->xexpose.y,
-              //             a_Event->xexpose.width,
-              //             a_Event->xexpose.height);
-              //printf("Expose: %i,%i - %i,%i\n",rc.x,rc.y,rc.w,rc.h);
-              do_Paint(m_Painter,rc,0);
-              endPaint();
+              while (XCheckTypedWindowEvent(m_Display, a_Event->xexpose.window, Expose, a_Event))
+                rc.combine(a_Event->xexpose.x,
+                           a_Event->xexpose.y,
+                           a_Event->xexpose.width,
+                           a_Event->xexpose.height);
+              //trace("expose event: " << rc.x << "," << rc.y << ", " << rc.w << "," << rc.h);
+              //do_Paint(m_Painter,rc,0);
+              //do_Paint(m_Surface->getPainter(),rc,0); // assume back buffer is kept updated...
+              blitBuffer(rc);
+              //endPaint();
             }
             break;
           case ButtonPress:

@@ -70,10 +70,11 @@ class h_Editor : public h_Window
 {
   //private:
   protected:
-    h_Instance*   m_Instance;
-    h_Connections m_Connections;
+    h_Instance*     m_Instance;
+    h_Connections   m_Connections;
     h_WidgetUpdates m_WidgetUpdates;
     h_Rect          m_WidgetUpdateRect;
+
 
   public:
 

@@ -59,7 +59,7 @@
   const char* h_GetBasePath(char* path)
   {
     #if defined H_LIB
-      char filepath[H_MAX_STRINGSIZE] = "";
+      //char filepath[H_MAX_STRINGSIZE] = "";
       Dl_info dli;
       dladdr(__func__, &dli);
       const char* slash = h_Strrchr(dli.dli_fname, '/');

@@ -1,13 +1,14 @@
 
-//#define H_DEBUG_LOG "holos_win.log"
 //#define H_DEBUG_CON
 //#define H_DEBUG_CON_CANQUIT
 //#define H_DEBUG_CON_NOTOP
 //#define H_DEBUG_CON_NORESIZE
 
-//#define H_DEBUG_MEM
-//#define H_DEBUG_MEM_PRINT
-//#define H_DEBUG_NEW
+#define H_DEBUG_LOG "holos_debug.log"
+
+#define H_DEBUG_MEM
+#define H_DEBUG_MEM_PRINT
+#define H_DEBUG_NEW
 
 #include "holos.h"
 #include "h/h_SkinDefault.h"
@@ -18,9 +19,8 @@
 #include "h/h_WdgValue.h"
 #include "h/h_WdgSlider.h"
 
-//#include "h/h_BasePath.h"
-//#include "h/h_BitmapLoader.h"
-
+#include "h/h_BasePath.h"
+#include "h/h_BitmapLoader.h"
 #include "h/h_Bitmap.h"
 #include "h/h_Surface.h"
 
@@ -56,8 +56,8 @@ class my_Widget : public h_Widget
         a_Painter->drawArc(x1,y1,x2,y2,0,0.75);
         a_Painter->resetPen();
 
-        a_Painter->drawBitmap( m_Bitmap,   0,0,  0,0,64,64 );
-        a_Painter->drawSurface( m_Surface, 70,0, 0,0,64,64 );
+        a_Painter->drawBitmap( m_Bitmap,   0,0,  0,0,456,108 );
+        a_Painter->drawSurface( m_Surface, 10,120, 0,0,64,64 );
 
       }
 
@@ -101,6 +101,7 @@ class my_Instance : public h_Instance,
     h_Skin*         m_Skin;
     h_Bitmap* bmp;
     h_Surface* srf;
+    h_BitmapLoader loader; // we need data after creating it
 
   public:
 
@@ -126,7 +127,7 @@ class my_Instance : public h_Instance,
       {
         char buf[H_MAX_STRINGSIZE];
         a_Parameter->getDisplay(buf);
-        trace("param: " << a_Parameter->getName().ptr() << " = " << buf );
+        //trace("param: " << a_Parameter->getName().ptr() << " = " << buf );
       }
 
     //----------
@@ -136,19 +137,31 @@ class my_Instance : public h_Instance,
         h_Rect rect = getEditorRect();
         m_Editor = new h_Editor(this,rect,ptr);
 
-        bmp = m_Editor->createBitmap(64,64,24);
+        char temp[H_MAX_STRINGSIZE];
+        temp[0] = 0;
+        h_GetBasePath(temp);
+        h_Strcat(temp,"../extern/mverb/background.png");
+        //trace("path: " << temp)
+        loader.load(temp);
+        int w = loader.getWidth();
+        int h = loader.getHeight();
+        int d = 24;//loader.getDepth();
+        char* b = (char*)loader.getBuffer();
+        //trace("w:"<<w << ", h:"<<h << ", d:"<<d );
+        bmp = m_Editor->createBitmap(w,h,d,b);
         bmp->prepare();
-        unsigned char* p = (unsigned char*)bmp->getBuffer();
-        for (int y=0; y<64; y++)
-        {
-          for (int x=0; x<64; x++)
-          {
-            *p++ = 0;     // b
-            *p++ = y * 4; // g
-            *p++ = x * 4; // r
-            *p++ = 0;
-          }
-        }
+
+        //unsigned char* p = (unsigned char*)bmp->getBuffer();
+        //for (int y=0; y<64; y++)
+        //{
+        //  for (int x=0; x<64; x++)
+        //  {
+        //    *p++ = 0;     // b
+        //    *p++ = y * 4; // g
+        //    *p++ = x * 4; // r
+        //    *p++ = 0;
+        //  }
+        //}
 
         srf = m_Editor->createSurface(64,64,24);
         h_Painter* paint = srf->getPainter();
@@ -185,9 +198,10 @@ class my_Instance : public h_Instance,
         // not needed for standalone?
         // it will get a size-event and we realign there..
         // fix this!!!
-        #ifdef H_LIB
-          m_Editor->do_Realign();
-        #endif
+        //#ifdef H_LIB
+          m_Editor->do_SetSize(rect.w,rect.h);
+        //  //m_Editor->do_Realign();
+        //#endif
 
         m_Editor->show();
         return (void*)m_Editor;
@@ -198,13 +212,11 @@ class my_Instance : public h_Instance,
     virtual void do_CloseEditor(void)
       {
         m_Editor->hide();
-
         delete bmp;
         delete srf;
-
+        delete m_Skin;
         delete m_Editor;
         m_Editor = H_NULL;
-        delete m_Skin;
         // widgets are automatically deleted
 
 

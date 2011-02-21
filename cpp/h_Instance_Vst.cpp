@@ -54,6 +54,7 @@ h_Instance::~h_Instance()
   {
     if (m_AEffect) h_Free(m_AEffect); // !!!!!  created in entrypoint()
     if (m_Host) delete m_Host;        // !!!!!  created in entrypoint()
+    if (m_Descriptor) delete m_Descriptor;        // !!!!!  created in entrypoint()
   }
 
 //----------------------------------------------------------------------

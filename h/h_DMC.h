@@ -51,9 +51,6 @@ struct h_dmc_node
 
 //----------------------------------------------------------------------
 
-#include "h/h_Defines.h"
-#include "h/h_Memory.h"
-
 class h_DMC
 {
   private:

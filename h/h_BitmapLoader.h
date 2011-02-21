@@ -27,6 +27,7 @@
 //#define STBI_NO_FAILURE_STRINGS
 
 #include "extern/stb_image.c"
+#include <stdio.h>
 
 class h_BitmapLoader
 {
@@ -60,10 +61,11 @@ class h_BitmapLoader
 
     void decode(char* buffer, int size)
       {
-        int req = 0;
+        int req = 4; // force rgba, else 0
         int comp;
         m_Buffer = stbi_load_from_memory((stbi_uc*)buffer,size,&m_Width,&m_Height,&comp,req);
         m_Depth = comp*8;
+        swap_rgba();
       }
 
     void load(char* filename)
@@ -74,9 +76,29 @@ class h_BitmapLoader
         fseek(fp,0,SEEK_SET);
         char* buffer = (char*)h_Malloc(size);
         int num = fread(buffer,1,size,fp);
+        if (size!=num) { /* error */ }
         fclose(fp);
         decode(buffer,size);
         h_Free(buffer);
+      }
+
+    void swap_rgba(void)
+      {
+        unsigned char* ptr = m_Buffer;
+        for (int x=0; x<m_Width; x++)
+        {
+          for (int y=0; y<m_Height; y++)
+          {
+            unsigned char r = ptr[0];
+            unsigned char g = ptr[1];
+            unsigned char b = ptr[2];
+            unsigned char a = ptr[3];
+            *ptr++ = b;
+            *ptr++ = g;
+            *ptr++ = r;
+            *ptr++ = a;
+          }
+        }
       }
 
 };

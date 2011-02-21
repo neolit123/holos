@@ -36,6 +36,7 @@ h_Platform::h_Platform()
 
 h_Platform::~h_Platform()
   {
+    //trace("platform dying...");
   }
 
 //----------
@@ -72,7 +73,15 @@ void h_Platform::closeDisplay(Display* a_Display)
       resource IDs (Window, Font, Pixmap, Colormap, Cursor, and GContext), or
       other resources that the client has created on this display, unless the
       close-down mode of the resource has been changed (see XSetCloseDownMode)
+
+      XCloseDisplay() performs a final XSync() operation
     */
+
+    /*
+      http://tronche.com/gui/x/xlib/display/close-operation.html
+
+    */
+
     XCloseDisplay(a_Display);
   }
 

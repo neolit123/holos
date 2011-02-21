@@ -286,6 +286,8 @@ class h_MemTracer
 
 static h_MemTracer static_MemTracer;
 
+//----------------------------------------------------------------------
+
 #ifdef H_DEBUG_MEM
 
   #ifdef H_DEBUG_NEW

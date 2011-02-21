@@ -128,7 +128,12 @@ class h_Painter_Linux
       {
         m_Display = a_Display;
         m_Drawable  = a_Drawable;
-        if (!m_Drawable) m_Drawable = XDefaultRootWindow(m_Display);
+        //if (!m_Drawable) m_Drawable = XDefaultRootWindow(m_Display);
+
+        // The XCreateGC() function creates a graphics context and returns a GC.
+        // The GC can be used with any destination drawable having the same root
+        // and depth as the specified drawable.
+
         m_GC        = XCreateGC(m_Display,m_Drawable,0,NULL);
         m_Font      = XQueryFont(m_Display,XGContextFromGC(m_GC));
         m_ClipRect  = h_Rect(0,0,0,0);
@@ -371,7 +376,7 @@ class h_Painter_Linux
     virtual void drawBitmap(h_Bitmap* aBitmap, int aX, int aY, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         XImage* img = aBitmap->getImage();
-        trace("drawBitmap: " << img);
+        //trace("drawBitmap: " << img);
         XPutImage(m_Display,m_Drawable,m_GC,img,aSrcX,aSrcY,aX,aY,aSrcW,aSrcH);
       }
 
