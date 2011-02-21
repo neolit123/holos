@@ -16,11 +16,217 @@
   You should have received a copy of the Holos Library License
   If not, see <http://holos.googlecode.com/>.
 */
+
 //----------------------------------------------------------------------
 #ifndef h_File_included
 #define h_File_included
 //----------------------------------------------------------------------
 
+#include "stdio.h"
+#include "h/h_Defines.h"
+#include "h/h_Stdlib.h"
+#include "h/h_Memory.h"
+#include "h/h_BasePath.h"
+#include "h/h_Debug.h"
+
+#define H_FILE_RB (char*)"rb"
+#define H_FILE_R  (char*)"r"
+
+#define H_FILE_WB (char*)"wb"
+#define H_FILE_W  (char*)"w"
+#define H_FILE_AB (char*)"ab"
+#define H_FILE_A  (char*)"a"
+
+#define H_FILE_RAUTO 0
+
+class h_File
+{
+  private:
+    char*           m_Mode;
+
+  public:
+    FILE*           m_File;
+    char            m_FilePath[H_MAX_PATHSIZE];
+    void*           m_Buffer;
+    unsigned long   m_Length;
+    unsigned long   m_Size;
+
+    h_File()
+      {
+        m_File = H_NULL;
+      }
+
+    ~h_File()
+      {
+        close();
+        freebuf();
+      }
+    
+    // close
+    void close(void)
+      {
+        if (m_File)
+          fclose(m_File);
+      }
+      
+    // free buffer
+    void freebuf(void)
+      {
+        if (m_Buffer)
+          h_Free(m_Buffer);
+      }
+      
+    // set path
+    char* path(const char* a_FileName)
+      {
+        m_FilePath[0] = '\0';
+        h_GetBasePath(m_FilePath);
+        h_Strcat(m_FilePath, (char*)a_FileName);
+        return m_FilePath;
+      }
+    
+    // get length
+    unsigned long length( const char* a_FileName,
+                          char* a_Mode = H_FILE_RB)
+      {
+        m_Mode = a_Mode;
+        
+        path(a_FileName);
+        m_File = fopen(m_FilePath, m_Mode);
+        
+        if (!m_File)
+        {
+          dtrace("h_File.size, #ERR open(" << m_Mode << "): " << m_FilePath);
+          return 0;
+        }
+        
+        fseek(m_File, 0, SEEK_END);
+        m_Length = ftell(m_File);
+        fseek(m_File, 0, SEEK_SET);
+        
+        return m_Length;
+      }
+
+    // read
+    unsigned long read( const char* a_FileName,
+                        void* a_Buffer,
+                        const unsigned long a_Length = H_FILE_RAUTO,
+                        const unsigned long a_Size = 1,
+                        char* a_Mode = H_FILE_RB)
+      {
+        m_File    = H_NULL;
+        m_Buffer  = a_Buffer;
+        m_Length  = a_Length;
+        m_Size    = a_Size;
+        m_Mode    = a_Mode;
+  
+        path(a_FileName);
+        m_File = fopen(m_FilePath, m_Mode);
+        dtrace("h_File.read, open(" << m_Mode << "): " << m_FilePath);
+        
+        if (!m_File)
+        {
+          dtrace("h_File.read, #ERR open(" << m_Mode << "): " << m_FilePath);
+          return 0;
+        }
+  
+        if (a_Length == H_FILE_RAUTO)
+        {
+          length(a_FileName);
+          
+          if (!m_Length)
+          {
+            dtrace("h_File.read, #ERR null sized: " << m_FilePath);
+            return 0;
+          }
+          a_Buffer = m_Buffer = h_Malloc(m_Length);
+        }
+        
+        unsigned long result = fread(m_Buffer, m_Size, m_Length, m_File); 
+  
+        if (!result)
+        {
+          dtrace("h_File.read, #ERR read: " << m_FilePath);
+          return 0;;
+        }
+        
+        close();  
+        return result;
+      }
+
+    // write
+    unsigned int write (const char* a_FileName,
+                        void* a_Buffer,
+                        const unsigned long a_Length = 0,
+                        const unsigned long a_Size = 1,
+                        char* a_Mode = H_FILE_WB)
+      {
+        if (a_Buffer == H_NULL)
+        {
+          dtrace("h_File.write, #ERR no buffer for: "<< m_FilePath);
+          return 0;
+        }
+        
+        m_File    = H_NULL;
+        m_Buffer  = a_Buffer;
+        m_Length  = a_Length;
+        m_Size    = a_Size;
+        m_Mode    = a_Mode;
+        
+        path(a_FileName);  
+        m_File = fopen(m_FilePath, m_Mode);
+        dtrace("h_File.write, open(" << m_Mode << "): " << m_FilePath);
+          
+        if (!m_File)
+        {
+          dtrace("h_File.write, #ERR open(" << m_Mode << "): " << m_FilePath);
+          return 0;
+        }
+  
+        if (!m_Length)
+        {
+          dtrace("h_File.write, #ERR write 0 bytes: " << m_FilePath);
+          return 0;
+        }
+        
+        if (!fwrite(m_Buffer, m_Size, m_Length, m_File))
+        {
+          dtrace("h_File.write, #ERR write: " << m_FilePath);
+          return 0;
+        }
+        close();
+  
+        return 1;
+      }
+};
+
+//----------------------------------------------------------------------
+#endif // h_File_included
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 class h_File
 {
   public:
@@ -32,6 +238,7 @@ class h_File
     int  read(char* buffer, int num) { return 0; }
     int  write(char* buffer, int num) { return 0; }
 };
+*/
 
 //// read file from base path
 //
@@ -112,6 +319,3 @@ class h_File
 //  return 1;
 //}
 //
-
-//----------------------------------------------------------------------
-#endif

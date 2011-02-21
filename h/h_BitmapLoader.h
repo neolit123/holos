@@ -28,6 +28,9 @@
 
 #include "extern/stb_image.c"
 #include <stdio.h>
+#include "h/h_Defines.h"
+#include "h/h_Stdlib.h"
+#include "h/h_File.h"
 
 class h_BitmapLoader
 {
@@ -36,6 +39,7 @@ class h_BitmapLoader
     int             m_Height;
     int             m_Depth;
     unsigned char*  m_Buffer;
+    h_File          m_File;
 
   public:
     int   getWidth(void)  { return m_Width; }
@@ -70,16 +74,29 @@ class h_BitmapLoader
 
     void load(char* filename)
       {
-        FILE* fp = fopen(filename,"rb");
+        unsigned long length = mFile.length(filename);
+        char* buffer = (char*)h_Malloc(length);
+
+        mFile.read(filename, buffer, length, sizeof(char), H_FILE_RB);
+        decode(buffer, length);
+        mFile.freebuf();
+        
+
+        /*
+        char filepath[H_MAX_PATHSIZE] = "";
+        h_Strcat(filepath, h_GetBasePath(filepath));
+        h_Strcat(filepath, filename);
+        FILE* fp = fopen(filepath,"rb");
         fseek(fp,0,SEEK_END);
         int size = ftell(fp);
         fseek(fp,0,SEEK_SET);
         char* buffer = (char*)h_Malloc(size);
         int num = fread(buffer,1,size,fp);
-        if (size!=num) { /* error */ }
+        // if (size!=num) { error }
         fclose(fp);
         decode(buffer,size);
         h_Free(buffer);
+        */
       }
 
     void swap_rgba(void)

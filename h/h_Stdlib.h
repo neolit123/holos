@@ -451,8 +451,8 @@ char* h_Strrev (register char* str)
  */
 
 _H_STDLIB_INLINE
-char* h_Itoa(register char* _st, int n, unsigned int maxlen = 10,
-  unsigned int base = 10, unsigned int fg = 0)
+char* h_Itoa( register char* _st, int n, unsigned int maxlen = 10,
+              unsigned int base = 10, unsigned int fg = 0)
 {
   if (!_st || maxlen > 33) return (char*)"0";
   register unsigned int v, p = 1;
@@ -548,8 +548,9 @@ int h_Atoi (register const char* s)
  *
  */
 _H_STDLIB_INLINE
-char* h_Ftoa(register char* st, register double f,
-  register int maxlen = 5, const unsigned int fg = 0) //, const bool e = false)
+char* h_Ftoa( register char* st, register double f,
+              register int maxlen = 5, const unsigned int fg = 0)
+              //, const bool e = false)
 {
   if (!st) return (char*)"0";
   char* ret = st;
