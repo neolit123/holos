@@ -60,7 +60,7 @@ class h_BitmapLoader
 
     ~h_BitmapLoader()
       {
-        if (m_Buffer) free(m_Buffer);
+        if (m_Buffer) h_Free(m_Buffer);
       }
 
     void decode(char* buffer, int size)
@@ -74,13 +74,13 @@ class h_BitmapLoader
 
     void load(char* filename)
       {
-        unsigned long length = mFile.length(filename);
+        unsigned long length = m_File.length(filename);
         char* buffer = (char*)h_Malloc(length);
 
-        mFile.read(filename, buffer, length, sizeof(char), H_FILE_RB);
+        m_File.read(filename, buffer, length, sizeof(char), H_FILE_RB);
         decode(buffer, length);
-        mFile.freebuf();
-        
+        m_File.freebuf();
+
 
         /*
         char filepath[H_MAX_PATHSIZE] = "";

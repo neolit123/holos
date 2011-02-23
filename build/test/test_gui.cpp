@@ -4,11 +4,11 @@
 //#define H_DEBUG_CON_NOTOP
 //#define H_DEBUG_CON_NORESIZE
 
-#define H_DEBUG_LOG "holos_debug.log"
+//#define H_DEBUG_LOG "holos_debug.log"
 
-#define H_DEBUG_MEM
-#define H_DEBUG_MEM_PRINT
-#define H_DEBUG_NEW
+//#define H_DEBUG_MEM
+//#define H_DEBUG_MEM_PRINT
+//#define H_DEBUG_NEW
 
 #include "holos.h"
 #include "h/h_SkinDefault.h"
@@ -65,6 +65,10 @@ class my_Widget : public h_Widget
 
 //----------------------------------------------------------------------
 
+const char* strings[] = { (char*)"string0", (char*)"string1", (char*)"string2", (char*)"string3" };
+float pow2(const float x) { return h_Pow(x,2.f); }
+float inv_pow2(const float x) { return h_Log(x)/h_Log(2.f); }
+
 class my_Descriptor : public h_Descriptor
 {
   public:
@@ -82,9 +86,19 @@ class my_Descriptor : public h_Descriptor
         m_NumOutputs  = 2; // outputs
         m_EditorRect  = h_Rect(0,0,640,480);
 
-        appendParameter( new h_Parameter("param","", PF_DEFAULT, 0 ) );
-        appendParameter( new h_ParFloat( "float","", PF_DEFAULT, 1.5, 0,5,0.25 ) );
-        appendParameter( new h_ParInt(   "int",  "", PF_DEFAULT, 3, 1,10, H_NULL) );
+        appendParameter( new h_Parameter("param",   "", PF_DEFAULT, 0 ) );
+        appendParameter( new h_ParFloat( "float",   "", PF_DEFAULT, 1.5, 0,5,0.25 ) );
+        appendParameter( new h_ParInt(   "int",     "", PF_DEFAULT, 3, 1,10, H_NULL) );
+
+        appendParameter( new h_ParFloat("parFloat", "", H_NULL, 4, 0, 10, 0.1, &pow2, &inv_pow2)); // 16
+        appendParameter( new h_ParInt(  "parInt",   "", H_NULL, 4, 0, 40, &pow2, &inv_pow2)); // 16
+        appendParameter( new h_ParText( "parText",  "", H_NULL, 2, 4, strings));
+
+        // would it be possible (and/or sensible) to have the default, and min/max values
+        // transformed through the inv_pow2 callbacks?
+        // so we could set the top one to:
+        // H_NULL, 16, 0, 1024, 0.1, &pow...
+        // and the 16,0,1024 would be changed to 4,0,10 (by inv_pow2)..
 
       }
 };
@@ -136,13 +150,11 @@ class my_Instance : public h_Instance,
       {
         h_Rect rect = getEditorRect();
         m_Editor = new h_Editor(this,rect,ptr);
-
-        char temp[H_MAX_STRINGSIZE];
-        temp[0] = 0;
-        h_GetBasePath(temp);
-        h_Strcat(temp,"../extern/mverb/background.png");
+        //char temp[H_MAX_STRINGSIZE];
+        //temp[0] = '\0';
+        //h_Strcat(temp,"../extern/mverb/background.png");
         //trace("path: " << temp)
-        loader.load(temp);
+        loader.load((char*)"../extern/mverb/background.png");
         int w = loader.getWidth();
         int h = loader.getHeight();
         int d = 24;//loader.getDepth();
@@ -183,28 +195,37 @@ class my_Instance : public h_Instance,
         m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect(  0,64),wa_Top ));
         m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect( 64, 0),wa_Right ));
         m_Editor->appendWidget( wdg = new h_WdgPanel(m_Editor,H_NULL_RECT,   wa_Client ));
-          wdg->setBorders(20,20,10,10);
-          wdg->appendWidget( w2 = new my_Widget( wdg, h_Rect(100,20),wa_StackedVert) );
-            w2->m_Bitmap = bmp;
-            w2->m_Surface = srf;
-          wdg->appendWidget( new h_WdgLabel( wdg, h_Rect(100,20),wa_StackedVert, "label") );
-          wdg->appendWidget( new h_WdgButton(wdg, h_Rect(100,20),wa_StackedVert, "button") );
-          wdg->appendWidget( new h_WdgValue( wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
-          wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),wa_StackedVert, 0.3) );
+        wdg->setBorders(20,20,10,10);
 
-        h_Parameter* par = m_Parameters->item(2);
-        m_Editor->connect( par, wdg2 );
+        //#define WAL wa_StackedVert
+        #define WAL wa_Top
 
-        // not needed for standalone?
-        // it will get a size-event and we realign there..
-        // fix this!!!
-        //#ifdef H_LIB
-          m_Editor->do_SetSize(rect.w,rect.h);
-        //  //m_Editor->do_Realign();
-        //#endif
+        wdg->appendWidget( w2 = new my_Widget( wdg, h_Rect(100,20),WAL) );
+        w2->m_Bitmap = bmp;
+        w2->m_Surface = srf;
+        wdg->appendWidget( new h_WdgLabel( wdg, h_Rect(100,20),WAL, "label") );
+        wdg->appendWidget( new h_WdgButton(wdg, h_Rect(100,20),WAL, "button") );
+        wdg->appendWidget( new h_WdgValue( wdg, h_Rect(100,20),WAL, 0.3) );
 
+        //h_Parameter* par;
+
+        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
+        m_Editor->connect( m_Parameters->item(2), wdg2 );
+
+        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
+        m_Editor->connect( m_Parameters->item(3), wdg2 );
+
+        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
+        m_Editor->connect( m_Parameters->item(4), wdg2 );
+
+        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
+        m_Editor->connect( m_Parameters->item(5), wdg2 );
+
+        m_Editor->do_SetSize(rect.w,rect.h); // paints buffer
         m_Editor->show();
         return (void*)m_Editor;
+
+        #undef WAL
       }
 
     //----------

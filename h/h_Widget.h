@@ -123,6 +123,16 @@ class h_WidgetListener
 
 //----------------------------------------------------------------------
 
+// TODO. sort (and documanet) member variables by feature/functionality,
+// perhaps rename the variables depending on function..
+/*
+  visual:        rect,skin
+  alignment:     alignment,min/max width/height,margin,padding,content,orig
+  interactivity: captured,hover,modal widgets
+  hierarchy:     listener, parent, children, index, connect,
+  options:       flags
+*/
+
 class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
@@ -146,6 +156,7 @@ class h_Widget : public h_WidgetBase,
     h_Widget*         m_Parent;
     int               m_Index;
     int               m_Connect;
+    h_Parameter*      m_Parameter;
     int               m_Flags;
     h_Widgets         m_Children;
     h_Rect            m_Rect;
@@ -171,6 +182,8 @@ class h_Widget : public h_WidgetBase,
     virtual void      setInternal(float a_Value)      { }
     virtual float     getInternal(void)               { return 0; }
 
+    inline void       setParameter(h_Parameter* a_Parameter) { m_Parameter = a_Parameter; }
+
   public:
 
     h_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Alignment=wa_None)
@@ -179,6 +192,7 @@ class h_Widget : public h_WidgetBase,
         m_Parent          = H_NULL;
         m_Index           = -1;
         m_Connect         = -1;
+        m_Parameter       = H_NULL;
         m_Flags           = wf_Active|wf_Visible|wf_Capture|wf_Align;
         m_Rect            = a_Rect;
         m_Skin            = H_NULL;

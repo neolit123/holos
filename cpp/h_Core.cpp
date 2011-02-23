@@ -49,6 +49,7 @@ h_Core::~h_Core()
   {
     if (m_Initialized)
     {
+      // cppcheck: safe to delete NULL ptr
       if (m_Platform) delete m_Platform;
       if (m_Format) delete m_Format;
     }

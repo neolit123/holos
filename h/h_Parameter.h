@@ -146,15 +146,24 @@ class h_ParFloat : public h_Parameter
       {
         m_Ptr      = a_Ptr;
         m_InvPtr   = a_InvPtr;
-        
+
+        //if (a_InvPtr)
+        //{
+        //  m_Value  = a_InvPtr(a_Value);
+        //  m_Min    = a_InvPtr(a_Min);
+        //  m_Max    = a_InvPtr(a_Max);
+        //}
+        //else
+        {
         m_Value  = a_Value;
         m_Min    = a_Min;
         m_Max    = a_Max;
-        
+        }
+
         m_Step     = a_Step;
         m_Range    = m_Max - m_Min;
         m_InvRange = 1 / m_Range;
-        
+
         if(m_Step > 0)
         {
           m_NumSteps = 1 + (m_Range / m_Step);
@@ -169,7 +178,7 @@ class h_ParFloat : public h_Parameter
         }
         setValueDefault(m_Value);
       }
-      
+
     virtual void  setValueDefault(const float a_Value)
       {
         m_Value = ((a_Value - m_Min) * m_InvRange);
@@ -188,7 +197,7 @@ class h_ParFloat : public h_Parameter
         if(m_Step > 0)
         {
           const float n = m_Value * m_NumSteps;
-          const int st = h_Mini((int)n, (int)(m_NumSteps - 1));          
+          const int st = h_Mini((int)n, (int)(m_NumSteps - 1));
           return m_Min + (st * m_Step);
         }
         else
@@ -196,7 +205,7 @@ class h_ParFloat : public h_Parameter
           return m_Min + (m_Value * m_Range);
         }
       }
-    
+
     virtual float getValue(void)
       {
         if (m_Ptr == H_NULL && m_InvPtr == H_NULL)
@@ -207,6 +216,9 @@ class h_ParFloat : public h_Parameter
 };
 
 //----------------------------------------------------------------------
+
+// remove this??
+
 class h_ParDb : public h_ParFloat
 {
   private:
@@ -221,11 +233,10 @@ class h_ParDb : public h_ParFloat
             const float a_Value = 0.f,
             const float a_Min = 0.f,
             const float a_Max = 1.f,
-            const float a_Step = 0.f)                
+            const float a_Step = 0.f)
     : h_ParFloat( a_Name, "dB", a_Flags, a_Value, a_Min, a_Max, a_Step)
     {}
 };
-
 
 //----------------------------------------------------------------------
 class h_ParInt : public h_Parameter
@@ -269,7 +280,7 @@ class h_ParInt : public h_Parameter
         m_HalfStep  = (m_InvRange)*0.5;
         m_Ptr       = a_Ptr;
         m_InvPtr    = a_InvPtr;
-        
+
         setInt(a_Value);
       }
 
@@ -314,25 +325,25 @@ class h_ParText : public h_ParInt
 {
   private:
     const char**  m_Strings;
-   
+
   public:
 
     h_ParText( const h_String a_Name,
               const h_String a_Label = "",
               const int a_Flags = 0,
-              const int a_Value = 0,              
+              const int a_Value = 0,
               const int a_Max = 1,
               const char** a_Strings = NULL)
       : h_ParInt(a_Name, a_Label, a_Flags, a_Value, 0, a_Max - 1)
       {
         setup(a_Strings);
       }
-      
+
     void setup(const char** a_Strings)
       {
         m_Strings = a_Strings;
       }
-    
+
     virtual void getDisplay(char* buf)
       {
         const int i = getInt();

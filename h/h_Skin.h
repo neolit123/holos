@@ -25,24 +25,18 @@
 
 //----------
 
-//struct h_SkinSettings
-//{
-//  h_Color m_BackColor;
-//  h_Color m_FillColor;
-//  h_Color m_DrawColor;
-//  h_Color m_TextColor;
-//  h_Color m_LightColor;
-//  h_Color m_DarkColor;
-//};
-
-//----------
-
 /*
   note that a skin doesn't need to overload all methods, we could for example
   have a skin with just a knob drawing function... if we attach this skin
   only to a knob widget, all is fine...
+  or a skin inheriting from another one, but override just some methods,
+  or the default colors, etc..
+  perhaps read from .ini file
+  draw bitmaps
+  opengl
   nice fif we need different looking widgets for different parts of a
   plugin editor... (sliders, knobs, buttons...)
+
 */
 
 class h_Skin
@@ -53,12 +47,17 @@ class h_Skin
     //h_Skin() {}
     //virtual ~h_Skin() {}
 
+    // the basic primitives used by the widgets
+
     virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
     virtual void drawPanel(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode) {}
     virtual void drawLabel(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
     virtual void drawButton(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
     virtual void drawValue(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
     virtual void drawSlider(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
+
+    virtual void drawValueExt(  h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp) {}
+    virtual void drawSliderExt( h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp) {}
 
 };
 

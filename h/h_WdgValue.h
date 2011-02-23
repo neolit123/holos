@@ -24,6 +24,8 @@
 #include "h/h_Color.h"
 #include "h/h_Widget.h"
 
+#define H_MAX_DISPLAYSTRING 32
+
 class h_WdgValue : public h_Widget
 {
   private:
@@ -32,13 +34,14 @@ class h_WdgValue : public h_Widget
     float m_ClickedY;
     bool  m_IsDragging;
   protected:
+    char  m_DispBuf[H_MAX_DISPLAYSTRING];
     float m_Value;
     bool  m_DragVertical;
     float m_DragSensitivity;
 
   public:
 
-    h_WdgValue(h_WidgetListener* a_Listener,h_Rect a_Rect, int a_Align, float a_Value)
+    h_WdgValue(h_WidgetListener* a_Listener,h_Rect a_Rect, int a_Align, float a_Value=0)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
         m_Value  = a_Value;
@@ -70,7 +73,14 @@ class h_WdgValue : public h_Widget
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        m_Skin->drawValue(a_Painter,m_Rect,a_Mode,m_Value);
+        if (m_Parameter)
+        {
+          h_String text = m_Parameter->getName();
+          m_Parameter->getDisplay(m_DispBuf);
+          float value = m_Parameter->getValue();
+          m_Skin->drawValueExt(a_Painter,m_Rect,a_Mode,value,text,m_DispBuf);
+        }
+        else m_Skin->drawValue(a_Painter,m_Rect,a_Mode,m_Value);
       }
 
     virtual void do_Enter(h_Widget* a_Widget)

@@ -65,6 +65,8 @@ class h_Window : public h_Window_Impl
     // we're tweaking a widget, so redraw it directly
     // and if buffered, blit to screen
 
+    // also called from h_Editor.notifyParameter
+
     virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
         h_Rect rect = a_Widget->getRect();
@@ -72,6 +74,7 @@ class h_Window : public h_Window_Impl
         h_Painter* painter = getSurface()->getPainter();
         a_Widget->do_Paint(painter,rect,a_Mode);
         //beginPaint();
+        //trace("blitbuffer: " << rect.x << "," << rect.y << ", " << rect.w << "," << rect.h);
         blitBuffer(rect);
         //endPaint();
       }
@@ -115,5 +118,6 @@ resizing the window means that we have to resize the h_Surface too, and doing
 this per pixel could be slow (?),
 so we might keep a larger surface than we really need, and just use the part
 we need to fill the window/editor size..
+(a bit like the h_Array, but for two dimensions)
 
 */

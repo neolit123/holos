@@ -103,9 +103,9 @@
 // -----------------------------------------------------------------------------
 
 // deprecate..
-#ifndef   NULL
-  #define NULL 0
-#endif
+//#ifndef   NULL
+//  #define NULL 0
+//#endif
 
 #define H_NULL 0
 

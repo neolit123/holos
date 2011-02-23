@@ -439,6 +439,7 @@ class h_Window_Linux : public h_Widget,
         //beginPaint();
         m_Painter->drawSurface( m_Surface, a_Rect.x,a_Rect.y, a_Rect.x,a_Rect.y,a_Rect.w,a_Rect.h );
         //endPaint();
+        flush();
       }
 
     //----------------------------------------
@@ -839,7 +840,7 @@ typedef h_Window_Linux h_Window_Impl;
 
 void* h_linux_threadProc(void* data)
   {
-    h_Window_Impl* win = (h_Window_Impl*)data;
+    h_Window_Impl* win = (h_Window_Impl*)data; // cppcheck: c-style pointer casting
     //trace("threadProc. win=" << win);
     if (win)
     {
@@ -879,7 +880,7 @@ void* h_linux_threadProc(void* data)
 
 void* h_linux_timerProc(void* data)
   {
-    h_Window_Impl* win = (h_Window_Impl*)data;
+    h_Window_Impl* win = (h_Window_Impl*)data; // cppcheck: c-style pointer casting
     if (win)
     {
       while (win->m_TimerRunning)

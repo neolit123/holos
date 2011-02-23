@@ -30,7 +30,7 @@ class h_WdgSlider : public h_WdgValue
 
   public:
 
-    h_WdgSlider(h_WidgetListener* a_Listener,h_Rect a_Rect, int a_Align, float a_Value)
+    h_WdgSlider(h_WidgetListener* a_Listener,h_Rect a_Rect, int a_Align, float a_Value=0)
     : h_WdgValue(a_Listener,a_Rect,a_Align,a_Value)
       {
         m_DragVertical = false;
@@ -43,7 +43,14 @@ class h_WdgSlider : public h_WdgValue
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        m_Skin->drawSlider(a_Painter,m_Rect,a_Mode,m_Value);
+        if (m_Parameter)
+        {
+          h_String text = m_Parameter->getName();
+          m_Parameter->getDisplay(m_DispBuf);
+          float value = m_Parameter->getInternal();
+          m_Skin->drawSliderExt(a_Painter,m_Rect,a_Mode,value,text,m_DispBuf);
+        }
+        else m_Skin->drawSlider(a_Painter,m_Rect,a_Mode,m_Value);
       }
 
 };

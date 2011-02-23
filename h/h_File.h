@@ -54,6 +54,7 @@ class h_File
     h_File()
       {
         m_File = H_NULL;
+        m_Buffer = H_NULL;
       }
 
     ~h_File()
@@ -61,21 +62,23 @@ class h_File
         close();
         freebuf();
       }
-    
+
     // close
     void close(void)
       {
         if (m_File)
           fclose(m_File);
+        m_File = H_NULL;
       }
-      
+
     // free buffer
     void freebuf(void)
       {
         if (m_Buffer)
           h_Free(m_Buffer);
+        m_Buffer = H_NULL;
       }
-      
+
     // set path
     char* path(const char* a_FileName)
       {
@@ -84,26 +87,27 @@ class h_File
         h_Strcat(m_FilePath, (char*)a_FileName);
         return m_FilePath;
       }
-    
+
     // get length
     unsigned long length( const char* a_FileName,
                           char* a_Mode = H_FILE_RB)
       {
         m_Mode = a_Mode;
-        
+
         path(a_FileName);
         m_File = fopen(m_FilePath, m_Mode);
-        
+
         if (!m_File)
         {
           dtrace("h_File.size, #ERR open(" << m_Mode << "): " << m_FilePath);
           return 0;
         }
-        
+
         fseek(m_File, 0, SEEK_END);
         m_Length = ftell(m_File);
         fseek(m_File, 0, SEEK_SET);
-        
+        close();
+
         return m_Length;
       }
 
@@ -119,21 +123,21 @@ class h_File
         m_Length  = a_Length;
         m_Size    = a_Size;
         m_Mode    = a_Mode;
-  
+
         path(a_FileName);
         m_File = fopen(m_FilePath, m_Mode);
         dtrace("h_File.read, open(" << m_Mode << "): " << m_FilePath);
-        
+
         if (!m_File)
         {
           dtrace("h_File.read, #ERR open(" << m_Mode << "): " << m_FilePath);
           return 0;
         }
-  
+
         if (a_Length == H_FILE_RAUTO)
         {
-          length(a_FileName);
-          
+          m_Length = length(a_FileName);
+
           if (!m_Length)
           {
             dtrace("h_File.read, #ERR null sized: " << m_FilePath);
@@ -141,16 +145,16 @@ class h_File
           }
           a_Buffer = m_Buffer = h_Malloc(m_Length);
         }
-        
-        unsigned long result = fread(m_Buffer, m_Size, m_Length, m_File); 
-  
+
+        unsigned long result = fread(m_Buffer, m_Size, m_Length, m_File);
+
         if (!result)
         {
           dtrace("h_File.read, #ERR read: " << m_FilePath);
           return 0;;
         }
-        
-        close();  
+        close();
+
         return result;
       }
 
@@ -166,36 +170,36 @@ class h_File
           dtrace("h_File.write, #ERR no buffer for: "<< m_FilePath);
           return 0;
         }
-        
+
         m_File    = H_NULL;
         m_Buffer  = a_Buffer;
         m_Length  = a_Length;
         m_Size    = a_Size;
         m_Mode    = a_Mode;
-        
-        path(a_FileName);  
+
+        path(a_FileName);
         m_File = fopen(m_FilePath, m_Mode);
         dtrace("h_File.write, open(" << m_Mode << "): " << m_FilePath);
-          
+
         if (!m_File)
         {
           dtrace("h_File.write, #ERR open(" << m_Mode << "): " << m_FilePath);
           return 0;
         }
-  
+
         if (!m_Length)
         {
           dtrace("h_File.write, #ERR write 0 bytes: " << m_FilePath);
           return 0;
         }
-        
+
         if (!fwrite(m_Buffer, m_Size, m_Length, m_File))
         {
           dtrace("h_File.write, #ERR write: " << m_FilePath);
           return 0;
         }
         close();
-  
+
         return 1;
       }
 };

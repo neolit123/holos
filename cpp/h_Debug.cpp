@@ -44,6 +44,7 @@ h_Debug::~h_Debug()
     #ifdef H_DEBUG_MEM
       static_MemTracer.stop();
     #endif
+    // cppcheck: safe to delete NULL ptr
     #ifdef H_DEBUG_LOG
       if (m_LogFile) delete m_LogFile;
     #endif

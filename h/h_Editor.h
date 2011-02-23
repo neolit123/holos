@@ -42,7 +42,7 @@ typedef h_Array<h_Connection*> h_Connections;
   if there are rapid automation of a parameter from the host, there would be a
   cpu hit for all the redrawing, that might even happen too fast to notice.
   we cache the widget that needs to be redrawn, and paint them all in
-  in IdleEditor (vst), or from a timer.
+  one IdleEditor (vst), or from a timer.
   also, we check if the widget is already in the update list, and only
   keep the last update (no point drawing the in-betweens).
 */
@@ -59,6 +59,9 @@ struct h_WidgetUpdateInfo
 };
 
 typedef h_Array<h_WidgetUpdateInfo> h_WidgetUpdates;
+
+// a h_Queue might be safer for a single-reader/single-writer, thread-wise
+// or even better, a h_RingBuffer ??
 
 //#include "h/h_Queue.h"
 //#define H_WIDGET_QUEUE_SIZE 256
@@ -143,6 +146,8 @@ class h_Editor : public h_Window
       {
         int conn = m_Connections.size();
         a_Widget->setConnect(conn);
+        a_Widget->setParameter(a_Parameter);
+        a_Widget->setInternal( a_Parameter->getInternal() );
         a_Parameter->setConnect(conn);
         m_Connections.append( new h_Connection(a_Parameter,a_Widget) );
       }
