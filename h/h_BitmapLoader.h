@@ -58,6 +58,16 @@ class h_BitmapLoader
         m_Buffer = H_NULL;
       }
 
+    h_BitmapLoader(char* buffer, int size)
+      {
+        decode(buffer,size);
+      }
+
+    h_BitmapLoader(char* filename)
+      {
+        load(filename);
+      }
+
     ~h_BitmapLoader()
       {
         if (m_Buffer) h_Free(m_Buffer);
@@ -81,7 +91,6 @@ class h_BitmapLoader
         decode(buffer, length);
         m_File.freebuf();
 
-
         /*
         char filepath[H_MAX_PATHSIZE] = "";
         h_Strcat(filepath, h_GetBasePath(filepath));
@@ -97,6 +106,21 @@ class h_BitmapLoader
         decode(buffer,size);
         h_Free(buffer);
         */
+      }
+
+    h_Surface* createSurface(h_Window* a_Window)
+      {
+        int w = m_Width;
+        int h = m_Height;
+        int d = 24;//loader.getDepth(); // x crash with 32 (on 24 bit nvidia)
+        char* b = (char*)m_Buffer;
+        h_Bitmap* bmp = a_Window->createBitmap(w,h,d,b);
+        bmp->prepare();
+        h_Surface* srf = a_Window->createSurface(w,h,d);
+        h_Painter* paint = srf->getPainter();
+        paint->drawBitmap( bmp, 0,0, 0,0,w,h );
+        delete bmp;
+        return srf;
       }
 
     void swap_rgba(void)

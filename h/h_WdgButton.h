@@ -54,19 +54,19 @@ class h_WdgButton : public h_Widget
 
     virtual void do_Enter(h_Widget* a_Widget)
       {
-        m_Listener->on_Redraw(this,2); // draw border
+        m_Listener->on_Redraw(this,dm_Enter); // draw border
         m_Listener->on_Cursor(cu_Finger);
       }
 
     virtual void do_Leave(h_Widget* a_Widget)
       {
-        m_Listener->on_Redraw(this,3); // remove border
+        m_Listener->on_Redraw(this,dm_Leave); // remove border
         m_Listener->on_Cursor(H_DEF_CURSOR);
       }
 
     virtual void do_MouseDown(int x, int y, int b, int s)
       {
-        m_Listener->on_Redraw(this,1); // highlight
+        m_Listener->on_Redraw(this,dm_Active); // highlight
         m_Clicked = true;
         m_WasInside = true;
       }
@@ -74,11 +74,11 @@ class h_WdgButton : public h_Widget
     virtual void do_MouseUp(int x, int y, int b, int s)
       {
         bool inside = m_Rect.contains(x,y);
-        m_Listener->on_Redraw(this,0); // background
+        m_Listener->on_Redraw(this,dm_Normal); // background
         if (inside)
         {
           m_Listener->on_Change(this);
-          m_Listener->on_Redraw(this,2); // border
+          m_Listener->on_Redraw(this,dm_Enter); // border
         }
         m_Clicked = false;
       }
@@ -88,8 +88,8 @@ class h_WdgButton : public h_Widget
         if (m_Clicked)
         {
           bool inside = m_Rect.contains(x,y);
-          if (m_WasInside && !inside) m_Listener->on_Redraw(this,0); // normal (off)
-          if (!m_WasInside && inside) m_Listener->on_Redraw(this,1); // on (highlight)
+          if (m_WasInside && !inside) m_Listener->on_Redraw(this,dm_Normal); // normal (off)
+          if (!m_WasInside && inside) m_Listener->on_Redraw(this,dm_Active); // on (highlight)
           m_WasInside = inside;
         }
       }

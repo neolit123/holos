@@ -28,71 +28,49 @@
 //#include "gui/h_Skin.h"
 #include "h/h_Skin.h"
 
-struct h_SkinColors
-{
-  h_Color m_FillColor;
-  h_Color m_BorderColor;
-  h_Color m_TextColor;
-  h_Color m_ActiveColor;
-  h_Color m_ValueColor;
-};
-
-//----------
+/*
+  a_Mode:
+  0 : default
+  1 : active
+  2 : hover on
+  3 : hover off
+  todo: fix these...
+*/
 
 class skin_Default : public h_Skin
 {
   private:
-    h_SkinColors  m_BackSkin;
-    h_SkinColors  m_PanelSkin;
-    h_SkinColors  m_LabelSkin;
-    h_SkinColors  m_ButtonSkin;
-    h_SkinColors  m_ValueSkin;
-    h_SkinColors  m_SliderSkin;
+    h_Color m_BackColor;
+    h_Color m_PanelColor;
+    h_Color m_WidgetColor;
+    h_Color m_TextColor;
+    h_Color m_ValueColor;
+    h_Color m_ActiveTextColor;
+    h_Color m_ActiveValueColor;
+
+    h_Color m_BorderColor;
+    h_Color m_HoverColor;
 
   public:
     skin_Default()
     //: h_Skin(&m_Settings)
       {
-        m_BackSkin.m_FillColor      = H_RGB(128,128,128);
+        m_BackColor         = H_RGB(120,120,120);
+        m_PanelColor        = H_RGB(128,128,128);
+        m_WidgetColor       = H_RGB(136,136,136);
 
-        m_PanelSkin.m_FillColor     = H_RGB(128,128,128);
-        m_PanelSkin.m_BorderColor   = H_RGB( 96, 96, 96);
+        m_TextColor         = H_RGB( 96, 96, 96);
+        m_ValueColor        = H_RGB(160,160,160);
+        m_ActiveTextColor   = H_RGB(  0,  0,  0);
+        m_ActiveValueColor  = H_RGB(176,176,176);
 
-        m_LabelSkin.m_FillColor     = H_RGB(120,120,120);
-        m_LabelSkin.m_TextColor     = H_RGB(192,192,192);
-
-        m_ButtonSkin.m_FillColor    = H_RGB(112,112,112);
-        m_ButtonSkin.m_BorderColor  = H_RGB( 64, 64, 64);
-        m_ButtonSkin.m_TextColor    = H_RGB(192,192,192);
-        m_ButtonSkin.m_ActiveColor  = H_RGB( 96, 96, 96);
-
-        m_SliderSkin.m_FillColor    = H_RGB(112,112,112);
-        m_SliderSkin.m_BorderColor  = H_RGB( 64, 64, 64);
-        m_SliderSkin.m_ValueColor   = H_RGB(144,144,144);
-        m_SliderSkin.m_ActiveColor  = H_RGB(160,160,160);
-        m_SliderSkin.m_TextColor    = H_RGB( 64, 64, 64);
-
-        m_ValueSkin.m_FillColor     = H_RGB(112,112,112);
-        m_ValueSkin.m_BorderColor   = H_RGB( 64, 64, 64);
-        m_ValueSkin.m_ValueColor    = H_RGB(144,144,144);
-        m_ValueSkin.m_ActiveColor   = H_RGB(160,160,160);
-        m_ValueSkin.m_TextColor     = H_RGB(160,160,160);
+        m_BorderColor       = H_RGB(160,160,160);
+        m_HoverColor        = H_RGB(192,192,192);
       }
-
-    //--------------------------------------------------
-    /*
-      a_Mode:
-      0 : default
-      1 : active
-      2 : hover on
-      3 : hover off
-      todo: fix these...
-    */
-    //--------------------------------------------------
 
     virtual void drawBackground(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        a_Painter->setFillColor(m_BackSkin.m_FillColor);
+        a_Painter->setFillColor(m_BackColor);
         a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h);
       }
 
@@ -102,14 +80,14 @@ class skin_Default : public h_Skin
       {
         switch (a_Mode)
         {
-          case 0: // up
-            a_Painter->setFillColor(m_PanelSkin.m_FillColor);
+          case dm_Normal:
+            a_Painter->setFillColor(m_PanelColor);
             a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-            a_Painter->setDrawColor(m_PanelSkin.m_BorderColor);
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 1: // down
-            break;
+          //case dm_Active:
+          //  break;
         }
       }
 
@@ -117,9 +95,9 @@ class skin_Default : public h_Skin
 
     virtual void drawLabel(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text)
       {
-        a_Painter->setFillColor(m_LabelSkin.m_FillColor);
+        a_Painter->setFillColor(m_WidgetColor);
         a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-        a_Painter->setTextColor(m_LabelSkin.m_TextColor);
+        a_Painter->setTextColor(m_TextColor);
         a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Text.ptr(), ta_Center);
       }
 
@@ -129,24 +107,28 @@ class skin_Default : public h_Skin
       {
         switch (a_Mode)
         {
-          case 0: // normal
-            a_Painter->setFillColor(m_ButtonSkin.m_FillColor);
+          case dm_Normal:
+            a_Painter->setFillColor(m_WidgetColor);
             a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-            a_Painter->setTextColor(m_ButtonSkin.m_TextColor);
+            a_Painter->setTextColor(m_TextColor);
             a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Text.ptr(), ta_Center);
-            break;
-          case 1: // click
-            a_Painter->setFillColor(m_ButtonSkin.m_ActiveColor);
-            a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-            a_Painter->setTextColor(m_ButtonSkin.m_TextColor);
-            a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Text.ptr(), ta_Center);
-            break;
-          case 2: // hover on
-            a_Painter->setDrawColor(m_ButtonSkin.m_BorderColor);
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 3: // hover off
-            a_Painter->setDrawColor(m_ButtonSkin.m_FillColor);
+          case dm_Active:
+            a_Painter->setFillColor(m_WidgetColor);
+            a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            a_Painter->setTextColor(m_ActiveTextColor);
+            a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Text.ptr(), ta_Center);
+            a_Painter->setDrawColor(m_BorderColor);
+            a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            break;
+          case dm_Enter: // hover on
+            a_Painter->setDrawColor(m_HoverColor);
+            a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
+            break;
+          case dm_Leave: // hover off
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
         } // switch
@@ -159,37 +141,36 @@ class skin_Default : public h_Skin
         char buffer[256];
         switch (a_Mode)
         {
-          case 0: // normal
+          case dm_Normal:
             {
-              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               h_Ftoa(buffer,a_Value);
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->setTextColor(m_TextColor);
               a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
-
-              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 1: // active
+          case dm_Active:
             {
-              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               h_Ftoa(buffer,a_Value);
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->setTextColor(m_ActiveTextColor);
               a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
-              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
-              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              //a_Painter->setTextColor(m_TextColor);
+              //a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2(), buffer, ta_Center);
+              a_Painter->setDrawColor(m_HoverColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 2: // hover on
-            a_Painter->setDrawColor(m_ValueSkin.m_BorderColor);
+          case dm_Enter:
+            a_Painter->setDrawColor(m_HoverColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 3: // hover off
-            a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+          case dm_Leave:
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
         }
@@ -201,36 +182,36 @@ class skin_Default : public h_Skin
       {
         switch (a_Mode)
         {
-          case 0: // normal
+          case dm_Normal:
             {
-              a_Painter->setFillColor(m_SliderSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               int len = (int) (a_Value * (float)a_Rect.w);
               int x2 = a_Rect.x + len - 1;
-              a_Painter->setFillColor(m_SliderSkin.m_ValueColor);
+              a_Painter->setFillColor(m_ValueColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, x2, a_Rect.y2());
-              a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 1: // active
+          case dm_Active:
             {
-              a_Painter->setFillColor(m_SliderSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               int len = (int) (a_Value * (float)a_Rect.w);
               int x2 = a_Rect.x + len - 1;
-              a_Painter->setFillColor(m_SliderSkin.m_ActiveColor);
+              a_Painter->setFillColor(m_ActiveValueColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, x2, a_Rect.y2());
-              a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+              a_Painter->setDrawColor(m_WidgetColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 2: // hover on
-            a_Painter->setDrawColor(m_SliderSkin.m_BorderColor);
+          case dm_Enter:
+            a_Painter->setDrawColor(m_HoverColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 3: // hover off
-            a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+          case dm_Leave:
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
         }
@@ -240,39 +221,39 @@ class skin_Default : public h_Skin
 
     //----------
 
-    virtual void drawValueExt(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Label, h_String a_Value)
+    virtual void drawValueExt(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp)
       {
         switch (a_Mode)
         {
-          case 0: // normal
+          case dm_Normal:
             {
-              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->setTextColor(m_TextColor);
               a_Painter->drawText( a_Rect.x+5, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Label.ptr(), ta_Left);
-              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Value.ptr(), ta_Right);
-              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Disp.ptr(), ta_Right);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              //a_Painter->setTextColor(m_ValueSkin.m_TextColor);
             }
             break;
-          case 1: // active
+          case dm_Active:
             {
-              a_Painter->setFillColor(m_ValueSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
-              a_Painter->setTextColor(m_ValueSkin.m_TextColor);
+              a_Painter->setTextColor(m_ActiveTextColor);
               a_Painter->drawText( a_Rect.x+5, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Label.ptr(), ta_Left);
-              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Value.ptr(), ta_Right);
-              a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+              a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Disp.ptr(), ta_Right);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 2: // hover on
-            a_Painter->setDrawColor(m_ValueSkin.m_BorderColor);
+          case dm_Enter:
+            a_Painter->setDrawColor(m_HoverColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 3: // hover off
-            a_Painter->setDrawColor(m_ValueSkin.m_FillColor);
+          case dm_Leave:
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
         }
@@ -284,42 +265,42 @@ class skin_Default : public h_Skin
       {
         switch (a_Mode)
         {
-          case 0: // normal
+          case dm_Normal:
             {
-              a_Painter->setFillColor(m_SliderSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               int len = (int) (a_Value * (float)a_Rect.w);
               int x2 = a_Rect.x + len - 1;
-              a_Painter->setFillColor(m_SliderSkin.m_ValueColor);
+              a_Painter->setFillColor(m_ValueColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, x2, a_Rect.y2());
-              a_Painter->setTextColor(m_SliderSkin.m_TextColor);
+              a_Painter->setTextColor(m_TextColor);
               a_Painter->drawText( a_Rect.x+5, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Label.ptr(), ta_Left);
               a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Disp.ptr(), ta_Right);
-              a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 1: // active
+          case dm_Active:
             {
-              a_Painter->setFillColor(m_SliderSkin.m_FillColor);
+              a_Painter->setFillColor(m_WidgetColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
               int len = (int) (a_Value * (float)a_Rect.w);
               int x2 = a_Rect.x + len - 1;
-              a_Painter->setFillColor(m_SliderSkin.m_ActiveColor);
+              a_Painter->setFillColor(m_ActiveValueColor);
               a_Painter->fillRect(a_Rect.x, a_Rect.y, x2, a_Rect.y2());
-              a_Painter->setTextColor(m_SliderSkin.m_TextColor);
+              a_Painter->setTextColor(m_ActiveTextColor);
               a_Painter->drawText( a_Rect.x+5, a_Rect.y, a_Rect.x2(), a_Rect.y2(), a_Label.ptr(), ta_Left);
               a_Painter->drawText( a_Rect.x, a_Rect.y, a_Rect.x2()-5, a_Rect.y2(), a_Disp.ptr(), ta_Right);
-              a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+              a_Painter->setDrawColor(m_BorderColor);
               a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             }
             break;
-          case 2: // hover on
-            a_Painter->setDrawColor(m_SliderSkin.m_BorderColor);
+          case dm_Enter:
+            a_Painter->setDrawColor(m_HoverColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
-          case 3: // hover off
-            a_Painter->setDrawColor(m_SliderSkin.m_FillColor);
+          case dm_Leave:
+            a_Painter->setDrawColor(m_BorderColor);
             a_Painter->drawRect(a_Rect.x, a_Rect.y, a_Rect.x2(), a_Rect.y2());
             break;
         }

@@ -150,6 +150,10 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../ports/port_eventhorizon.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../ports/port_mverb.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -158,7 +162,7 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/test_gfx.cpp">
+		<Unit filename="../test/test_blit.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -369,6 +373,7 @@
 		<Unit filename="../../h/h_WdgButton.h" />
 		<Unit filename="../../h/h_WdgColor.h" />
 		<Unit filename="../../h/h_WdgComboBox.h" />
+		<Unit filename="../../h/h_WdgImage.h" />
 		<Unit filename="../../h/h_WdgKnob.h" />
 		<Unit filename="../../h/h_WdgLabel.h" />
 		<Unit filename="../../h/h_WdgMultiPanel.h" />

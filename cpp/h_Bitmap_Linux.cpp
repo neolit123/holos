@@ -80,7 +80,7 @@ class h_Bitmap_Linux
         m_Buffer    = (char*)a_Buffer;
         m_Prepared  = false;
         m_Allocated = false;
-        allocate();
+        //allocate();
         //prepare();
       }
 
@@ -102,6 +102,7 @@ class h_Bitmap_Linux
     void prepare(void)
       {
         if (m_Prepared) return;
+        //if (!m_Buffer) allocate();
         int screen = XDefaultScreen(m_Display);
         Visual* visual = XDefaultVisual(m_Display,screen);
         m_Image = XCreateImage(

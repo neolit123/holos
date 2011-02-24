@@ -98,6 +98,7 @@ void h_Instance::transferParameters(void)
     {
       h_Parameter* par = m_Parameters->item(i);//[i];
       do_HandleParameter(par);
+      //notifyParameter(par); // ?? do we need to tell the host our values?
     }
   }
 

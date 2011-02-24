@@ -62,7 +62,7 @@ class h_Instance_Base
     virtual bool    do_ProcessBlock(float** a_Inputs, float** a_Outputs, int a_Length) { return false; }
     virtual void    do_ProcessSample(float** a_Inputs, float** a_Outputs) {}
     virtual void    do_PostProcess(float** a_Inputs, float** a_Outputs, int a_Length) {}
-    virtual void*   do_OpenEditor(void* ptr) { return H_NULL; }
+    virtual void*   do_OpenEditor(void* ptr) { return H_NULL; } // return h_Editor
     virtual void    do_CloseEditor(void) {}
     virtual void    do_IdleEditor(void) {}
   public:

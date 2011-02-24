@@ -18,50 +18,49 @@
 #include "h/h_WdgButton.h"
 #include "h/h_WdgValue.h"
 #include "h/h_WdgSlider.h"
+#include "h/h_WdgImage.h"
 
 #include "h/h_BasePath.h"
 #include "h/h_BitmapLoader.h"
 #include "h/h_Bitmap.h"
 #include "h/h_Surface.h"
 
-#include <stdio.h>  // fopen
-
 //----------------------------------------------------------------------
 
-class my_Widget : public h_Widget
-{
-  public:
-    h_Bitmap*  m_Bitmap;
-    h_Surface* m_Surface;
-
-  public:
-
-    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
-    : h_Widget(a_Listener,a_Rect,a_Align)
-      {
-      }
-
-    //virtual ~my_Widget()
-    //  {
-    //  }
-
-    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
-      {
-        int x1 = m_Rect.x;
-        int y1 = m_Rect.y;
-        int x2 = m_Rect.x2();
-        int y2 = m_Rect.y2();
-        a_Painter->setDrawColor( H_RGB(160,160,160) );
-        a_Painter->setPenWidth(5);
-        a_Painter->drawArc(x1,y1,x2,y2,0,0.75);
-        a_Painter->resetPen();
-
-        a_Painter->drawBitmap( m_Bitmap,   0,0,  0,0,456,108 );
-        a_Painter->drawSurface( m_Surface, 10,120, 0,0,64,64 );
-
-      }
-
-};
+//class my_Widget : public h_Widget
+//{
+//  public:
+//    h_Bitmap*  m_Bitmap;
+//    h_Surface* m_Surface;
+//
+//  public:
+//
+//    my_Widget(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align/*=wa_None*/)
+//    : h_Widget(a_Listener,a_Rect,a_Align)
+//      {
+//      }
+//
+//    //virtual ~my_Widget()
+//    //  {
+//    //  }
+//
+//    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
+//      {
+//        int x1 = m_Rect.x;
+//        int y1 = m_Rect.y;
+//        int x2 = m_Rect.x2();
+//        int y2 = m_Rect.y2();
+//        a_Painter->setDrawColor( H_RGB(160,160,160) );
+//        a_Painter->setPenWidth(5);
+//        a_Painter->drawArc(x1,y1,x2,y2,0,0.75);
+//        a_Painter->resetPen();
+//
+//        a_Painter->drawBitmap( m_Bitmap,   0,0,  0,0,456,108 );
+//        a_Painter->drawSurface( m_Surface, 10,120, 0,0,64,64 );
+//
+//      }
+//
+//};
 
 //----------------------------------------------------------------------
 
@@ -113,9 +112,8 @@ class my_Instance : public h_Instance,
   private:
     h_Editor*       m_Editor;
     h_Skin*         m_Skin;
-    h_Bitmap* bmp;
-    h_Surface* srf;
-    h_BitmapLoader loader; // we need data after creating it
+    h_Surface*      srf;
+    h_BitmapLoader* loader;
 
   public:
 
@@ -124,9 +122,8 @@ class my_Instance : public h_Instance,
       {
         m_Editor = H_NULL;
         m_Skin   = H_NULL;
+        srf      = H_NULL;
         transferParameters();
-        bmp = H_NULL;
-        srf = H_NULL;
       }
 
     //----------
@@ -148,80 +145,56 @@ class my_Instance : public h_Instance,
 
     virtual void* do_OpenEditor(void* ptr)
       {
+
         h_Rect rect = getEditorRect();
         m_Editor = new h_Editor(this,rect,ptr);
-        //char temp[H_MAX_STRINGSIZE];
-        //temp[0] = '\0';
-        //h_Strcat(temp,"../extern/mverb/background.png");
-        //trace("path: " << temp)
-        loader.load((char*)"../extern/mverb/background.png");
-        int w = loader.getWidth();
-        int h = loader.getHeight();
-        int d = 24;//loader.getDepth();
-        char* b = (char*)loader.getBuffer();
-        //trace("w:"<<w << ", h:"<<h << ", d:"<<d );
-        bmp = m_Editor->createBitmap(w,h,d,b);
-        bmp->prepare();
 
-        //unsigned char* p = (unsigned char*)bmp->getBuffer();
-        //for (int y=0; y<64; y++)
-        //{
-        //  for (int x=0; x<64; x++)
-        //  {
-        //    *p++ = 0;     // b
-        //    *p++ = y * 4; // g
-        //    *p++ = x * 4; // r
-        //    *p++ = 0;
-        //  }
-        //}
+        loader = new h_BitmapLoader((char*)"../extern/mverb/background.png"); // relative to this exe/dll
+        srf = loader->createSurface(m_Editor);
+        int w = loader->getWidth();
+        int h = loader->getHeight();
+        delete loader;
 
-        srf = m_Editor->createSurface(64,64,24);
-        h_Painter* paint = srf->getPainter();
-        paint->setFillColor( H_DARK_CYAN );
-        paint->fillRect(0,0,63,63);
-        paint->setDrawColor( H_CYAN );
-        paint->drawCircle(0,0,63,63);
-
-        m_Editor->setBorders(10,10,5,5);
+        m_Editor->setBorders(4,4,2,2);
         m_Skin = new skin_Default();
         m_Editor->applySkin(m_Skin);
         m_Editor->appendWidget( new h_WdgBackground(this) );
 
-        h_Widget* wdg;
-        h_Widget* wdg2;
-        my_Widget* w2;
+        h_Widget* panel;
 
-        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect(128, 0),wa_Left ));
-        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect(  0,64),wa_Top ));
-        m_Editor->appendWidget( new h_WdgPanel(m_Editor,h_Rect( 64, 0),wa_Right ));
-        m_Editor->appendWidget( wdg = new h_WdgPanel(m_Editor,H_NULL_RECT,   wa_Client ));
-        wdg->setBorders(20,20,10,10);
+        m_Editor->appendWidget(         new h_WdgPanel(m_Editor,h_Rect(128, 0), wa_Left ));
+        m_Editor->appendWidget(         new h_WdgImage(m_Editor,h_Rect(  w, h), wa_Top, srf ));
+        m_Editor->appendWidget(         new h_WdgPanel(m_Editor,h_Rect(  0,64), wa_Bottom ));
+        m_Editor->appendWidget(         new h_WdgPanel(m_Editor,h_Rect( 64, 0), wa_Right ));
+        m_Editor->appendWidget( panel = new h_WdgPanel(m_Editor,H_NULL_RECT,    wa_Client ));
 
-        //#define WAL wa_StackedVert
-        #define WAL wa_Top
+          panel->setBorders(15,10,20,5);
+          panel->setFlag(wf_Clipping);
 
-        wdg->appendWidget( w2 = new my_Widget( wdg, h_Rect(100,20),WAL) );
-        w2->m_Bitmap = bmp;
-        w2->m_Surface = srf;
-        wdg->appendWidget( new h_WdgLabel( wdg, h_Rect(100,20),WAL, "label") );
-        wdg->appendWidget( new h_WdgButton(wdg, h_Rect(100,20),WAL, "button") );
-        wdg->appendWidget( new h_WdgValue( wdg, h_Rect(100,20),WAL, 0.3) );
+          //#define WAL wa_StackedVert
+          #define WAL wa_Top
+          //my_Widget* mywidget;
+          //panel->appendWidget( mywidget = new my_Widget( panel, h_Rect(100,20),WAL) );
+          //mywidget->m_Bitmap = bmp;
+          //mywidget->m_Surface = srf;
 
-        //h_Parameter* par;
+          panel->appendWidget( new h_WdgLabel( panel, h_Rect(100,20),WAL, "label") );
+          panel->appendWidget( new h_WdgButton(panel, h_Rect(100,20),WAL, "button") );
+          panel->appendWidget( new h_WdgValue( panel, h_Rect(100,20),WAL, 0.3) );
+          panel->appendWidget( new h_WdgSlider(panel, h_Rect(100,20),WAL, 0.3) );
 
-        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
-        m_Editor->connect( m_Parameters->item(2), wdg2 );
+          h_Widget* widget;
+          panel->appendWidget( widget = new h_WdgSlider(panel, h_Rect(100,20),WAL) );
+          m_Editor->connect( m_Parameters->item(2), widget );
+          panel->appendWidget( widget = new h_WdgSlider(panel, h_Rect(100,20),WAL) );
+          m_Editor->connect( m_Parameters->item(3), widget );
+          panel->appendWidget( widget = new h_WdgSlider(panel, h_Rect(100,20),WAL) );
+          m_Editor->connect( m_Parameters->item(4), widget );
+          //panel->appendWidget( widget = new h_WdgSlider(panel, h_Rect(100,20),WAL) );
+          panel->appendWidget( widget = new h_WdgValue(panel, h_Rect(100,20),WAL) );
+          m_Editor->connect( m_Parameters->item(5), widget );
 
-        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
-        m_Editor->connect( m_Parameters->item(3), wdg2 );
-
-        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
-        m_Editor->connect( m_Parameters->item(4), wdg2 );
-
-        wdg->appendWidget( wdg2 = new h_WdgSlider(wdg, h_Rect(100,20),WAL) );
-        m_Editor->connect( m_Parameters->item(5), wdg2 );
-
-        m_Editor->do_SetSize(rect.w,rect.h); // paints buffer
+        m_Editor->do_SetSize(rect.w,rect.h); // realigns/paints buffer
         m_Editor->show();
         return (void*)m_Editor;
 
@@ -233,15 +206,11 @@ class my_Instance : public h_Instance,
     virtual void do_CloseEditor(void)
       {
         m_Editor->hide();
-        delete bmp;
         delete srf;
         delete m_Skin;
         delete m_Editor;
         m_Editor = H_NULL;
         // widgets are automatically deleted
-
-
-
       }
 
     //----------
@@ -252,15 +221,15 @@ class my_Instance : public h_Instance,
 
     //----------
 
-    virtual void do_HandleState(int a_State)
-      {
-        switch(a_State)
-        {
-          case is_Resume:
-            //transferParameters();
-            break;
-        }
-      }
+    //virtual void do_HandleState(int a_State)
+    //  {
+    //    switch(a_State)
+    //    {
+    //      case is_Resume:
+    //        transferParameters();
+    //        break;
+    //    }
+    //  }
 
     //----------
 

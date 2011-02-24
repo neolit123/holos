@@ -82,7 +82,10 @@ class h_Window : public h_Window_Impl
     // a widget want to change the mouse cursor
     virtual void on_Cursor(int a_Cursor)
       {
-        setCursor(a_Cursor);
+        //if (a_Cursor==-2)      hideCursor();
+        //else if (a_Cursor==-3) showCursor();
+        //else
+          setCursor(a_Cursor);
       }
 
     //virtual void on_Hint(h_String aHint)

@@ -75,6 +75,12 @@ typedef h_Array<h_Widget*> h_Widgets;
 
 //----------------------------------------------------------------------
 
+// draw mode
+#define dm_Normal 0
+#define dm_Active 1
+#define dm_Enter  2
+#define dm_Leave  3
+
 class h_WidgetBase
 {
   public:

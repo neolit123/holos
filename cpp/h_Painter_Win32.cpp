@@ -132,8 +132,10 @@ class h_Painter_Win32 //: public h_Painter_Base
 
         // font
         LOGFONT LFont;
-        memset(&LFont,0,sizeof(LFont));
-        strcpy(LFont.lfFaceName,"Arial");
+        //memset(&LFont,0,sizeof(LFont));
+        //strcpy(LFont.lfFaceName,"Arial");
+        h_Memset(&LFont,0,sizeof(LFont));
+        h_Strcpy(LFont.lfFaceName,"Arial");
         LFont.lfHeight = -MulDiv(8,GetDeviceCaps(tempdc,LOGPIXELSY),72);
         m_Font = CreateFontIndirect(&LFont);
         SelectObject(m_DC,m_Font);

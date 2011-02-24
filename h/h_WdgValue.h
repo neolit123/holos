@@ -85,14 +85,14 @@ class h_WdgValue : public h_Widget
 
     virtual void do_Enter(h_Widget* a_Widget)
       {
-        m_Listener->on_Redraw(this,2); // draw border
+        m_Listener->on_Redraw(this,dm_Enter); // draw border
         if (m_DragVertical) m_Listener->on_Cursor(cu_ArrowUpDown);
         else m_Listener->on_Cursor(cu_ArrowLeftRight);
       }
 
     virtual void do_Leave(h_Widget* a_Widget)
       {
-        m_Listener->on_Redraw(this,3); // remove border
+        m_Listener->on_Redraw(this,dm_Leave); // remove border
         m_Listener->on_Cursor(H_DEF_CURSOR);
       }
 
@@ -102,8 +102,8 @@ class h_WdgValue : public h_Widget
         m_ClickedX = x;
         m_ClickedY = y;
         m_OrigValue = m_Value;
-        m_Listener->on_Redraw(this,1); // active
-        m_Listener->on_Redraw(this,2); // border on
+        m_Listener->on_Redraw(this,dm_Active);
+        m_Listener->on_Redraw(this,dm_Enter);
       }
 
     virtual void do_MouseUp(int x, int y, int b, int s)
@@ -112,8 +112,8 @@ class h_WdgValue : public h_Widget
         m_OrigValue = m_Value;
         //m_Listener->on_Change(this);
         bool inside = m_Rect.contains(x,y);
-        m_Listener->on_Redraw(this,0); // active
-        if (inside) m_Listener->on_Redraw(this,2); // border on
+        m_Listener->on_Redraw(this,dm_Normal); // active
+        if (inside) m_Listener->on_Redraw(this,dm_Enter);
       }
 
     // m_Rect.w/h and m_DragSensitivity must be > 0
@@ -137,8 +137,8 @@ class h_WdgValue : public h_Widget
           if (m_Value>1) m_Value=1;
           if (m_Value<0) m_Value=0;
           m_Listener->on_Change(this);
-          m_Listener->on_Redraw(this,1); // active
-          m_Listener->on_Redraw(this,2); // border on
+          m_Listener->on_Redraw(this,dm_Active); // active
+          m_Listener->on_Redraw(this,dm_Enter); // border on
         }
       }
 

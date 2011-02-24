@@ -28,6 +28,7 @@
   #define H_UTILS_INLINE
 #endif
 
+#include "h/h_Types.h"
 #include "h/h_Stdlib.h"
 
 // convert to boolean
@@ -83,10 +84,14 @@ unsigned long h_BitReverse(unsigned long v)
 H_UTILS_INLINE
 void h_CreateUniqueName(char* a_Buffer, char* a_Prefix, void* a_Ptr)
   {
-    static char h_int2hex[17] = "0123456789abcdef";       // +'\0' = 17
+    static char h_int2hex[17] = "0123456789abcdef";       // +'\0' = 17 (64 bot = 8*2 hex)
     while (*a_Prefix != '\0') *a_Buffer++ = *a_Prefix++;  // memset + update pointers
-    unsigned long iptr = (unsigned long)a_Ptr;            // todo: 64-bit (long long?)
-    // todo: h_BitReverse
+    #ifdef _H_64BIT_
+      h_int64 iptr = (h_int64)a_Ptr;
+    #else
+      unsigned long iptr = (unsigned long)a_Ptr;
+    #endif
+    //todo: h_BitReverse
     while (iptr>0)
     {
       int j = iptr & 0x0f;          // 0..f

@@ -17,29 +17,33 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_WdgPanel_included
-#define h_WdgPanel_included
+#ifndef h_WdgImage_included
+#define h_WdgImage_included
 //----------------------------------------------------------------------
 
+#include "h/h_Color.h"
 #include "h/h_Widget.h"
 
-class h_WdgPanel : public h_Widget
+class h_WdgImage : public h_Widget
 {
+  private:
+    h_Surface* m_Surface;
 
   public:
 
-    h_WdgPanel(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align)
+    h_WdgImage(h_WidgetListener* a_Listener, h_Rect a_Rect, int a_Align, h_Surface* a_Surface)
     : h_Widget(a_Listener,a_Rect,a_Align)
       {
+        m_Surface = a_Surface;
       }
 
-    virtual ~h_WdgPanel()
+    virtual ~h_WdgImage()
       {
       }
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        m_Skin->drawPanel(a_Painter,m_Rect,a_Mode);
+        if (m_Surface) a_Painter->drawSurface(m_Surface,m_Rect.x,m_Rect.y,0,0,m_Rect.w,m_Rect.h);
         h_Widget::do_Paint(a_Painter,a_Rect,a_Mode);
       }
 
@@ -47,3 +51,4 @@ class h_WdgPanel : public h_Widget
 
 //----------------------------------------------------------------------
 #endif
+
