@@ -64,7 +64,7 @@ DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved)
 //----------------------------------------------------------------------
 
 #ifndef H_NOGUI
-// implemented in h_Window_Win32.h
+// implemented in h_Window_Win32.cpp
 LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 

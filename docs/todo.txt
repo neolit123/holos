@@ -3,7 +3,9 @@
 missing, in no particular order
 ----------------------------------------------------------------------
 
-* the rest of the parameters from axonlib
+* [generally done?]
+  the rest of the parameters from axonlib
+
 
 * --"-- widgets --"--
 
@@ -12,8 +14,6 @@ missing, in no particular order
 * /test: directory with small(-ish) test apps, individually testing
   the holos features. and, if possible, a way to run all tests,
   route all output to file, and compare with a "master" ???
-
-* linux: h_Bitmap
 
 ----------------------------------------------------------------------
 ideas
@@ -38,7 +38,7 @@ ideas
 known major bugs
 ----------------------------------------------------------------------
 
-* partially fixed???
+* [partially fixed???]
   in a dual-display setup in linux, if i drag the editor window to the
   other screen than energy xt2, close it, and try to re-open it, x
   freezes completely, and i have to do a AltGr-SysRq-K to kill x.

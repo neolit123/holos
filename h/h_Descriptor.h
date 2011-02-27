@@ -66,7 +66,7 @@ class h_Descriptor
         m_UniqueId    = H_MAGIC;
         m_Flags       = df_None;
         m_NumInputs   = 2;
-        m_NumOutputs  = 0;
+        m_NumOutputs  = 2;
         m_EditorRect  = h_Rect(256,256);
         m_Parameters.clear();
       }

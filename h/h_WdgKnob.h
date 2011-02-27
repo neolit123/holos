@@ -17,3 +17,43 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
+#ifndef h_WdgKnob_included
+#define h_WdgKnob_included
+//----------------------------------------------------------------------
+
+//#include "h/h_Color.h"
+//#include "h/h_Widget.h"
+#include "h/h_WdgValue.h"
+
+class h_WdgKnob : public h_WdgValue
+{
+
+  public:
+
+    h_WdgKnob(h_WidgetListener* a_Listener,h_Rect a_Rect, int a_Align, float a_Value=0)
+    : h_WdgValue(a_Listener,a_Rect,a_Align,a_Value)
+      {
+        //m_DragVertical = false;
+        //m_DragSensitivity = 1;
+      }
+
+    virtual ~h_WdgKnob()
+      {
+      }
+
+    virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
+      {
+        if (m_Parameter)
+        {
+          h_String text = m_Parameter->getName();
+          m_Parameter->getDisplay(m_DispBuf);
+          float value = m_Parameter->getInternal();
+          m_Skin->drawKnobExt(a_Painter,m_Rect,a_Mode,value,text,m_DispBuf); //TODO
+        }
+        else m_Skin->drawKnob(a_Painter,m_Rect,a_Mode,m_Value);
+      }
+
+};
+
+//----------------------------------------------------------------------
+#endif

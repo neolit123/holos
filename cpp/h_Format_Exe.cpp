@@ -54,6 +54,7 @@ int h_Format::entrypoint(void* a_Ptr)
     h_Host* host = new h_Host();
     h_Descriptor* descriptor = createDescriptor();
     h_Instance* instance = createInstance(host,descriptor);
+    //TODO: do_HandleState: is_Open, is_Resume, etc [fake a host]
     #ifndef H_NOGUI
     if (descriptor->m_Flags & df_HasEditor)
     {

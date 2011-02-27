@@ -68,6 +68,15 @@ class h_Parameter
 
   public:
 
+    /*
+    idea/suggestions:
+    swap around the parameters a little, so we could do something like:
+      new h_Parameter("Damping", 0.5)
+    and the rest oculd be default arguments
+    (and, i don't know if we use the flags yet? we assume all parameters are
+     automatable? and what about the label? how useful is it?
+    */
+
     h_Parameter(h_String a_Name,
                 h_String a_Label,
                 int a_Flags = 0,

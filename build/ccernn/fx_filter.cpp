@@ -1,40 +1,19 @@
-#define H_DEBUG_LOG "holos_win.log"
-#define H_DEBUG_LOG_UNIQUE
-#define H_DEBUG_CON
-//#define H_DEBUG_CON_CANQUIT
-//#define H_DEBUG_CON_NOTOP
-//#define H_DEBUG_CON_NORESIZE
-
 #define H_NOGUI
-
 #include "holos.h"
 
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
-
-h_ParamDescr my_Params[] =
+class my_Descriptor : public h_Descriptor
 {
-  {"filter","",pt_None,PF_DEFAULT, 0.5  }
-};
+  public:
 
-//----------------------------------------------------------------------
-
-h_Descriptor my_Descriptor =
-{
-  "fx_filter",
-  "ccernn",
-  "holos test plugin",
-  0,
-  H_MAGIC,
-  df_None,
-  2,    // inputs
-  2,    // outputs
-  1,    // parameters
-  0,    // programs
-  my_Params,
-  H_NULL,
-  H_NULL_RECT
+    my_Descriptor()
+    : h_Descriptor()
+      {
+        m_Name   = "fx_filter";
+        m_Author = "ccernn";
+        appendParameter(new h_Parameter("filter","",PF_DEFAULT,0.5));
+      }
 };
 
 #define H_DESCRIPTOR my_Descriptor
@@ -50,21 +29,44 @@ class my_Instance : public h_Instance
 
   public:
 
+
     my_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host,a_Descriptor)
       {
+        // do not call virtual methods in constructor !!!
+        // trace( getSampleRate() );
         lowpass = true;
         cur0 = 0;
         cur1 = 0;
         weight = 0;
-        transferParameters();
+        //transferParameters();
       }
 
     virtual ~my_Instance()
       {
       }
 
-    //----------
+    virtual void do_HandleState(int a_State)
+      {
+        switch(a_State)
+        {
+          case is_Open:
+            //trace( "srate: " << getSampleRate() );
+            transferParameters();
+            break;
+          //case is_Close:
+          //  break;
+          //case is_Suspend:
+          //  trace( "srate: " << getSampleRate() );
+          //  break;
+          //case is_Resume:
+          //  trace( "srate: " << getSampleRate() );
+          //  break;
+          //case is_Rate:
+          //  trace( "srate: " << getSampleRate() );
+          //  break;
+        }
+      }
 
     virtual void do_HandleParameter(h_Parameter* a_Parameter)
       {
@@ -77,8 +79,6 @@ class my_Instance : public h_Instance
           weight = value*value*value*value;
         }
       }
-
-    //----------
 
     virtual void do_ProcessSample(float** a_Inputs, float** a_Outputs)
       {
@@ -106,7 +106,7 @@ class my_Instance : public h_Instance
 #define H_INSTANCE my_Instance
 
 //----------------------------------------------------------------------
-#include "holos_impl.h"
+#include "holos.cpp"
 
 
 

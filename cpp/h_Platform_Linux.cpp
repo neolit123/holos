@@ -25,28 +25,43 @@
 h_Platform::h_Platform()
   {
     #ifndef H_NOGUI
+
       // The XInitThreads() function initializes Xlib support for concurrent threads.
       // This function must be the first Xlib function a multi-threaded program calls,
       // and it must complete before any other Xlib call is made.
+
+      /*
+        // http://www.remlab.net/op/xlib.shtml
+        .."XInitThreads() is the most important, and is required for the later two
+        functions to work anyway. XLockDisplay() and XUnlockDisplay() provide a
+        recursive lock for the unlikely event that a single display is shared across
+        multiple threads, which is generally a bad idea and not terribly useful..."
+      */
+
       XInitThreads();
+
     #endif
   }
-
-//----------
 
 h_Platform::~h_Platform()
   {
     //trace("platform dying...");
   }
 
-//----------
-
 h_String h_Platform::getName(void)
   {
     return "linux";
   }
 
-//--------------------------------------------------
+/*
+
+  these are currently here because i wasn't sure if we wanted to have one
+  display connection, and share this among multiple instances, or if each
+  plugin instance should have its own display connection.
+
+  currently each plugin has its own connection
+
+*/
 
 #ifndef H_NOGUI
 
@@ -62,8 +77,6 @@ Display* h_Platform::openDisplay(void)
     */
     return XOpenDisplay(NULL);
   }
-
-//----------
 
 void h_Platform::closeDisplay(Display* a_Display)
   {
@@ -91,6 +104,11 @@ void h_Platform::closeDisplay(Display* a_Display)
 //#endif
 #endif
 
+
+
+
+
+
 /*
   m_WinDisplay   = XOpenDisplay(NULL);
   // XSync???
@@ -102,13 +120,11 @@ void h_Platform::closeDisplay(Display* a_Display)
   m_WinColormap  = XDefaultColormap(m_WinDisplay,m_WinScreen);  // the default colormap ID for allocation on the specified screen
 */
 
-/*
-  // http://www.remlab.net/op/xlib.shtml
-  .."XInitThreads() is the most important, and is required for the later two
-  functions to work anyway. XLockDisplay() and XUnlockDisplay() provide a
-  recursive lock for the unlikely event that a single display is shared across
-  multiple threads, which is generally a bad idea and not terribly useful..."
-*/
+
+
+
+
+
 
 /*
 

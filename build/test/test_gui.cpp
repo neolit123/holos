@@ -6,9 +6,9 @@
 
 //#define H_DEBUG_LOG "holos_debug.log"
 
-//#define H_DEBUG_MEM
-//#define H_DEBUG_MEM_PRINT
-//#define H_DEBUG_NEW
+#define H_DEBUG_MEM
+#define H_DEBUG_MEM_PRINT
+#define H_DEBUG_NEW
 
 #include "holos.h"
 #include "h/h_SkinDefault.h"
@@ -19,6 +19,7 @@
 #include "h/h_WdgValue.h"
 #include "h/h_WdgSlider.h"
 #include "h/h_WdgImage.h"
+#include "h/h_WdgKnob.h"
 
 #include "h/h_BasePath.h"
 #include "h/h_BitmapLoader.h"
@@ -123,6 +124,9 @@ class my_Instance : public h_Instance,
         m_Editor = H_NULL;
         m_Skin   = H_NULL;
         srf      = H_NULL;
+        // do not call virtual methods in the constructor.
+        // this one might call other virtual functions, like do_HandleParameter !!
+        // todo: call it in do_HandleState, case is_Open:
         transferParameters();
       }
 
@@ -182,6 +186,7 @@ class my_Instance : public h_Instance,
           panel->appendWidget( new h_WdgButton(panel, h_Rect(100,20),WAL, "button") );
           panel->appendWidget( new h_WdgValue( panel, h_Rect(100,20),WAL, 0.3) );
           panel->appendWidget( new h_WdgSlider(panel, h_Rect(100,20),WAL, 0.3) );
+          panel->appendWidget( new h_WdgKnob(  panel, h_Rect(100,30),WAL, 0.3) );
 
           h_Widget* widget;
           panel->appendWidget( widget = new h_WdgSlider(panel, h_Rect(100,20),WAL) );

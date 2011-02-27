@@ -38,8 +38,21 @@
 // http://eli.thegreenplace.net/2011/02/17/the-many-faces-of-operator-new-in-c/
 //
 
+//----------------------------------------------------------------------
+
 #include "h/h_Memory.h"
 //#include "h/h_Stdlib.h"
+
+/*
+  in case we want to change them...
+  by not using h_Malloc, etc, we avoid keeping track of the small allocs for
+  the mem nodes, and also for the proper/real allocations
+*/
+
+#define leak_malloc   malloc
+#define leak_calloc   calloc
+#define leak_realloc  realloc
+#define leak_free     free
 
 struct h_MemNode
 {
@@ -53,14 +66,14 @@ struct h_MemNode
   bool        m_New;
 };
 
-//----------
+//----------------------------------------------------------------------
 
 class h_MemTracer
 {
   private:
-    bool  m_Started;
-    h_MemNode* m_Head;
-    h_MemNode* m_Tail;
+    bool        m_Started;
+    h_MemNode*  m_Head;
+    h_MemNode*  m_Tail;
     int         m_Allocated;
     int         m_AllocatedNum;
     int         m_AllocatedMax;
@@ -71,14 +84,14 @@ class h_MemTracer
 
     h_MemTracer()
       {
-        m_Started = false;
-        m_Head = H_NULL;
-        m_Tail = H_NULL;
-        m_Allocated = 0;
-        m_AllocatedNum = 0;
-        m_AllocatedMax = 0;
-        m_NumAlloc = 0;
-        m_NumFree = 0;
+        m_Started       = false;
+        m_Head          = H_NULL;
+        m_Tail          = H_NULL;
+        m_Allocated     = 0;
+        m_AllocatedNum  = 0;
+        m_AllocatedMax  = 0;
+        m_NumAlloc      = 0;
+        m_NumFree       = 0;
       }
 
     ~h_MemTracer()
@@ -88,12 +101,12 @@ class h_MemTracer
 
     void start(void)
       {
-        m_Started=true;
+        m_Started = true;
       }
 
     void stop(void)
       {
-        m_Started=false;
+        m_Started = false;
       }
 
   private:
@@ -171,7 +184,7 @@ class h_MemTracer
         if (m_Started)
         {
           const char* file = h_StripPath(a_File);
-          h_MemNode* node = (h_MemNode*)malloc(sizeof(h_MemNode)); // !!!
+          h_MemNode* node = (h_MemNode*)leak_malloc(sizeof(h_MemNode)); // !!!
           m_NumAlloc++;
           node->m_Addr = a_Addr;
           node->m_Size = a_Size;
@@ -212,7 +225,7 @@ class h_MemTracer
                        << (node->m_New?"new":"h_Malloc") );
               }
             #endif
-            free(node); // !!!
+            leak_free(node); // !!!
             m_NumFree++;
           }
           //else
@@ -254,21 +267,21 @@ class h_MemTracer
 
     void* trace_malloc(const size_t size, const char* file, const char* func, unsigned int line)
       {
-        void* ptr = malloc(size);
+        void* ptr = leak_malloc(size);
         append(ptr,size,file,func,line,false);
         return ptr;
       }
 
     void* trace_calloc(const int num, const size_t size, const char* file, const char* func, unsigned int line)
       {
-        void* ptr = calloc(num,size);
+        void* ptr = leak_calloc(num,size);
         append(ptr,num*size,file,func,line,false);
         return ptr;
       }
 
     void* trace_realloc(void* ptr, const size_t size, const char* file, const char* func, unsigned int line)
       {
-        void* p2 = realloc(ptr,size);
+        void* p2 = leak_realloc(ptr,size);
         remove(ptr,file,func,line,false);
         append(p2,size,file,func,line,false);
         return p2;
@@ -277,12 +290,27 @@ class h_MemTracer
     void trace_free(void* ptr, const char* file, const char* func, unsigned int line)
       {
         remove(ptr,file,func,line,false);
-        free(ptr);
+        leak_free(ptr);
       }
 
 };
 
 //----------------------------------------------------------------------
+
+// being static means that multiple instances uses the same
+// static_MemTracer object.. it's shared for all instances/threads..
+//
+// needs to be static, so our 'overloaded' new/delete macros can use it
+// would be better if it were part of the h_Debug class, but i haven't found
+// a nice/clean way to replace the new/delete with macros that call a
+// non-static class method. if this were part of a class, this class must be
+// available/accessible during our new (pun..) new/delete macros. everywhere.
+
+// __thread ??
+
+// multiple instances can be in a single thread, or in multiple threads.
+// our problem above is not related to threads, but that many plugin instances
+// have access to the same static/global class-instance.
 
 static h_MemTracer static_MemTracer;
 
@@ -291,6 +319,9 @@ static h_MemTracer static_MemTracer;
 #ifdef H_DEBUG_MEM
 
   #ifdef H_DEBUG_NEW
+
+    // unreliable (and dangerous?) if multiple plugin instances uses
+    // mem-tracing at the same time..
 
     // these should be defined as __thread
     static __thread char*         mem_del_file;
@@ -309,7 +340,7 @@ static h_MemTracer static_MemTracer;
     void* operator new (const size_t size, const char* file, const char* func, unsigned int line) throw (std::bad_alloc)
       {
         //dtrace("op new");
-        void* ptr = malloc(size);
+        void* ptr = leak_malloc(size);
         static_MemTracer.append(ptr,size,file,func,line,true);
         return ptr;
       }
@@ -317,7 +348,7 @@ static h_MemTracer static_MemTracer;
     void* operator new[] (const size_t size, const char* file, const char* func, unsigned int line) throw (std::bad_alloc)
       {
         //dtrace("op new[]");
-        void* ptr = malloc(size);
+        void* ptr = leak_malloc(size);
         static_MemTracer.append(ptr,size,file,func,line,true);
         return ptr;
       }
@@ -325,14 +356,14 @@ static h_MemTracer static_MemTracer;
     void operator delete (void* ptr) throw()
       {
         //dtrace("op delete");
-        free(ptr);
+        leak_free(ptr);
         static_MemTracer.remove(ptr,mem_del_file,mem_del_func,mem_del_line,true);
       }
 
     void operator delete[] (void* ptr) throw()
       {
         //dtrace("op delete[]");
-        free(ptr);
+        leak_free(ptr);
         static_MemTracer.remove(ptr,mem_del_file,mem_del_func,mem_del_line,true);
       }
 
@@ -366,6 +397,13 @@ static h_MemTracer static_MemTracer;
 //#else
 //  h_Malloc, etc... already defined in /lib/h_Memory.h
 #endif
+
+//----------
+
+#undef leak_malloc
+#undef leak_calloc
+#undef leak_realloc
+#undef leak_free
 
 //----------------------------------------------------------------------
 #endif

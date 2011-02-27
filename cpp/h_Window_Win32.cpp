@@ -111,7 +111,7 @@ class h_Window_Win32 : public h_Widget,
     int         m_WinAdjustWidth;
     int         m_WinClickedButton;
     int         m_WinPrevCursor;
-    int m_Depth;
+    int         m_Depth;
 
   public:
     inline h_Painter* getPainter(void)  { return m_WinPainter; }
@@ -196,8 +196,8 @@ class h_Window_Win32 : public h_Widget,
         //DragAcceptFiles(m_WinHandle,true);
 
         m_WinPainter = new h_Painter(m_WinHandle);
-        createBuffer();
 
+        createBuffer();
         //TODO:
         //if (aWinFlags & AX_WIN_BUFFERED) mSurface = createSurface(mRect.w,mRect.h,32);
       }

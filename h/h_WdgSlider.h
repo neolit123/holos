@@ -21,8 +21,8 @@
 #define h_WdgSlider_included
 //----------------------------------------------------------------------
 
-#include "h/h_Color.h"
-#include "h/h_Widget.h"
+//#include "h/h_Color.h"
+//#include "h/h_Widget.h"
 #include "h/h_WdgValue.h"
 
 class h_WdgSlider : public h_WdgValue

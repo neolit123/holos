@@ -30,6 +30,7 @@
 #endif
 
 //----------------------------------------------------------------------
+// buffer, cursor
 
 class h_Window : public h_Window_Impl
 {

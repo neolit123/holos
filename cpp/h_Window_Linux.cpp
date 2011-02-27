@@ -162,11 +162,11 @@ class h_Window_Linux : public h_Widget,
     //int         m_Width;
     //int         m_Height;
     long        m_EventMask;
-    int         m_Screen;
-    Visual*     m_Visual;
+//    int         m_Screen;
+//    Visual*     m_Visual;
     int         m_Depth;
-    Colormap    m_Colormap;
-    Window      m_Root;
+//    Colormap    m_Colormap;
+//    Window      m_Root;
     #ifdef H_ALPHA
     Picture     m_Picture;
     #endif
@@ -218,17 +218,17 @@ class h_Window_Linux : public h_Widget,
         //  int fbcount;
         //  GLXFBConfig *fbc = glXChooseFBConfig(m_Display,H_INTERFACE->getScreen(),h_window_gl_attr,&fbcount);
         //  XVisualInfo *vi = glXGetVisualFromFBConfig(m_Display,fbc[0]);
-        //  Visual*  visual    = vi->visual;
-        //  int      depth    = vi->depth;
+        //  Visual* visual = vi->visual;
+        //  int depth = vi->depth;
         //  Colormap colormap = XCreateColormap(m_Display,H_INTERFACE->getRoot(),visual,AllocNone);
 
         //#else
 
-          m_Root      = XDefaultRootWindow(m_Display);
-          m_Screen    = XDefaultScreen(m_Display); // the default screen number referenced by the XOpenDisplay() function
-          m_Visual    = XDefaultVisual(m_Display,m_Screen);
-          m_Depth     = XDefaultDepth(m_Display,m_Screen);
-          m_Colormap  = XCreateColormap(m_Display,m_Root,m_Visual,AllocNone);
+          Window root = XDefaultRootWindow(m_Display);
+          int screen = XDefaultScreen(m_Display); // the default screen number referenced by the XOpenDisplay() function
+          Visual* visual = XDefaultVisual(m_Display,screen);
+          Colormap colormap = XCreateColormap(m_Display,root,visual,AllocNone);
+          m_Depth = XDefaultDepth(m_Display,screen);
 
         //#endif
 
@@ -242,11 +242,11 @@ class h_Window_Linux : public h_Widget,
                             | PropertyChangeMask
                             | ClientMessage;
 
-        XSetWindowAttributes  swa;
+        XSetWindowAttributes swa;
         swa.event_mask        = m_WinEventMask;
         swa.background_pixmap = None;
         swa.border_pixel      = 0;
-        swa.colormap          = m_Colormap;
+        swa.colormap          = colormap;
         //swa.override_redirect = true;
 
         // http://tronche.com/gui/x/xlib/window/attributes/
@@ -264,7 +264,7 @@ class h_Window_Linux : public h_Widget,
           0, // border width
           m_Depth,
           InputOutput,
-          m_Visual,
+          visual,
           swa_mask,
           &swa
         );
@@ -308,11 +308,9 @@ class h_Window_Linux : public h_Widget,
         m_Black.green   = 0;
         m_Black.blue    = 0;
         m_Black.flags   = (DoRed or DoGreen or DoBlue);
-        XAllocColor(m_Display,m_Colormap,&m_Black);
+        XAllocColor(m_Display,colormap,&m_Black);
 
-        m_Painter  = new h_Painter(m_Display,m_Window);
-        createBuffer();
-
+        /*
         #ifdef H_ALPHA
           XWindowAttributes winattralpha;
           XGetWindowAttributes(m_Display,m_Window,&winattralpha );
@@ -328,6 +326,10 @@ class h_Window_Linux : public h_Widget,
           m_Renderer = new h_Renderer(this);
           //m_Renderer->setRenderTarget(this);
         #endif
+        */
+
+        m_Painter  = new h_Painter(m_Display,m_Window);
+        createBuffer();
 
         // event handler thread
         if (m_Embedded)
@@ -422,7 +424,7 @@ class h_Window_Linux : public h_Widget,
     void resizeBuffer(int a_Width, int a_Height)
       {
         //trace("resizeBuffer: " << a_Width << "," << a_Height );
-        deleteBuffer();
+        delete m_Surface; // deleteBuffer();
         m_Surface = createSurface(a_Width,a_Height,m_Depth);
         //trace(":: surface content is gone!");
       }

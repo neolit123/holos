@@ -26,6 +26,16 @@
 #define SIZE_INIT 16
 #define SIZE_MULT 2
 
+#define array_malloc  h_Malloc
+#define array_calloc  h_Calloc
+#define array_realloc h_Realloc
+#define array_free    h_Free
+
+//#define array_malloc  malloc
+//#define array_calloc  calloc
+//#define array_realloc realloc
+//#define array_free    free
+
 template<class _T>
 class h_Array
 {
@@ -43,13 +53,13 @@ class h_Array
 		  	m_Tsize = sizeof(_T);
         m_RealSize = SIZE_INIT;
 			  m_Size = 0;
-			  m_Buffer = (_T*)h_Malloc(m_RealSize*m_Tsize);
+			  m_Buffer = (_T*)array_malloc(m_RealSize*m_Tsize);
 			}
 
     h_Array(const h_Array& a_Array)
       {
         m_Tsize = sizeof(_T);
-        m_Buffer = (_T*)h_Malloc(m_Tsize*a_Array.m_RealSize);
+        m_Buffer = (_T*)array_malloc(m_Tsize*a_Array.m_RealSize);
         h_Memcpy(m_Buffer, a_Array.m_Buffer, m_Tsize*a_Array.m_RealSize);
         m_RealSize = a_Array.m_RealSize;
         m_Size = a_Array.m_Size;
@@ -59,7 +69,7 @@ class h_Array
       {
         if (m_Buffer)
         {
-          h_Free(m_Buffer);
+          array_free(m_Buffer);
           m_Buffer = NULL;
         }
       }
@@ -100,7 +110,7 @@ class h_Array
         m_Size = 0;
         if (a_Erase)
         {
-          m_Buffer = (_T*)h_Realloc((char*)m_Buffer, m_Tsize*SIZE_INIT);
+          m_Buffer = (_T*)array_realloc((char*)m_Buffer, m_Tsize*SIZE_INIT);
           m_RealSize = SIZE_INIT;
         }
       }
@@ -111,7 +121,7 @@ class h_Array
         if (m_Size > m_RealSize)
         {
           m_RealSize *= SIZE_MULT;
-          m_Buffer = (_T*)h_Realloc(m_Buffer, m_Tsize*m_RealSize);
+          m_Buffer = (_T*)array_realloc(m_Buffer, m_Tsize*m_RealSize);
         }
         m_Buffer[m_Size-1] = a_Item;
       }
@@ -123,7 +133,7 @@ class h_Array
           if ( (a_Size>m_RealSize) || (a_Size<m_RealSize/SIZE_MULT) )
           {
             m_RealSize = a_Size;
-            m_Buffer = (_T*)h_Realloc(m_Buffer, m_Tsize*m_Size);
+            m_Buffer = (_T*)array_realloc(m_Buffer, m_Tsize*m_Size);
             m_Size = a_Size;
           }
         }
@@ -158,6 +168,11 @@ class h_Array
         else return NULL;
       }
 };
+
+#undef array_malloc
+#undef array_calloc
+#undef array_realloc
+#undef array_free
 
 //----------------------------------------------------------------------
 #endif

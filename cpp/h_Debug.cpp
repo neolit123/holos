@@ -22,6 +22,16 @@
 //#ifdef h_Debug_included
 //----------------------------------------------------------------------
 
+/*
+
+- static_MemTracer must be created before initialize() is called,
+  and must be alive (not deleted) in the constructor,
+  because we call start/stop here..
+
+  we include h_MemTracer.h at the end of h_Debug.h
+
+*/
+
 #include "h/h_Globals.h"
 
 //----------

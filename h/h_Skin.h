@@ -55,11 +55,13 @@ class h_Skin
     virtual void drawButton(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, h_String a_Text) {}
     virtual void drawValue(     h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
     virtual void drawSlider(    h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
+    virtual void drawKnob(      h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value) {}
 
     // connected to parameters:
 
     virtual void drawValueExt(  h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp) {}
     virtual void drawSliderExt( h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp) {}
+    virtual void drawKnobExt(   h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp) {}
 
 };
 

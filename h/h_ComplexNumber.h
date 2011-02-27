@@ -174,7 +174,7 @@ _CNUM_INLINE
 cnum_s cnum_div(const cnum_s x, const cnum_s y)
 {
   return  cnum_div_r(cnum_mul(x, cnum_conjugate(y)),
-          (y.r*y.r + h_Abs(y.i*y.i)));
+                    (y.r*y.r + h_Abs(y.i*y.i)));
 }
 
 #define cnum_inv(x) \
@@ -213,7 +213,7 @@ _CNUM_INLINE
 cnum_s cnum_log_k(const cnum_s x, const int k)
 {
   return  cnum_new(h_Log(h_Cabs(x.r, x.i)),
-          (h_Carg(x.r, x.i) + (PI2*k)));
+                  (h_Carg(x.r, x.i) + (PI2*k)));
 }
 
 #define cnum_log(x) \

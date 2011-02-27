@@ -22,7 +22,7 @@ class my_Descriptor : public h_Descriptor
         m_Flags       = df_None;
         m_NumInputs   = 2;
         m_NumOutputs  = 2;
-        //m_EditorRect  = H_NULL_RECT;
+
         appendParameter( new h_Parameter("Damping",       "", PF_DEFAULT, 0.5 ) );
         appendParameter( new h_Parameter("Density",       "", PF_DEFAULT, 0.5 ) );
         appendParameter( new h_Parameter("Bandwidth",     "", PF_DEFAULT, 0.5 ) );
@@ -64,7 +64,7 @@ class my_Instance : public h_Instance
         switch (a_State)
         {
           case is_Resume:
-            transferParameters();
+            transferParameters(); // should we do this every time we suspend/resums?
             em_verb.setSampleRate( getSampleRate());
             break;
         }

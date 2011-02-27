@@ -217,9 +217,52 @@ class skin_Default : public h_Skin
         }
       }
 
-    //----------
+    virtual void drawKnob(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value)
+      {
+        switch (a_Mode)
+        {
+          case dm_Normal:
+          case dm_Active:
+            {
+              a_Rect.add(2,2,-4,-4);
+              int x  = a_Rect.x;
+              int y  = a_Rect.y;
+              int size = h_Mini(a_Rect.w,a_Rect.h);
+              a_Painter->setDrawColor(m_WidgetColor);
+              a_Painter->setPenWidth(5);
+              a_Painter->drawArc(x+2,y+2,x+(size-2),y+(size-2),-0.35,0.7);
+              a_Painter->resetPen();
+              a_Painter->setDrawColor(m_ValueColor);
+              a_Painter->setPenWidth(5);
+              a_Painter->drawArc(x+2,y+2,x+(size-2),y+(size-2),-0.35,a_Value*0.7);
+              a_Painter->resetPen();
+//              int th = a_Painter->textHeight("Xj");
+//              if (a_Rect.h >= (2*th))
+//              {
+//                a_Painter->setTextColor(m_TextColor);
+//                a_Painter->drawText(x+size+8,y,   a_Rect.x2(),a_Rect.y2(),a_Name,ta_Top|ta_Left);
+//                a_Painter->drawText(x+size+8,y+th,a_Rect.x2(),a_Rect.y2(),a_Disp,ta_Top|ta_Left);
+//              //a_Painter->drawText(x+size+5,y,   aRect.x2(),aRect.y2(),aDisp,ta_Bottom|ta_Left);
+//              }
+//              else
+//              {
+//                a_Painter->setTextColor(mTextColor);
+//                a_Painter->drawText(x+size+5,y,aRect.x2(),aRect.y2(),aDisp,ta_Left);
+//              }
+            }
+            break;
+          //case dm_Active:
+          //  {
+          //  }
+          //  break;
+          case dm_Enter:
+            break;
+          case dm_Leave:
+            break;
+        }
+      }
 
-    //----------
+    //--------------------------------------------------
 
     virtual void drawValueExt(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode, float a_Value, h_String a_Label, h_String a_Disp)
       {

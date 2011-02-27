@@ -35,9 +35,16 @@ typedef unsigned long h_Color;
 
 #ifdef H_LINUX
 
-  //
-  // !!! this only works for 32-bit, bgra !!!
-  //
+  /*
+    !! this only works for 32-bit, bgra !!!
+    we need a Display*, and a Colormap to call the XAllocColor function,
+    perhaps we could open a display connection, read some data, root window,
+    colormap, etc, and close it again?
+    or make a function/method in h_Window
+      h_Color col = m_Window->color(r,g,b)
+    we did that in axonlib, if i remember correctly..
+    and it would be similar to how bitmaps and surfaces are handled (factory)
+  */
 
   h_Color h_xcolor(unsigned char r, unsigned char g, unsigned char b)
       {
