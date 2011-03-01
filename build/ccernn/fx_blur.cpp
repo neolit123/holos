@@ -1,6 +1,6 @@
 #define H_NOGUI
 #include "holos.h"
-#include "h/h_Parameter.h"
+#include "src/h_Parameter.h"
 
 //----------------------------------------------------------------------
 
@@ -122,9 +122,13 @@ class my_Instance : public h_Instance
         bufsize += ( bufsize_t - bufsize ) * decay2;
         decay   += ( decay_t   - decay   ) * decay2;
 
-        if( fr<0.5 ) BUF_t[pos] = spl0;
-        BUF[pos] += ( BUF_t[pos] - BUF[pos] ) * decay;
+        // left
+
+        if (fr<0.5) BUF_t[pos] = spl0;
+        BUF[pos] += (BUF_t[pos]-BUF[pos]) * decay;
         spl0 = BUF[pos] * vol;
+
+        // right
 
         int po2 = pos + 0x20000;
 
@@ -144,7 +148,7 @@ class my_Instance : public h_Instance
 #define H_INSTANCE my_Instance
 
 //----------------------------------------------------------------------
-#include "holos.cpp"
+#include "holos_impl.h"
 
 
 

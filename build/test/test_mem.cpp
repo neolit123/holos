@@ -39,7 +39,7 @@ class my_Descriptor : public h_Descriptor
 
 //----------------------------------------------------------------------
 
-#include "h/h_Memory.h"
+#include "src/h_Memory.h"
 
 class my_Instance : public h_Instance
 {
@@ -68,6 +68,6 @@ class my_Instance : public h_Instance
 //----------------------------------------------------------------------
 
 //#include "holos_impl.h"
-#include "holos.cpp"
+#include "holos_impl.h"
 
 

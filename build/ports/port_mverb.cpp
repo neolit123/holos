@@ -92,4 +92,4 @@ class my_Instance : public h_Instance
 #define H_INSTANCE my_Instance
 
 //----------------------------------------------------------------------
-#include "holos.cpp"
+#include "holos_impl.h"

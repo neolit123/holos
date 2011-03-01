@@ -8,23 +8,24 @@
 
 #define H_DEBUG_MEM
 #define H_DEBUG_MEM_PRINT
+#define H_DEBUG_MEM_NOREDEFINE
 #define H_DEBUG_NEW
 
 #include "holos.h"
-#include "h/h_SkinDefault.h"
-#include "h/h_WdgBackground.h"
-#include "h/h_WdgPanel.h"
-#include "h/h_WdgLabel.h"
-#include "h/h_WdgButton.h"
-#include "h/h_WdgValue.h"
-#include "h/h_WdgSlider.h"
-#include "h/h_WdgImage.h"
-#include "h/h_WdgKnob.h"
+#include "src/h_SkinDefault.h"
+#include "src/h_WdgBackground.h"
+#include "src/h_WdgPanel.h"
+#include "src/h_WdgLabel.h"
+#include "src/h_WdgButton.h"
+#include "src/h_WdgValue.h"
+#include "src/h_WdgSlider.h"
+#include "src/h_WdgImage.h"
+#include "src/h_WdgKnob.h"
 
-#include "h/h_BasePath.h"
-#include "h/h_BitmapLoader.h"
-#include "h/h_Bitmap.h"
-#include "h/h_Surface.h"
+#include "src/h_BasePath.h"
+#include "src/h_BitmapLoader.h"
+#include "src/h_Bitmap.h"
+#include "src/h_Surface.h"
 
 //----------------------------------------------------------------------
 
@@ -66,8 +67,9 @@
 //----------------------------------------------------------------------
 
 const char* strings[] = { (char*)"string0", (char*)"string1", (char*)"string2", (char*)"string3" };
-float pow2(const float x) { return h_Pow(x,2.f); }
-float inv_pow2(const float x) { return h_Log(x)/h_Log(2.f); }
+
+float p2(const float x) { return x*x; }
+float inv_p2(const float x) { return h_Sqrt(x); }
 
 class my_Descriptor : public h_Descriptor
 {
@@ -87,19 +89,12 @@ class my_Descriptor : public h_Descriptor
         m_EditorRect  = h_Rect(0,0,640,480);
 
         appendParameter( new h_Parameter("param",   "", PF_DEFAULT, 0 ) );
-        appendParameter( new h_ParFloat( "float",   "", PF_DEFAULT, 1.5, 0,5,0.25 ) );
-        appendParameter( new h_ParInt(   "int",     "", PF_DEFAULT, 3, 1,10, H_NULL) );
+        appendParameter( new h_ParFloat( "float",   "", PF_DEFAULT, 1.5, 0,5, 0.25 ) );
+        appendParameter( new h_ParInt(   "int",     "", PF_DEFAULT, 3,   1,   10 ) );
 
-        appendParameter( new h_ParFloat("parFloat", "", H_NULL, 4, 0, 10, 0.1, &pow2, &inv_pow2)); // 16
-        appendParameter( new h_ParInt(  "parInt",   "", H_NULL, 4, 0, 40, &pow2, &inv_pow2)); // 16
-        appendParameter( new h_ParText( "parText",  "", H_NULL, 2, 4, strings));
-
-        // would it be possible (and/or sensible) to have the default, and min/max values
-        // transformed through the inv_pow2 callbacks?
-        // so we could set the top one to:
-        // H_NULL, 16, 0, 1024, 0.1, &pow...
-        // and the 16,0,1024 would be changed to 4,0,10 (by inv_pow2)..
-
+        appendParameter( new h_ParFloat("parFloat", "", PF_DEFAULT, 440, 1, 44100, 0, &p2, &inv_p2 )); // 16
+        appendParameter( new h_ParInt(  "parInt",   "", PF_DEFAULT, 256, 1,1024, &p2, &inv_p2 )); // 16
+        appendParameter( new h_ParText( "parText",  "", PF_DEFAULT, 2,   4, strings));
       }
 };
 
@@ -140,9 +135,18 @@ class my_Instance : public h_Instance,
 
     virtual void  do_HandleParameter(h_Parameter* a_Parameter)
       {
-        char buf[H_MAX_STRINGSIZE];
-        a_Parameter->getDisplay(buf);
-        //trace("param: " << a_Parameter->getName().ptr() << " = " << buf );
+        char disp[H_MAX_STRINGSIZE];
+        a_Parameter->getDisplay(disp);
+        trace("param: " << a_Parameter->getName().ptr() << " = " << disp );
+//        float i = a_Parameter->getInternal();
+//        float v = a_Parameter->getValue();
+//        char buf[32];
+//        h_Ftoa(buf,i);
+//        trace( a_Parameter->getName().ptr() );
+//        trace( "  i: " << i);
+//        trace( "  v: " << v);
+//        a_Parameter->getDisplay(buf);
+//        trace( "  d: " << buf);
       }
 
     //----------
@@ -238,12 +242,6 @@ class my_Instance : public h_Instance,
 
     //----------
 
-    //virtual void do_HandleParameter(h_Parameter* a_Parameter)
-    //  {
-    //  }
-
-    //----------
-
     //virtual void do_HandleMidi(int a_Offset, unsigned char a_Msg1, unsigned char a_Msg2, unsigned char a_Msg3)
     //  {
     //  }
@@ -287,6 +285,6 @@ class my_Instance : public h_Instance,
 
 //----------------------------------------------------------------------
 
-#include "holos.cpp"
+#include "holos_impl.h"
 
 

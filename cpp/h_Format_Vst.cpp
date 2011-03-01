@@ -80,7 +80,7 @@ AEffect* h_Format::entrypoint(audioMasterCallback audioMaster)
     effect->uniqueID                = desc->m_UniqueId;//H_MAGIC + 0x0000;
     //effect->numPrograms             = desc->m_NumProgs;
     //effect->numParams               = 0;//desc->m_NumParams;
-    effect->numPrograms             = 0;
+    effect->numPrograms             = desc->m_Programs.size();
     effect->numParams               = desc->m_Parameters.size();
     effect->numInputs               = desc->m_NumInputs;
     effect->numOutputs              = desc->m_NumOutputs;

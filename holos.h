@@ -21,56 +21,56 @@
 #define holos_h_included
 //----------------------------------------------------------------------
 
-#include "h/h_Defines.h"
-#include "h/h_Debug.h"
-#include "h/h_Core.h"
+#include "src/h_Defines.h"
+#include "src/h_Debug.h"
+#include "src/h_Core.h"
 
 // platform
 
 #ifdef H_LINUX
-  //#include "h/h_Linux.h"
-  #include "h/h_Platform_Linux.h"
+  //#include "src/h_Linux.h"
+  #include "src/h_Platform_Linux.h"
 #endif
 
 #ifdef H_WIN32
-  //#include "h/h_Win32.h"
-  #include "h/h_Platform_Win32.h"
+  //#include "src/h_Win32.h"
+  #include "src/h_Platform_Win32.h"
 #endif
 
-#include "h/h_Host.h"
-#include "h/h_Instance.h"
-//#include "h/h_Format.h"
-#include "h/h_Parameter.h"
-#include "h/h_Descriptor.h"
+#include "src/h_Host.h"
+#include "src/h_Instance.h"
+//#include "src/h_Format.h"
+#include "src/h_Parameter.h"
+#include "src/h_Descriptor.h"
 
 // host, instance, format
 
 #ifdef H_EXE
-  //#include "h/h_Exe.h"
-  #include "h/h_Host_Exe.h"
-  #include "h/h_Instance_Exe.h"
-  #include "h/h_Format_Exe.h"
+  //#include "src/h_Exe.h"
+  #include "src/h_Host_Exe.h"
+  #include "src/h_Instance_Exe.h"
+  #include "src/h_Format_Exe.h"
 #endif
 
 #ifdef H_LADSPA
-  //#include "h/h_Ladspa.h"
-  #include "h/h_Host_Ladspa.h"
-  #include "h/h_Instance_Ladspa.h"
-  #include "h/h_Format_Ladspa.h"
+  //#include "src/h_Ladspa.h"
+  #include "src/h_Host_Ladspa.h"
+  #include "src/h_Instance_Ladspa.h"
+  #include "src/h_Format_Ladspa.h"
 #endif
 
 #ifdef H_VST
-  //#include "h/h_Vst.h"
-  #include "h/h_Host_Vst.h"
-  #include "h/h_Instance_Vst.h"
-  #include "h/h_Format_Vst.h"
+  //#include "src/h_Vst.h"
+  #include "src/h_Host_Vst.h"
+  #include "src/h_Instance_Vst.h"
+  #include "src/h_Format_Vst.h"
 #endif
 
 #ifndef H_NOGUI
-  #include "h/h_Editor.h"
+  #include "src/h_Editor.h"
 #endif
 
-//#include "h/h_Main.h"
+//#include "src/h_Main.h"
 
 //----------------------------------------------------------------------
 #endif

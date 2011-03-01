@@ -65,6 +65,8 @@ class h_Instance_Base
     virtual void*   do_OpenEditor(void* ptr) { return H_NULL; } // return h_Editor
     virtual void    do_CloseEditor(void) {}
     virtual void    do_IdleEditor(void) {}
+    virtual void    do_PreProgram(int a_Index) {}
+    virtual void    do_SetProgram(int a_Index) {}
   public:
     virtual int     getPlayState(void)      { return 0; }
     virtual double  getSamplePos(void)      { return 0; }
@@ -74,6 +76,8 @@ class h_Instance_Base
     virtual int     getCurrentProgram(void) { return 0; }
   public:
     virtual void    transferParameters(void) {}
+    virtual void    transferProgram(int a_Index) {}
+    virtual void    saveProgram(int a_Index) {}
     virtual void    notifyParameter(h_Parameter* a_Parameter) {}
     virtual void    notifyResize(int aWidth, int aHeight) {}
     virtual void    updateTime(void) {}

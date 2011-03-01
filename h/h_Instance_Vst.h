@@ -76,6 +76,7 @@ class h_Instance : public h_Instance_Base
   protected:
     h_Descriptor*       m_Descriptor;
     h_Parameters*       m_Parameters;
+    h_Programs*         m_Programs;
     h_Rect              m_EditorRect;
   public:
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
@@ -99,6 +100,8 @@ class h_Instance : public h_Instance_Base
     //virtual h_Rect  getEditorRect(void)     { return m_EditorRect; }
   public:
     virtual void    transferParameters(void);
+    virtual void    transferProgram(int a_Index);
+    virtual void    saveProgram(int a_Index);
     virtual void    notifyParameter(h_Parameter* aParameter);
     virtual void    notifyResize(int aWidth, int aHeight);
     virtual void    updateTime(void);

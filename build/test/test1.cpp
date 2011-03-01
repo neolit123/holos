@@ -7,9 +7,9 @@
 
 #include "holos.h"
 
-#include "h/h_Window.h"
-#include "h/h_WdgBackground.h"
-#include "h/h_SkinDefault.h"
+#include "src/h_Window.h"
+#include "src/h_WdgBackground.h"
+#include "src/h_SkinDefault.h"
 
 //----------------------------------------------------------------------
 

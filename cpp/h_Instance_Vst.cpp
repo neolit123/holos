@@ -33,6 +33,7 @@ h_Instance::h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     m_Host            = a_Host;
     m_Descriptor      = a_Descriptor;
     m_Parameters      = m_Descriptor->getParameters();
+    m_Programs        = m_Descriptor->getPrograms();
     m_AudioMaster     = a_Host->getAudioMaster();
     m_AEffect         = a_Host->getAEffect();
     h_Memset(&m_MidiEventList,0,sizeof(h_VstEvents));
@@ -103,6 +104,28 @@ void h_Instance::transferParameters(void)
   }
 
 //----------
+
+void h_Instance::transferProgram(int a_Index)
+  {
+    if (a_Index >= m_Programs->size()) return;
+    int num = m_Parameters->size();
+    h_Program* prog = m_Programs->item(a_Index);
+    for (int i=0; i<num; i++)
+    {
+      h_Parameter* par = m_Parameters->item(i);//[i];
+      float val = prog->getValue(i);
+      par->setInternal(val);
+    }
+  }
+
+void h_Instance::saveProgram(int a_Index)
+  {
+    h_Program* prog = m_Programs->item(a_Index);
+    for (int i=0; i<m_Parameters->size(); i++)
+    {
+      prog->setValue( i, m_Parameters->item(i)->getInternal() );
+    }
+  }
 
 //void setupPrograms()
 //  {
@@ -279,24 +302,17 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effSetProgram: // 02
         trace_vst("vst dispatcher: effSetProgram");
-        //do_PreProgram(m_CurrentProgram);
-        ////#ifndef AX_NOAUTOSAVE_PROGRAMS
-        ////saveProgram( getCurrentProgram() );
-        ////#endif
-        m_CurrentProgram = (VstInt32)value;
-        //_loadProgram(m_CurrentProgram);
-        ////if (mPrograms.size()>0)
-        ////{
-        ////  axProgram* prog = mPrograms[mCurrentProgram];
-        ////  int num = mParameters.size();
-        ////  for (int i=0; i<num; i++)
-        ////  {
-        ////    float val = prog->getValue(i);
-        ////    mParameters[i]->doSetValue(val,true);
-        ////  }
-        //// let plugin know the program have changed
-        //do_SetProgram(m_CurrentProgram);
-        ////}
+        if (m_Programs->size() > 0)
+        {
+          do_PreProgram(m_CurrentProgram);
+          #ifndef H_PROGRAMS_NOAUTOSAVE
+          saveProgram(m_CurrentProgram);
+          #endif
+          m_CurrentProgram = (VstInt32)value;
+          transferProgram(m_CurrentProgram);
+          do_SetProgram(m_CurrentProgram);
+          transferParameters();
+        }
         break;
 
       //----------
@@ -315,10 +331,11 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effSetProgramName: // 04
         trace_vst("vst dispatcher: effSetProgramName");
-        //if (m_Programs.size() > 0)
-        //{
-        //  m_Programs[m_CurrentProgram]->setName( (char*)ptr );
-        //} else *(char*)ptr = '\0';
+        if (m_Programs->size() > 0)
+        {
+          m_Programs->item(m_CurrentProgram)->setName((char*)ptr);
+          result = 1;
+        }
         break;
 
       //----------
@@ -328,10 +345,12 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetProgramName: // 05
         trace_vst("vst dispatcher: effGetProgramName");
-        //if (m_Programs.size() > 0)
-        //{
-        //  strncpy( (char*)ptr, m_Programs[m_CurrentProgram]->getName().ptr(), kVstMaxProgNameLen );
-        //} else *(char*)ptr = '\0';
+        if (m_Programs->size() > 0)
+        {
+          h_Strncpy( (char*)ptr, m_Programs->item(m_CurrentProgram)->getName(), kVstMaxProgNameLen );
+          result = 1;
+        }
+        else *(char*)ptr = '\0';
         break;
 
       //----------
@@ -355,7 +374,6 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       case effGetParamDisplay: // 07
         trace_vst("vst dispatcher: effGetParamDisplay");
         m_Parameters->item(index)->getDisplay((char*)ptr);
-        //h_Strcpy((char*)ptr,"display");
         break;
 
       //----------
@@ -367,7 +385,6 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
       case effGetParamName: // 08
         trace_vst("vst dispatcher: effGetParamName");
         m_Parameters->item(index)->getName((char*)ptr);
-        //h_Strcpy((char*)ptr,"name");
         break;
 
       //----------
@@ -562,7 +579,7 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effCanBeAutomated: // 26
         trace_vst("vst dispatcher: effCanBeAutomated");
-        //if ( mParameters[index]->getFlags() & pf_Automate ) v = 1;
+        if ( m_Parameters->item(index)->getFlags() & pf_Automate ) result = 1;
         break;
 
       //----------
@@ -581,11 +598,13 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       case effGetProgramNameIndexed: // 29
         trace_vst("vst dispatcher: effGetProgramNameIndexed");
-        //if (index<mPrograms.size())
-        //{
-        //  strncpy( (char*)ptr, mPrograms[index]->getName().ptr(), kVstMaxProgNameLen );
-        //  result = 1;
-        //}
+        if (m_Programs->size() > 0)
+        {
+          trace(m_Programs->item(index)->getName());
+          h_Strncpy( (char*)ptr, m_Programs->item(index)->getName(), kVstMaxProgNameLen );
+          result = 1;
+        }
+        else *(char*)ptr = '\0';
         break;
 
       //----------
@@ -752,20 +771,6 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
         result = m_Descriptor->m_Version;;
         break;
 
-      //----------
-
-      //namespace PlugCanDos
-      //{
-      //	const char* canDoSendVstEvents = "sendVstEvents"; ///< plug-in will send Vst events to Host
-      //	const char* canDoSendVstMidiEvent = "sendVstMidiEvent"; ///< plug-in will send MIDI events to Host
-      //	const char* canDoReceiveVstEvents = "receiveVstEvents"; ///< plug-in can receive MIDI events from Host
-      //	const char* canDoReceiveVstMidiEvent = "receiveVstMidiEvent"; ///< plug-in can receive MIDI events from Host
-      //	const char* canDoReceiveVstTimeInfo = "receiveVstTimeInfo"; ///< plug-in can receive Time info from Host
-      //	const char* canDoOffline = "offline"; ///< plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
-      //	const char* canDoMidiProgramNames = "midiProgramNames"; ///< plug-in supports function #getMidiProgramName ()
-      //	const char* canDoBypass = "bypass"; ///< plug-in supports function #setBypass ()
-      //}
-
       // case effVendorSpecific:
       //    if (index == effGetParamDisplay && ptr)
       //    {
@@ -782,21 +787,32 @@ VstIntPtr h_Instance::vst_dispatcher(VstInt32 opCode, VstInt32 index, VstIntPtr 
 
       //----------
 
+      //namespace PlugCanDos
+      //{
+      //	const char* canDoSendVstEvents = "sendVstEvents"; ///< plug-in will send Vst events to Host
+      //	const char* canDoSendVstMidiEvent = "sendVstMidiEvent"; ///< plug-in will send MIDI events to Host
+      //	const char* canDoReceiveVstEvents = "receiveVstEvents"; ///< plug-in can receive MIDI events from Host
+      //	const char* canDoReceiveVstMidiEvent = "receiveVstMidiEvent"; ///< plug-in can receive MIDI events from Host
+      //	const char* canDoReceiveVstTimeInfo = "receiveVstTimeInfo"; ///< plug-in can receive Time info from Host
+      //	const char* canDoOffline = "offline"; ///< plug-in supports offline functions (#offlineNotify, #offlinePrepare, #offlineRun)
+      //	const char* canDoMidiProgramNames = "midiProgramNames"; ///< plug-in supports function #getMidiProgramName ()
+      //	const char* canDoBypass = "bypass"; ///< plug-in supports function #setBypass ()
+      //}
+
       case effCanDo: // 51
         trace_vst("vst dispatcher: effCanDo");
         {
-          //trace("axFormatVst.dispatcher :: effCanDo");
-          //v = canDo ((char*)ptr);
           char* p = (char*)ptr;
           trace_vst("effCanDo: '" << p << "'");
 
           bool _send = (m_Descriptor->m_Flags&df_SendMidi);
+          bool _receive = (m_Descriptor->m_Flags&df_ReceiveMidi);
+
           if (_send)
           {
             if (!h_Strcmp(p,"sendVstEvents")) return 1;
             if (!h_Strcmp(p,"sendVstMidiEvents")) return 1;
           }
-          bool _receive = (m_Descriptor->m_Flags&df_ReceiveMidi);
           if (_receive)
           {
             if (!h_Strcmp(p,"receiveVstEvents")) return 1;

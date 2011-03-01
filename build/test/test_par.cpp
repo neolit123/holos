@@ -39,8 +39,8 @@ class desc : public h_Descriptor
       m_EditorRect  = H_NULL_RECT;
       appendParameter
         (new h_ParFloat("parFloat", "", H_NULL, 4, 0, 10, 0.1, &pow2, &inv_pow2));
-      appendParameter
-        (new h_ParDb("parDb", H_NULL, 0, -24, 24, 0.001));
+      //appendParameter
+      //  (new h_ParDb("parDb", H_NULL, 0, -24, 24, 0.001));
       appendParameter
         (new h_ParInt("parInt", "", H_NULL, 4, 0, 40, &pow2, &inv_pow2));
       appendParameter
@@ -66,4 +66,4 @@ class inst : public h_Instance
 #define H_DESCRIPTOR  desc
 #define H_INSTANCE    inst
 
-#include "holos.cpp"
+#include "holos_impl.h"
