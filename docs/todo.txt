@@ -1,19 +1,34 @@
 
 ----------------------------------------------------------------------
-missing, in no particular order
+major missing features from axonlib, in no particular order
 ----------------------------------------------------------------------
 
-* [generally done?]
-  the rest of the parameters from axonlib
-
+* the rest of the parameters from axonlib
+  [generally done?]
 
 * --"-- widgets --"--
 
 * ladspa
+  [in progress]
 
 * /test: directory with small(-ish) test apps, individually testing
   the holos features. and, if possible, a way to run all tests,
   route all output to file, and compare with a "master" ???
+
+----------------------------------------------------------------------
+code
+----------------------------------------------------------------------
+
+* namespace (?)
+
+  wrap everything in a 'holos' namespace? 'using holos;'
+  to avoid polluting the global namespace?
+
+* h_ prefix
+
+  add a h_ or H_ prefix to absolutely everything?
+  again to avoid name collisions with our other code,
+  a lib-users plugin code, or external libraries..
 
 ----------------------------------------------------------------------
 ideas
@@ -34,8 +49,13 @@ ideas
   hardware acceleration might be a little problematic,
   depending on screen vs surface color-depth/format..
 
+* program dumping
+
+  a dummPrograms() function that writes out a .h file that we can
+  directly include in our plugin
+
 ----------------------------------------------------------------------
-known major bugs
+known (?) major bugs
 ----------------------------------------------------------------------
 
 * [partially fixed???]

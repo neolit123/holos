@@ -21,6 +21,13 @@
 #define h_Host_Ladspa_included
 //----------------------------------------------------------------------
 
+class h_Host : public h_Host_Base
+{
+  public:
+    h_Host();
+    ~h_Host();
+    virtual h_String getName(void);
+};
 
 
 //----------------------------------------------------------------------

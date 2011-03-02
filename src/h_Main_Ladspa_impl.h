@@ -21,13 +21,26 @@
 #define h_Main_Ladspa_impl_included
 //#ifdef h_Ladspa_included
 //----------------------------------------------------------------------
+/*
+  looks like jost (and qtractor) doesn't see the exported function.
+  'nm holos_ladspa_debug.so' shows a line like this:
+    000057bf T ladspa_descriptor
+  jost prints out:
+  'You are trying to load a shared library ?'
+  so it seems the .so isn't loading...
+*/
 
-//__externc __dllexport
-//const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)
-//{
-//  LADSPA_Descriptor* descr = (LADSPA_Descriptor*)format->entrypoint(NULL);
-//  return descr;
-//}
+//#include <stdio.h> // printf (for testing)
+
+__externc __dllexport
+const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index)
+{
+  //printf("ladspa_descriptor!!!\n"); // testing
+  if (Index>0) return H_NULL;
+  static_Debug.initialize();
+  static_Core.initialize();
+  return static_Core.m_Format->entrypoint(H_NULL);
+}
 
 //----------------------------------------------------------------------
 //#endif

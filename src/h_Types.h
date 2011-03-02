@@ -22,6 +22,10 @@
 //----------------------------------------------------------------------
 
 #include "src/h_Defines.h"
+#include <stdint.h>
+
+/*
+// ### should be better plat. dependent (or deleted)
 
 // limits
 //----------------------------------------------------------------------
@@ -47,48 +51,37 @@
 #define H_LDBL_MIN       3.36210314311209350626E-4932L
 #define H_LDBL_EPSILON   1.08420217248550443401E-19L
 #define H_LDBL_DENORM    3.64519953188247460253E-4951L
+*/
 
-// fixed size types
+// plat. dependent
 //----------------------------------------------------------------------
 
-#define h_int8         char
-#define h_uint8        unsigned char
-#define h_int16        short
-#define h_uint16       unsigned short
+#define h_int8_t          int8_t
+#define h_uint8_t         uint8_t
+#define h_int16_t         int16_t
+#define h_uint16_t        uint16_t
+#define h_int32_t         int32_t
+#define h_unt32_t         uint32_t
+#define h_int64_t         int64_t
+#define h_uint64_t        uint64_t
 
-// architecture dependant
-//----------------------------------------------------------------------
-
-#ifdef _H_32BIT_
-  #define h_int32         long
-  #define h_uint32        unsigned long
-  #define h_int64         long long
-  #define h_uint64        unsigned long long
-  #define h_intptr        h_uint32
-  #define H_LONG_MAX      2147483647L
-  #define H_ULONG_MAX     8589934591UL
-#endif
-#ifdef _H_64BIT_
-  #define h_int32         int
-  #define h_uint32        unsigned int
-  #define h_int64         long long
-  #define h_uint64        unsigned long long
-  #define h_intptr        h_uint64
-  #define H_LONG_MAX      9223372036854775807L
-  #define H_ULONG_MAX     18446744073709551615UL
-#endif
-
-#define __aligned_t(x)    __attribute__ ((aligned (x)))
-#define __may_alias_t     __attribute__ ((may_alias))
+#define h_uintptr_t       uintptr_t
+#define h_intptr          intptr_t
+#define h_size_t          size_t
+#define h_ssize_t         ssize_t
 
 // aligned types
 //----------------------------------------------------------------------
+
+#define __aligned_t(x)    __attribute__ ((aligned (x)))
 
 typedef double      __aligned_t(8) double_8;
 typedef long long   __aligned_t(8) longlong_8;
 
 // aliasing types
 //----------------------------------------------------------------------
+
+#define __may_alias_t     __attribute__ ((may_alias))
 
 typedef void*                 __may_alias_t void_ptr_a;
 typedef long double           __may_alias_t ldouble_a;

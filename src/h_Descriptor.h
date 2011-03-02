@@ -144,7 +144,11 @@ class h_Descriptor
     void initPrograms(int a_NumProgs, h_Parameters* a_Parameters)
       {
         int pnum = a_Parameters->size();
+
+        // warning: ISO C++ forbids variable length array
+        //float* val = (float*)h_Malloc(pnum*sizeof(float));
         float val[pnum];
+
         for (int i=0; i<pnum; i++) val[i] = a_Parameters->item(i)->getInternal();
         for (int j=0; j<a_NumProgs; j++)
         {
@@ -155,6 +159,9 @@ class h_Descriptor
           trace(str);
           appendProgram( new h_Program( h_String(str), pnum, (float*)&val) );
         }
+
+        //delete val;
+
       }
 
 //    void deletePrograms(void)

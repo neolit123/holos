@@ -24,7 +24,7 @@
 class h_Instance : public h_Instance_Base
 {
   private:
-    h_Host*   m_Host; // we need to delete this in destructor
+    h_Host*   m_Host;
     h_Rect    m_EditorRect;
     bool      m_EditorIsOpen;
     int       m_PlayState;

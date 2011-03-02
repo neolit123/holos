@@ -22,26 +22,12 @@
 //#ifdef h_Exe_included
 //----------------------------------------------------------------------
 
-//#ifndef H_NOGUI
-//  #include "gui/h_Window.h"
-//#endif
-
-//#include "core/source/h_Host_Exe_impl.h"
-//#include "core/source/h_Instance_Exe_impl.h"
-//#include "core/source/h_Format_Exe_impl.h"
-
-//----------------------------------------------------------------------
-//
-// main
-//
-//----------------------------------------------------------------------
-
 //int main(void)
 int main(int argc, char** argv)
 {
   static_Debug.initialize();
   static_Core.initialize();
-  //parse cmdline args -> entrypoint
+  // todo/maybe-do: parse cmdline args -> entrypoint
   return static_Core.m_Format->entrypoint(H_NULL);
 }
 

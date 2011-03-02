@@ -21,18 +21,29 @@
 #define h_Format_Ladspa_included
 //----------------------------------------------------------------------
 
+#define MAX_LADSPA_PORTS 256
+
+#include "../extern/ladspa/ladspa.h"
+
 class h_Format
 {
   private:
-    h_Platform* m_Platform;
+    h_Platform*           m_Platform;
+    h_Descriptor*         m_Descriptor;
+    LADSPA_Descriptor     m_LadspaDescr;
+    char*                 m_PortNames[MAX_LADSPA_PORTS];
+    LADSPA_PortDescriptor m_PortDesc[MAX_LADSPA_PORTS];
+    LADSPA_PortRangeHint  m_PortHint[MAX_LADSPA_PORTS];
 
   public:
     h_Format();
     ~h_Format();
-    h_Descriptor* createDescriptor(void);
-    h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
-    int           entrypoint(void* a_Ptr);
-    h_String      getName(void) { return "ladspa"; }
+    h_Descriptor*       createDescriptor(void);
+    h_Instance*         createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
+    h_String            getName(void) { return "ladspa"; }
+    LADSPA_Descriptor*  entrypoint(void* a_Ptr);
+    LADSPA_Handle       lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate);
+
 };
 
 

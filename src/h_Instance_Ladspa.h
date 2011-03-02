@@ -21,10 +21,12 @@
 #define h_Instance_Ladspa_included
 //----------------------------------------------------------------------
 
+#include "../extern/ladspa/ladspa.h"
+
 class h_Instance : public h_Instance_Base
 {
   private:
-    h_Host*   m_Host; // we need to delete this in destructor
+    h_Host*   m_Host;
     //h_Rect    m_EditorRect;
     //bool      m_EditorIsOpen;
     int       m_PlayState;
@@ -32,15 +34,32 @@ class h_Instance : public h_Instance_Base
     double    m_SamplePos;
     double    m_BeatPos;
     double    m_Tempo;
+
+  protected:
+    h_Descriptor* m_Descriptor;
+    h_Parameters* m_Parameters;
+
   public:
+
     h_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor);
     virtual ~h_Instance();
+
     //inline h_Rect getEditorRect(void) { return m_EditorRect; }
+
     virtual void  transferParameters(void);
-    //virtual void  notifyParameter(h_Parameter* aParameter);
+    virtual void  notifyParameter(h_Parameter* a_Parameter);
     //virtual void  notifyResize(int aWidth, int aHeight);
     virtual void  updateTime(void);
     virtual void  sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
+
+    virtual void lad_connect_port(unsigned long Port, LADSPA_Data * DataLocation);
+    virtual void lad_activate(void);
+    virtual void lad_run(unsigned long SampleCount);
+    //virtual void lad_run_adding(unsigned long SampleCount);
+    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain);
+    virtual void lad_deactivate(void);
+    virtual void lad_cleanup(void);
+
 };
 
 

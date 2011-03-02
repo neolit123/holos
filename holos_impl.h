@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------
 #ifndef holos_impl_included
 #define holos_impl_included
-#ifdef holos_h_included
+//#ifdef holos_h_included
 //----------------------------------------------------------------------
 
 // select default implementations if we don't provide our own
@@ -97,5 +97,5 @@
 //#endif
 
 //----------------------------------------------------------------------
-#endif
+//#endif
 #endif

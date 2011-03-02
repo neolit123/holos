@@ -43,6 +43,59 @@
 					<Add library="GL" />
 				</Linker>
 			</Target>
+			<Target title="linux vst debug">
+				<Option output="../../bin/holos_vst_debug.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="linux vst release">
+				<Option output="../../bin/holos_vst.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DH_VST" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="pthread" />
+					<Add library="X11" />
+					<Add library="Xrender" />
+					<Add library="GL" />
+				</Linker>
+			</Target>
+			<Target title="linux ladspa debug">
+				<Option output="../../bin/holos_ladspa_debug.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-fPIC" />
+					<Add option="-shared" />
+					<Add option="-DH_DEBUG" />
+					<Add option="-DH_LADSPA" />
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,-Bsymbolic" />
+					<Add option="-export-dynamic" />
+					<Add option="-shared" />
+					<Add library="pthread" />
+				</Linker>
+			</Target>
 			<Target title="win32 exe debug">
 				<Option output="../../bin/holos_debug.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../../bin/" />
@@ -76,42 +129,8 @@
 					<Add library="msimg32" />
 				</Linker>
 			</Target>
-			<Target title="linux vst debug">
-				<Option output="../../bin/holos_debug.so" prefix_auto="0" extension_auto="0" />
-				<Option object_output="obj/debug/" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-					<Add option="-DH_DEBUG" />
-					<Add option="-DH_VST" />
-				</Compiler>
-				<Linker>
-					<Add library="pthread" />
-					<Add library="X11" />
-					<Add library="Xrender" />
-					<Add library="GL" />
-				</Linker>
-			</Target>
-			<Target title="linux vst release">
-				<Option output="../../bin/holos.so" prefix_auto="0" extension_auto="0" />
-				<Option object_output="obj/release/" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-DH_VST" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add library="pthread" />
-					<Add library="X11" />
-					<Add library="Xrender" />
-					<Add library="GL" />
-				</Linker>
-			</Target>
 			<Target title="win32 vst debug">
-				<Option output="../../bin/holos_debug.dll" prefix_auto="0" extension_auto="0" />
+				<Option output="../../bin/holos_vst_debug.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/debug/" />
 				<Option type="3" />
 				<Option compiler="ming32" />
@@ -126,7 +145,7 @@
 				</Linker>
 			</Target>
 			<Target title="win32 vst release">
-				<Option output="../../bin/holos.dll" prefix_auto="0" extension_auto="0" />
+				<Option output="../../bin/holos_vst.dll" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/release/" />
 				<Option type="3" />
 				<Option compiler="ming32" />
@@ -189,7 +208,6 @@
 		<Unit filename="../../docs/LICENSE.txt" />
 		<Unit filename="../../docs/faq.txt" />
 		<Unit filename="../../docs/todo.txt" />
-		<Unit filename="../../h.h" />
 		<Unit filename="../../holos.h" />
 		<Unit filename="../../holos_impl.h" />
 		<Unit filename="../../src/h_Array.h" />

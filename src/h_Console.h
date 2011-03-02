@@ -113,7 +113,7 @@ class h_Console
           }
           //else printf("[h_DebugConsole.h]: winapi console: # cannot get menu\n");
           // _O_TEXT = 0x4000
-          h_intptr h_Hcrt = _open_osfhandle((h_intptr)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
+          h_uintptr_t h_Hcrt = _open_osfhandle((h_uintptr_t)GetStdHandle(STD_OUTPUT_HANDLE), 0x4000);
           if (h_Hcrt)
           {
             m_File = _fdopen(h_Hcrt,"w");
@@ -135,7 +135,7 @@ class h_Console
     ~h_Console()
       {
         FreeConsole();
-        if (m_File) close((h_intptr)m_File);
+        if (m_File) close((h_uintptr_t)m_File);
       }
 
     //----------
