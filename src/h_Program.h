@@ -21,7 +21,7 @@
 #define h_Program_included
 //----------------------------------------------------------------------
 
-#define MAX_PROGNAMESIZE 24
+#define MAX_PROGNAMESIZE 64
 
 class h_Program
 {

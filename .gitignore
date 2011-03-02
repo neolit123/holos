@@ -6,4 +6,4 @@ bin
 *.exe
 *.log
 holos_backup*.*
-
+extern/vst/*

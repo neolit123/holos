@@ -23,6 +23,8 @@
 
 #include "../extern/ladspa/ladspa.h"
 
+#define MAX_LADSPA_PORTS 256
+
 class h_Instance : public h_Instance_Base
 {
   private:
@@ -34,6 +36,11 @@ class h_Instance : public h_Instance_Base
     double    m_SamplePos;
     double    m_BeatPos;
     double    m_Tempo;
+    //
+    float*        m_Inputs[MAX_LADSPA_PORTS];
+    float*        m_Outputs[MAX_LADSPA_PORTS];
+    LADSPA_Data*  m_ParamPtr[MAX_LADSPA_PORTS];
+    LADSPA_Data   m_ParamPrev[MAX_LADSPA_PORTS];
 
   protected:
     h_Descriptor* m_Descriptor;
@@ -48,15 +55,16 @@ class h_Instance : public h_Instance_Base
 
     virtual void  transferParameters(void);
     virtual void  notifyParameter(h_Parameter* a_Parameter);
-    //virtual void  notifyResize(int aWidth, int aHeight);
-    virtual void  updateTime(void);
-    virtual void  sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);
+
+    virtual void  notifyResize(int aWidth, int aHeight); // not used
+    virtual void  updateTime(void); // not used
+    virtual void  sendMidi(int offset, unsigned char msg1, unsigned char msg2, unsigned char msg3);  // not used
 
     virtual void lad_connect_port(unsigned long Port, LADSPA_Data * DataLocation);
     virtual void lad_activate(void);
     virtual void lad_run(unsigned long SampleCount);
-    //virtual void lad_run_adding(unsigned long SampleCount);
-    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain);
+    //virtual void lad_run_adding(unsigned long SampleCount); // not used
+    //virtual void lad_set_run_adding_gain(LADSPA_Data Gain); // not used
     virtual void lad_deactivate(void);
     virtual void lad_cleanup(void);
 

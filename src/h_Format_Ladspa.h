@@ -21,7 +21,7 @@
 #define h_Format_Ladspa_included
 //----------------------------------------------------------------------
 
-#define MAX_LADSPA_PORTS 256
+//#define MAX_LADSPA_PORTS 256
 
 #include "../extern/ladspa/ladspa.h"
 
