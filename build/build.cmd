@@ -1,5 +1,5 @@
-:: compile.cmd
-:: compile script for lib holos / win32
+:: build.cmd
+:: build script for lib holos / win32
 ::
 :: Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 :: This file is part of the Holos Library.
@@ -25,14 +25,14 @@
 :: *** user settings here
 :: -----------------------------------------------------------------------------
 :: set path to holos headers
-:: e.g: c:\holos\ (or relative to the compile.cmd) - location of Holos.h
+:: e.g: c:\holos\ (or relative to the build.cmd) - location of Holos.h
 set hpath=..
 
-:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
-set vstpath=..\..\vstsdk24
+:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to build.cmd)
+set vstpath=..\extern\vst
 
-:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to compile.cmd)
-set ladspapath=..\..\ladspa_sdk\src
+:: set path to vstsdk, e.g: c:\vstsdk24\ (or relative to build.cmd)
+set ladspapath=..\extern\ladspa
 
 :: set g++ path, e.g: c:\mingw\bin\g++
 set mgwpath=g++
@@ -275,9 +275,9 @@ goto begin
 :syntax
 echo.
 echo ---------------------------------------------------------------------------
-echo * holos compile script for windows
+echo * holos build script for windows
 echo.
-echo usage: compile.cmd [file.cpp] [-h] [format] [other options] [...]
+echo usage: build.cmd [file.cpp] [-h] [format] [other options] [...]
 echo  -exe : create an executable (default)
 echo  -vst : create a vst dll
 echo  -ladspa : create a ladspa dll

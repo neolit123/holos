@@ -24,42 +24,12 @@
 #include "src/h_Defines.h"
 #include "src/h_Debug.h"
 #include "src/h_Core.h"
-
-// platform
-
-#ifdef H_LINUX
-  #include "src/h_Platform_Linux.h"
-#endif
-
-#ifdef H_WIN32
-  #include "src/h_Platform_Win32.h"
-#endif
-
+#include "src/h_Platform.h"
 #include "src/h_Host.h"
 #include "src/h_Instance.h"
-//#include "src/h_Format.h"
+#include "src/h_Format.h"
 #include "src/h_Parameter.h"
 #include "src/h_Descriptor.h"
-
-// host, instance, format
-
-#ifdef H_EXE
-  #include "src/h_Host_Exe.h"
-  #include "src/h_Instance_Exe.h"
-  #include "src/h_Format_Exe.h"
-#endif
-
-#ifdef H_LADSPA
-  #include "src/h_Host_Ladspa.h"
-  #include "src/h_Instance_Ladspa.h"
-  #include "src/h_Format_Ladspa.h"
-#endif
-
-#ifdef H_VST
-  #include "src/h_Host_Vst.h"
-  #include "src/h_Instance_Vst.h"
-  #include "src/h_Format_Vst.h"
-#endif
 
 #ifndef H_NOGUI
   #include "src/h_Editor.h"

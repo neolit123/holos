@@ -22,6 +22,11 @@
 //#ifdef h_Core_included
 //----------------------------------------------------------------------
 
+#include "src/h_Core.h"
+
+#include "src/h_Platform.h"
+#include "src/h_Format.h"
+
 /*
   this is called once, just after the dll/exe has been loaded into memory,
   during initialization of static variables (static_Core)

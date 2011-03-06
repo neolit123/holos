@@ -73,11 +73,13 @@ LRESULT CALLBACK h_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARA
 h_Platform::h_Platform()
   {
     m_WinInstance = static_WinInstance;
-    //
+        
     m_WinDepth = 24; //TODO: find real value...
     h_CreateUniqueName(m_WinClassName,(char*)"holos_win_",this);
     #ifndef H_NOGUI
-    m_WinIcon = LoadIcon(m_WinInstance, "axicon");
+    
+    // something breaks the title bar icon (.exe)
+    m_WinIcon = LoadIcon(m_WinInstance, "h_icon");
     m_WinCursor = NULL; // LoadCursor(NULL, IDC_ARROW);
     h_Memset(&m_WinClass,0,sizeof(m_WinClass));
     m_WinClass.style         = CS_HREDRAW | CS_VREDRAW;

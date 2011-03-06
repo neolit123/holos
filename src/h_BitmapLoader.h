@@ -45,7 +45,7 @@ class h_BitmapLoader
     int   getWidth(void)  { return m_Width; }
     int   getHeight(void) { return m_Height; }
     int   getDepth(void)  { return m_Depth; }
-    void* getBuffer(void) { return m_Buffer; }
+    char* getBuffer(void) { return (char*)m_Buffer; }
 
 
   public:
@@ -79,7 +79,7 @@ class h_BitmapLoader
         int comp;
         m_Buffer = stbi_load_from_memory((stbi_uc*)buffer,size,&m_Width,&m_Height,&comp,req);
         m_Depth = comp*8;
-        swap_rgba();
+        //swapRgba();
       }
 
     void load(char* filename)
@@ -108,39 +108,69 @@ class h_BitmapLoader
         */
       }
 
-    h_Surface* createSurface(h_Window* a_Window)
-      {
-        int w = m_Width;
-        int h = m_Height;
-        int d = 24;//loader.getDepth(); // x crash with 32 (on 24 bit nvidia)
-        char* b = (char*)m_Buffer;
-        h_Bitmap* bmp = a_Window->createBitmap(w,h,d,b);
-        bmp->prepare();
-        h_Surface* srf = a_Window->createSurface(w,h,d);
-        h_Painter* paint = srf->getPainter();
-        paint->drawBitmap( bmp, 0,0, 0,0,w,h );
-        delete bmp;
-        return srf;
-      }
+//    h_Surface* createSurface(h_Window* a_Window, int a_Depth=24)
+//      {
+//        int w = m_Width;
+//        int h = m_Height;
+//        int d = a_Depth;//24;//loader.getDepth(); // x crash with 32 (on 24 bit nvidia)
+//        char* b = (char*)m_Buffer;
+//        h_Bitmap* bmp = a_Window->createBitmap(w,h,d,b);
+//        bmp->prepare();
+//        h_Surface* srf = a_Window->createSurface(w,h,d);
+//        h_Painter* paint = srf->getPainter();
+//        paint->drawBitmap( bmp, 0,0, 0,0,w,h );
+//        delete bmp;
+//        return srf;
+//      }
 
-    void swap_rgba(void)
-      {
-        unsigned char* ptr = m_Buffer;
-        for (int x=0; x<m_Width; x++)
-        {
-          for (int y=0; y<m_Height; y++)
-          {
-            unsigned char r = ptr[0];
-            unsigned char g = ptr[1];
-            unsigned char b = ptr[2];
-            unsigned char a = ptr[3];
-            *ptr++ = b;
-            *ptr++ = g;
-            *ptr++ = r;
-            *ptr++ = a;
-          }
-        }
-      }
+//    void swapRgba(void)
+//      {
+//        unsigned char* ptr = m_Buffer;
+//        for (int x=0; x<m_Width; x++)
+//        {
+//          for (int y=0; y<m_Height; y++)
+//          {
+//            unsigned char r = ptr[0];
+//            unsigned char g = ptr[1];
+//            unsigned char b = ptr[2];
+//            unsigned char a = ptr[3];
+//            *ptr++ = b;
+//            *ptr++ = g;
+//            *ptr++ = r;
+//            *ptr++ = a;
+//          }
+//        }
+//      }
+
+//    inline unsigned char alpha(int c, int a)
+//      {
+//        int ret = (c*a) >> 8;
+//        return ret & 0xff;
+//      }
+//
+//
+//    void premultAlpha(void)
+//      {
+//        if (m_Buffer)
+//        {
+//          for(int y=0; y<m_Height; y++)
+//          {
+//            for(int x=0; x<m_Width; x++)
+//            {
+//              int pos = (y*m_Width + x) * 4;
+//              unsigned char r = m_Buffer[pos+0];
+//              unsigned char g = m_Buffer[pos+1];
+//              unsigned char b = m_Buffer[pos+2];
+//              unsigned char a = m_Buffer[pos+3];
+//              m_Buffer[pos+0] = alpha(r,a);
+//              m_Buffer[pos+1] = alpha(g,a);
+//              m_Buffer[pos+2] = alpha(b,a);
+//              m_Buffer[pos+3] = a;
+//            } //for x
+//          } //for y
+//        } //mBuffer
+//      }
+
 
 };
 

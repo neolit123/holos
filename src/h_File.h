@@ -71,6 +71,21 @@ class h_File
         m_File = H_NULL;
       }
 
+    // test
+    int test(const char* a_FilePath, char* a_Mode)
+      {
+        m_File = fopen(a_FilePath, a_Mode);
+        if (m_File)
+        {
+          close();
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+
     // free buffer
     void freebuf(void)
       {
@@ -95,18 +110,16 @@ class h_File
         m_Mode = a_Mode;
 
         path(a_FileName);
-        m_File = fopen(m_FilePath, m_Mode);
-
-        if (!m_File)
+        FILE* tmp_file = fopen(m_FilePath, m_Mode);
+        if (!tmp_file)
         {
           dtrace("h_File.size, #ERR open(" << m_Mode << "): " << m_FilePath);
           return 0;
         }
-
-        fseek(m_File, 0, SEEK_END);
-        m_Length = ftell(m_File);
-        fseek(m_File, 0, SEEK_SET);
-        close();
+        fseek(tmp_file, 0, SEEK_END);
+        m_Length = ftell(tmp_file);
+        fseek(tmp_file, 0, SEEK_SET);
+        fclose(tmp_file);
 
         return m_Length;
       }
@@ -126,6 +139,7 @@ class h_File
 
         path(a_FileName);
         m_File = fopen(m_FilePath, m_Mode);
+
         dtrace("h_File.read, open(" << m_Mode << "): " << m_FilePath);
 
         if (!m_File)
@@ -151,7 +165,7 @@ class h_File
         if (!result)
         {
           dtrace("h_File.read, #ERR read: " << m_FilePath);
-          return 0;;
+          return 0;
         }
         close();
 

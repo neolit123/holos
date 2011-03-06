@@ -21,7 +21,22 @@
 #define h_BasePath_included
 //----------------------------------------------------------------------
 
+#include "stdio.h"
+#include "stdlib.h"
 #include "src/h_Stdlib.h"
+
+//----------------------------------------------------------------------
+
+char* h_GetHomePath(char* a_Buffer)
+{
+  //h_Strcat(a_Buffer, getenv("HOME"));
+  a_Buffer[0] = '\0';
+  char* env = getenv("HOME");
+  if (env) h_Strcat(a_Buffer,env);
+  //h_Strcat(a_Buffer, (char*)"\\");
+  h_Strcat(a_Buffer, (char*)"/");
+  return a_Buffer;
+}
 
 //----------------------------------------------------------------------
 #ifdef H_WIN32
@@ -76,9 +91,9 @@
       {
         h_Strcat(a_Buffer, (char*)"./");
       }
-    #elif defined H_FORMAT_EXE
-      char filepath[H_MAX_PATH] = "";
-      long rd_res = readlink("/proc/self/exe", filepath, H_MAX_PATH);
+    #elif defined H_EXE
+      char filepath[H_MAX_PATHSIZE] = "";
+      long rd_res = readlink("/proc/self/exe", filepath, H_MAX_PATHSIZE);
       filepath[H_MAX_PATHSIZE-1] = '\0';
       if (rd_res)
       {

@@ -32,4 +32,18 @@ class h_Host_Base
 };
 
 //----------------------------------------------------------------------
+
+#ifdef H_EXE
+  #include "src/h_Host_Exe.h"
+#endif
+
+#ifdef H_LADSPA
+  #include "src/h_Host_Ladspa.h"
+#endif
+
+#ifdef H_VST
+  #include "src/h_Host_Vst.h"
+#endif
+
+//----------------------------------------------------------------------
 #endif

@@ -23,19 +23,98 @@
 
 #include "src/h_Vector.h"
 
-//class rt_Vec;
-//class rt_Ray;
-//
-//class rt_Object;
-//class rt_Light;
-//class rt_Camera;
-//class rt_Material;
-//class rt_Scene;
-//
-//class rt_Sphere   : public rt_Object;
-//class rt_Plane    : public rt_Object;
-//class rt_Triangle : public rt_Object;
+// 32 bit, rgba
+typedef unsigned long rt_col;
 
+//----------------------------------------------------------------------
+// base classes
+//----------------------------------------------------------------------
+
+class rt_Ray
+{
+  private:
+    h_Vector    m_Origin;
+    h_Vector    m_Direction;
+
+  public:
+
+    rt_Ray()
+      {
+        m_Origin.set(0,0,0);
+        m_Direction.set(0,0,0);
+      }
+
+    rt_Ray(h_Vector a_Origin, h_Vector a_Direction)
+      {
+        m_Origin = a_Origin;
+        m_Direction = a_Direction;
+      }
+
+    ~rt_Ray()
+      {
+      }
+
+};
+
+//----------------------------------------------------------------------
+
+class rt_Object
+{
+  public:
+    float intersect(rt_Ray ray) { return 0; }
+    bool  intersect(rt_Ray ray, float* t0, float* t1) { return false; }
+};
+
+typedef h_Array<rt_Object*> rt_Objects;
+
+//----------------------------------------------------------------------
+
+class rt_Scene
+{
+  private:
+    rt_Objects  m_Objects;
+};
+
+//----------------------------------------------------------------------
+// objects
+//----------------------------------------------------------------------
+
+class rt_Sphere : public rt_Object
+{
+  private:
+    h_Vector  m_Pos;
+    float     m_Radius;
+};
+
+//----------------------------------------------------------------------
+// main raytracer
+//----------------------------------------------------------------------
+
+class h_RayTracer
+{
+  public:
+
+    // recursively trace a ray
+
+    rt_col traceray(rt_Ray ray)
+      {
+        return 0;
+      }
+
+    // render a screen pixel
+
+    rt_col render(float sx, float sy)
+      {
+        h_Vector orig(0,0,-5);
+        h_Vector dir(sx,sy,0);
+        dir.sub(orig);
+        dir.normalize();
+        rt_Ray ray(orig,dir);
+        return traceray(ray);
+      }
+
+
+};
 
 //----------------------------------------------------------------------
 #endif

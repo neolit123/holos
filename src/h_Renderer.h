@@ -24,7 +24,7 @@
 class h_RenderSource
 {
   public:
-    virtual void getHandle(void) {}
+    virtual void getHandle(void) = 0;//{}
 };
 
 //----------
@@ -32,7 +32,7 @@ class h_RenderSource
 class h_RenderTarget
 {
   public:
-    virtual void getHandle(void) {}
+    virtual void getHandle(void) = 0;//{}
 };
 
 //----------------------------------------------------------------------

@@ -85,4 +85,18 @@ class h_Instance_Base
 };
 
 //----------------------------------------------------------------------
+
+#ifdef H_EXE
+  #include "src/h_Instance_Exe.h"
+#endif
+
+#ifdef H_LADSPA
+  #include "src/h_Instance_Ladspa.h"
+#endif
+
+#ifdef H_VST
+  #include "src/h_Instance_Vst.h"
+#endif
+
+//----------------------------------------------------------------------
 #endif

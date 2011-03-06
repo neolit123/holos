@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# holos's bash compile script for linux
+# holos's bash build script for linux
 #
 # Copyright (c) 2010 Tor-Helge Skei, Lubomir I. Ivanov et al
 # This file is part of the Holos Library.
@@ -25,10 +25,10 @@
 hpath="../"
 
 # vst path
-vstpath="../../vstsdk24"
+vstpath="../extern/vst"
 
 # ladspa path
-ladspapath="../../ladspa_sdk/src"
+ladspapath="../extern/ladspa"
 
 # g++ command
 gpp="g++"
@@ -46,7 +46,7 @@ windres="i586-mingw32msvc-windres"
 resfile="rc_default.rc"
 
 # warning flags
-warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
+warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
 
 # optimization
 # you can add --whole-program --combine here for newer GCC
@@ -64,10 +64,10 @@ function show_help
 {
   echo ""
   echo "-------------------------------------------------------------------------------"
-  echo "* holos compile script for linux"
+  echo "* holos build script for linux"
   echo ""
   echo "usage:"
-  echo "./compile [file.cpp] [-h] [-linux or -win32] [format] [options] [...]"
+  echo "./build [file.cpp] [-h] [-linux or -win32] [format] [options] [...]"
   echo ""  
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
@@ -190,6 +190,12 @@ else
   then
     nogui="yes"
     noguisx="-nogui"
+    if [ "$nogui" == "yes" ];
+      then
+        tgt="-DH_NOGUI"
+      else
+        tgt=""
+    fi  
   fi
   
   # ------------------------- check if extension is .cpp
@@ -197,7 +203,7 @@ else
   then
     showerr "### ERR: first argument has to be a .cpp file"
   else
-    # ------------------------- use mingw
+    # ------------------------- verbose
     if [ "$2" == "-v" ] || [ "$3" == "-v" ] || [ "$4" == "-v" ] || [ "$5" == "-v" ] || [ "$6" == "-v" ] || [ "$7" == "-v" ] || [ "$8" == "-v" ] || [ "$9" == "-v" ];
     then
       v="yes"
@@ -207,7 +213,7 @@ else
     then
       compiler=$mingw
       fmt_ext=".exe"
-      if [ "$nogui" == "yes" ]; 
+      if [ "$nogui" == "yes" ];
       then
         tgt="-DH_NOGUI"
       else
@@ -372,7 +378,7 @@ else
       `rm -f "$target_s_ext"`
     fi
     
-    # ------------------------- command line (compile)
+    # ------------------------- command line (compile/link)
     _cmdline="$compiler \"${1}\" -o \"${target_s_ext}\" -I$ladspapath -I$vstpath -I$hpath $tgt $res $gccdebug $libdebug $ext_params $format $warn $opt $mplt $linker"
     if [ "$v" == "yes" ];
     then

@@ -189,11 +189,11 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/test_blit.cpp">
+		<Unit filename="../test/test_gui.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/test_gui.cpp">
+		<Unit filename="../test/test_ladspa.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -246,12 +246,14 @@
 		<Unit filename="../../src/h_Editor.h" />
 		<Unit filename="../../src/h_Events.h" />
 		<Unit filename="../../src/h_File.h" />
+		<Unit filename="../../src/h_Format.h" />
 		<Unit filename="../../src/h_Format_Exe.h" />
 		<Unit filename="../../src/h_Format_Exe_impl.h" />
 		<Unit filename="../../src/h_Format_Ladspa.h" />
 		<Unit filename="../../src/h_Format_Ladspa_impl.h" />
 		<Unit filename="../../src/h_Format_Vst.h" />
 		<Unit filename="../../src/h_Format_Vst_impl.h" />
+		<Unit filename="../../src/h_Format_impl.h" />
 		<Unit filename="../../src/h_Globals.h" />
 		<Unit filename="../../src/h_Horner.h" />
 		<Unit filename="../../src/h_Host.h" />
@@ -261,6 +263,7 @@
 		<Unit filename="../../src/h_Host_Ladspa_impl.h" />
 		<Unit filename="../../src/h_Host_Vst.h" />
 		<Unit filename="../../src/h_Host_Vst_impl.h" />
+		<Unit filename="../../src/h_Host_impl.h" />
 		<Unit filename="../../src/h_Instance.h" />
 		<Unit filename="../../src/h_Instance_Exe.h" />
 		<Unit filename="../../src/h_Instance_Exe_impl.h" />
@@ -268,6 +271,7 @@
 		<Unit filename="../../src/h_Instance_Ladspa_impl.h" />
 		<Unit filename="../../src/h_Instance_Vst.h" />
 		<Unit filename="../../src/h_Instance_Vst_impl.h" />
+		<Unit filename="../../src/h_Instance_impl.h" />
 		<Unit filename="../../src/h_Integer.h" />
 		<Unit filename="../../src/h_Libaam.h" />
 		<Unit filename="../../src/h_List.h" />
@@ -275,6 +279,7 @@
 		<Unit filename="../../src/h_Main_Exe_impl.h" />
 		<Unit filename="../../src/h_Main_Ladspa_impl.h" />
 		<Unit filename="../../src/h_Main_Vst_impl.h" />
+		<Unit filename="../../src/h_Main_impl.h" />
 		<Unit filename="../../src/h_Math.h" />
 		<Unit filename="../../src/h_Matrix.h" />
 		<Unit filename="../../src/h_MemTracer.h" />
@@ -285,10 +290,12 @@
 		<Unit filename="../../src/h_Painter_Win32_impl.h" />
 		<Unit filename="../../src/h_Parameter.h" />
 		<Unit filename="../../src/h_Pattern.h" />
+		<Unit filename="../../src/h_Platform.h" />
 		<Unit filename="../../src/h_Platform_Linux.h" />
 		<Unit filename="../../src/h_Platform_Linux_impl.h" />
 		<Unit filename="../../src/h_Platform_Win32.h" />
 		<Unit filename="../../src/h_Platform_Win32_impl.h" />
+		<Unit filename="../../src/h_Platform_impl.h" />
 		<Unit filename="../../src/h_Point.h" />
 		<Unit filename="../../src/h_PolyFiller.h" />
 		<Unit filename="../../src/h_Program.h" />

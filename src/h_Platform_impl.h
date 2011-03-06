@@ -17,27 +17,17 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Format_Exe_included
-#define h_Format_Exe_included
+#ifndef h_Platform_impl_included
+#define h_Platform_impl_included
 //----------------------------------------------------------------------
 
-#include "src/h_Descriptor.h"
-#include "src/h_Instance.h"
+#ifdef H_LINUX
+  #include "src/h_Platform_Linux_impl.h"
+#endif
 
-class h_Format
-{
-  private:
-    h_Platform* m_Platform;
-
-  public:
-    h_Format();
-    ~h_Format();
-    h_Descriptor* createDescriptor(void);
-    h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
-    int           entrypoint(void* a_Ptr);
-    h_String      getName(void) { return "exe"; }
-};
+#ifdef H_WIN32
+  #include "src/h_Platform_Win32_impl.h"
+#endif
 
 //----------------------------------------------------------------------
 #endif
-

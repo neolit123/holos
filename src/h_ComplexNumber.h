@@ -286,7 +286,7 @@ cnum_s cnum_pow(const cnum_s x, const cnum_t n)
   h_Cos((x).r)*h_Sinh((x).i))
 
 #define cnum_sinh(x) \
-  cnum_new(h_Sinh(x.r)*h_Cos(x.i), h_Cosh(x.r)*Sin(x.i))
+  cnum_new(h_Sinh(x.r)*h_Cos(x.i), h_Cosh(x.r)*h_Sin(x.i))
 
 #define cnum_cos(x) \
   cnum_new(h_Cos(x.r)*h_Cosh(x.i), -h_Sin(x.r)*h_Sinh(x.i))

@@ -43,9 +43,9 @@ class h_Surface_Linux : public h_PaintSource
     int         m_Height;
     int         m_Depth;
     h_Painter*  m_Painter;
-    //#ifdef H_ALPHA
-    //Picture     m_Picture;
-    //#endif
+    #ifdef H_ALPHA
+    Picture     m_Picture;
+    #endif
     //#ifdef H_OPENGL
     //#endif
 
@@ -56,9 +56,9 @@ class h_Surface_Linux : public h_PaintSource
     inline h_Painter* getPainter(void) { return m_Painter; }
     // h_PaintSource:
     virtual Drawable getSourceDrawable(void) { return m_Pixmap; }
-    //#ifdef H_ALPHA
-    //virtual Picture  getSourcePicture(void)  { return m_Picture; }
-    //#endif
+    #ifdef H_ALPHA
+    virtual Picture  getSourcePicture(void)  { return m_Picture; }
+    #endif
     // h_PaintTarget:
     //virtual Drawable getTargetDrawable(void) { return m_Pixmap; }
 
@@ -85,18 +85,19 @@ class h_Surface_Linux : public h_PaintSource
         m_Pixmap    = XCreatePixmap(m_Display,m_Drawable,m_Width,m_Height,m_Depth);
         m_Painter   = new h_Painter(m_Display,m_Pixmap);
 
-        //#ifdef H_ALPHA
-        //  XRenderPictFormat* fmt;
-        //  if (a_Depth==24) fmt = XRenderFindStandardFormat(m_Display,PictStandardRGB24);
-        //  else fmt = XRenderFindStandardFormat(m_Display,PictStandardARGB32);
-        //  XRenderPictureAttributes pict_attr;
-        //  pict_attr.poly_edge = PolyEdgeSmooth;
-        //  pict_attr.poly_mode = PolyModeImprecise;
-        //  //pict_attr.component_alpha = true;
-        //  int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
-        //  m_Picture = XRenderCreatePicture(m_Display,/*mDrawable*/m_Pixmap,fmt,pict_bits,&pict_attr);
-        //  m_Painter->setPicture(m_Picture);
-        //#endif
+        #ifdef H_ALPHA
+          XRenderPictFormat* fmt;
+          if (a_Depth==24) fmt = XRenderFindStandardFormat(m_Display,PictStandardRGB24);
+          else fmt = XRenderFindStandardFormat(m_Display,PictStandardARGB32);
+          XRenderPictureAttributes pict_attr;
+          pict_attr.poly_edge = PolyEdgeSmooth;
+          pict_attr.poly_mode = PolyModeImprecise;
+          //pict_attr.component_alpha = true;
+          int pict_bits = /*CPComponentAlpha |*/ CPPolyEdge | CPPolyMode;
+          m_Picture = XRenderCreatePicture(m_Display,/*mDrawable*/m_Pixmap,fmt,pict_bits,&pict_attr);
+          m_Painter->setPicture(m_Picture);
+        #endif
+
         //#ifdef H_OPENGL
         //  //GLXPixmap glXCreatePixmap(Display* dpy, GLXFBConfig config, Pixmap pixmap, NULL);
         //#endif

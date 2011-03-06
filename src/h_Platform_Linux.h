@@ -35,11 +35,14 @@ class h_Platform
     h_Platform();
     ~h_Platform();
     h_String getName(void);
-    #ifndef H_NOGUI
-    Display* openDisplay(void);
-    void     closeDisplay(Display* a_Display);
-    #endif
+    //#ifndef H_NOGUI
+    //Display* openDisplay(void);
+    //void     closeDisplay(Display* a_Display);
+    //#endif
 };
+
+//Display* openDisplay(void) { return XOpenDisplay(NULL); }
+//void closeDisplay(Display* disp) { XCloseDisplay(disp); }
 
 //----------------------------------------------------------------------
 #endif

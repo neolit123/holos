@@ -27,6 +27,7 @@
 
 class h_Instance : public h_Instance_Base
 {
+  friend class h_Format;
   private:
     h_Host*   m_Host;
     //h_Rect    m_EditorRect;
@@ -52,6 +53,8 @@ class h_Instance : public h_Instance_Base
     virtual ~h_Instance();
 
     //inline h_Rect getEditorRect(void) { return m_EditorRect; }
+
+    virtual double  getSampleRate(void)     { return m_SampleRate; }
 
     virtual void  transferParameters(void);
     virtual void  notifyParameter(h_Parameter* a_Parameter);

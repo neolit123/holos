@@ -6,10 +6,10 @@
 
 //#define H_DEBUG_LOG "holos_debug.log"
 
-#define H_DEBUG_MEM
-#define H_DEBUG_MEM_PRINT
-#define H_DEBUG_MEM_NOREDEFINE
-#define H_DEBUG_NEW
+//#define H_DEBUG_MEM
+//#define H_DEBUG_MEM_PRINT
+//#define H_DEBUG_MEM_NOREDEFINE
+//#define H_DEBUG_NEW
 
 #include "holos.h"
 #include "src/h_SkinDefault.h"
@@ -158,13 +158,22 @@ class my_Instance : public h_Instance,
         m_Editor = new h_Editor(this,rect,ptr);
 
         loader = new h_BitmapLoader((char*)"../extern/mverb/background.png"); // relative to this exe/dll
-        srf = loader->createSurface(m_Editor);
-        int w = loader->getWidth();
-        int h = loader->getHeight();
-        delete loader;
+        trace("loaded ok");
 
-        m_Editor->setBorders(4,4,2,2);
-        m_Skin = new skin_Default();
+        int   w = loader->getWidth();
+        int   h = loader->getHeight();
+        int   d = 24;//loader->getDepth();
+        char* b = loader->getBuffer();
+
+        h_Bitmap* bmp = m_Editor->createBitmap(w,h,d,b);
+        bmp->prepare();
+        bmp->swapRgba();
+        srf = m_Editor->createSurface(w,h,d);
+        srf->getPainter()->drawBitmap(bmp,0,0,0,0,w,h);
+        delete bmp;
+
+        m_Editor->setBorders(10,10,5,5);
+        m_Skin = new skin_Default(m_Editor);
         m_Editor->applySkin(m_Skin);
         m_Editor->appendWidget( new h_WdgBackground(this) );
 

@@ -17,26 +17,21 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Format_Exe_included
-#define h_Format_Exe_included
+#ifndef h_Instance_impl_included
+#define h_Instance_impl_included
 //----------------------------------------------------------------------
 
-#include "src/h_Descriptor.h"
-#include "src/h_Instance.h"
+#ifdef H_EXE
+  #include "src/h_Instance_Exe_impl.h"
+#endif
 
-class h_Format
-{
-  private:
-    h_Platform* m_Platform;
+#ifdef H_LADSPA
+  #include "src/h_Instance_Ladspa_impl.h"
+#endif
 
-  public:
-    h_Format();
-    ~h_Format();
-    h_Descriptor* createDescriptor(void);
-    h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
-    int           entrypoint(void* a_Ptr);
-    h_String      getName(void) { return "exe"; }
-};
+#ifdef H_VST
+  #include "src/h_Instance_Vst_impl.h"
+#endif
 
 //----------------------------------------------------------------------
 #endif

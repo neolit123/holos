@@ -63,42 +63,42 @@ h_String h_Platform::getName(void)
 
 */
 
-#ifndef H_NOGUI
-
-Display* h_Platform::openDisplay(void)
-  {
-    /*
-      Specifies the hardware display name, which determines the display and
-      communications domain to be used. On a POSIX-conformant system, if the
-      display_name is NULL, it defaults to the value of the DISPLAY
-      environment variable.
-      After a successful call to XOpenDisplay() all of the screens in the
-      display can be used by the client.
-    */
-    return XOpenDisplay(NULL);
-  }
-
-void h_Platform::closeDisplay(Display* a_Display)
-  {
-    /*
-      The XCloseDisplay() function closes the connection to the X server for
-      the display specified in the Display structure and destroys all windows,
-      resource IDs (Window, Font, Pixmap, Colormap, Cursor, and GContext), or
-      other resources that the client has created on this display, unless the
-      close-down mode of the resource has been changed (see XSetCloseDownMode)
-
-      XCloseDisplay() performs a final XSync() operation
-    */
-
-    /*
-      http://tronche.com/gui/x/xlib/display/close-operation.html
-
-    */
-
-    XCloseDisplay(a_Display);
-  }
-
-#endif // !H_NOGUI
+//#ifndef H_NOGUI
+//
+//Display* h_Platform::openDisplay(void)
+//  {
+//    /*
+//      Specifies the hardware display name, which determines the display and
+//      communications domain to be used. On a POSIX-conformant system, if the
+//      display_name is NULL, it defaults to the value of the DISPLAY
+//      environment variable.
+//      After a successful call to XOpenDisplay() all of the screens in the
+//      display can be used by the client.
+//    */
+//    return XOpenDisplay(NULL);
+//  }
+//
+//void h_Platform::closeDisplay(Display* a_Display)
+//  {
+//    /*
+//      The XCloseDisplay() function closes the connection to the X server for
+//      the display specified in the Display structure and destroys all windows,
+//      resource IDs (Window, Font, Pixmap, Colormap, Cursor, and GContext), or
+//      other resources that the client has created on this display, unless the
+//      close-down mode of the resource has been changed (see XSetCloseDownMode)
+//
+//      XCloseDisplay() performs a final XSync() operation
+//    */
+//
+//    /*
+//      http://tronche.com/gui/x/xlib/display/close-operation.html
+//
+//    */
+//
+//    XCloseDisplay(a_Display);
+//  }
+//
+//#endif // !H_NOGUI
 
 //----------------------------------------------------------------------
 //#endif

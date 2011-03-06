@@ -1,38 +1,54 @@
 
-1. make it work
-2. make it right
-3. make it fast   [and small - ccernn]
+:::::::::: global variables ::::::::::
 
+h_ComplexNumbers.h
+  cnum_i1
+  cnum_r1
+  cnum_r2
+  cnum_zero
+  
+h_Core.h
+  static_Core
 
-----------------------------------------------------------------------
+h_Debug.h
+  static_Debug
 
-:: core
+h_DurandKerner.h
+  dk_demoivre_c
+  
+h_Globals.h
+  static_WinInstance
+  
+h_MemTracer.h
+  mem_del_file
+  mem_del_func
+  mem_del_line
+  static_MemTracer
 
-core
-platform
-format
+h_Painter_Linux_impl.h
+  h_alpha_mat_ident
 
-:: wrappers
+h_Pattern.h
+  h_pattern_error_text
 
-window
-bitmap
-surface
-texture
+h_Render_Linux_impl.h
+  h_fbconfig_attr
 
-:: gui
+h_Stdlib.h
+  static_LastFastRand
 
-widget
-painter
-renderer
-skin
+h_Texture_Linux_impl.h
+  h_texture_attr
 
-:: app/plugin
+h_VirtualMachine.h
+  h_InternalNames
 
-host
-instance
-descriptor
-parameter
-editor
+h_Window_Linux_impl.h
+  h_window_attr
+  h_window_gl_attr
+  noData
+  
+:::::::::: global functions ::::::::::
 
-----------------------------------------------------------------------
-
+h_Assert.h
+  

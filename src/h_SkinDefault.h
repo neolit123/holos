@@ -52,7 +52,8 @@ class skin_Default : public h_Skin
     h_Color m_HoverColor;
 
   public:
-    skin_Default()
+
+    skin_Default(h_Editor* a_Editor)
     //: h_Skin(&m_Settings)
       {
         m_BackColor         = H_RGB(120,120,120);

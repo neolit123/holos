@@ -23,37 +23,38 @@
 
 #include <windows.h>
 
-class h_Bitmap_Win32// : public h_Bitmap_Base
+class h_Bitmap_Win32 : public h_Bitmap_Base
 {
+
+  friend class h_Window_Win32;
+
   private:
-    int             m_Width;
-    int             m_Height;
-    int             m_Depth;
-    bool            m_Allocated;
-    //unsigned long*  m_Buffer;
-    char*           m_Buffer;
     bool            m_Prepared;
     HBITMAP         m_Bitmap;
 
   public:
-
-    inline int      getWidth(void)  { return m_Width; }
-    inline int      getHeight(void) { return m_Height; }
-    inline int      getDepth(void)  { return m_Depth; }
-    inline char*    getBuffer(void) { return m_Buffer; }
     inline HBITMAP  getBitmap(void) { return m_Bitmap; }
 
-  public:
+  private: //must be created from h_Window
+
+//    h_Bitmap_Win32()
+//    : h_Bitmap_Base()
+//      {
+//        m_Prepared = false;
+//      }
+
+//    #ifndef H_NO_BITMAPLOADER
+//      h_Bitmap_Win32(char* filename)
+//      : h_Bitmap_Base(filename)
+//        {
+//        }
+//    #endif
 
     // create & prepare (for rendering) a bitmap
 
     h_Bitmap_Win32(int a_Width, int a_Height, int a_Depth)
+    : h_Bitmap_Base(a_Width,a_Height,a_Depth)
       {
-        m_Width  = a_Width;
-        m_Height = a_Height;
-        m_Depth  = a_Depth;
-        m_Buffer = H_NULL;
-        m_Allocated = false;
         m_Prepared = false;
         prepare();
       }
@@ -65,21 +66,17 @@ class h_Bitmap_Win32// : public h_Bitmap_Base
     // to use..
 
     h_Bitmap_Win32(int a_Width, int a_Height, int a_Depth, char* a_Buffer)
-    //: h_Bitmap_Base()
+    : h_Bitmap_Base(a_Width,a_Height,a_Depth,a_Buffer)
       {
-        m_Width  = a_Width;
-        m_Height = a_Height;
-        m_Depth  = a_Depth;
-        m_Buffer = a_Buffer;
-        m_Allocated = false;
         m_Prepared = false;
         allocate();
       }
 
-    ~h_Bitmap_Win32()
+  public:
+
+    virtual ~h_Bitmap_Win32()
       {
         if (m_Prepared) DeleteObject(m_Bitmap); // deletes allocated buffer
-        if (m_Allocated) delete[] m_Buffer;
       }
 
     //----------
@@ -90,38 +87,25 @@ class h_Bitmap_Win32// : public h_Bitmap_Base
         BITMAPINFO bmi;
         h_Memset(&bmi,0,sizeof(BITMAPINFO));
         bmi.bmiHeader.biSize        = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth       = m_Width;      // width of the bitmap, in pixels.
-        bmi.bmiHeader.biHeight      = -m_Height;    // height (negative)
-        bmi.bmiHeader.biPlanes      = 1;            // number of planes for target device. must be set to 1.
-        bmi.bmiHeader.biBitCount    = 32;           // bits per pixel
-        bmi.bmiHeader.biCompression = BI_RGB;       // uncompressed
-        bmi.bmiHeader.biSizeImage   = 0;            // size, in bytes, of the image. may be set to zero for BI_RGB bitmaps.
+        bmi.bmiHeader.biWidth       = getWidth();     // width of the bitmap, in pixels.
+        bmi.bmiHeader.biHeight      = - getHeight();  // height (negative)
+        bmi.bmiHeader.biPlanes      = 1;              // number of planes for target device. must be set to 1.
+        bmi.bmiHeader.biBitCount    = 32;             // bits per pixel
+        bmi.bmiHeader.biCompression = BI_RGB;         // uncompressed
+        bmi.bmiHeader.biSizeImage   = 0;              // size, in bytes, of the image. may be set to zero for BI_RGB bitmaps.
         void* ptr;
         HDC tempdc = GetDC(0); // GetDC(mWin);
         m_Bitmap = CreateDIBSection(tempdc,&bmi,DIB_RGB_COLORS,&ptr,NULL,0);
         ReleaseDC(0,tempdc);
-        if (m_Buffer)
+        if (getBuffer())
         {
-          h_Memcpy(ptr,m_Buffer,m_Width*m_Height*4);
+          h_Memcpy(ptr,getBuffer(),getWidth()*getHeight()*4);
         }
-        if (m_Allocated)
-        {
-          delete[] m_Buffer; // assumes created with new, not malloc
-          m_Allocated = false;
-        }
-        m_Buffer = (char*)ptr;
+        deallocate();
+        setBuffer((char*)ptr);
         m_Prepared = true;
       }
 
-    //----------
-
-    void allocate(void)
-      {
-        if (m_Buffer || m_Allocated) return;// false;
-        m_Buffer = new char[m_Width*m_Height*4];// 32bit rgba
-        m_Allocated = true; // DeleteObject() in destructor deletes allocated buffer
-        //return true;
-      }
 };
 
 //----------------------------------------------------------------------

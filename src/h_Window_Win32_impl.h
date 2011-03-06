@@ -217,6 +217,11 @@ class h_Window_Win32 : public h_Widget,
     // factory
     //----------------------------------------
 
+//    h_Bitmap* createBitmap(void)
+//      {
+//        return new h_Bitmap();
+//      }
+
     h_Bitmap* createBitmap(int a_Width, int a_Height, int a_Depth)
       {
         return new h_Bitmap(a_Width,a_Height,a_Depth);
@@ -231,6 +236,18 @@ class h_Window_Win32 : public h_Widget,
       {
         return new h_Surface(a_Width,a_Height,a_Depth);
       }
+
+//    h_Surface* createSurface(h_Bitmap* a_Bitmap, int a_Depth=24)
+//      {
+//        int   w = a_Bitmap->getWidth();
+//        int   h = a_Bitmap->getHeight();
+//        int   d = a_Depth;//24;//loader.getDepth(); // x crash with 32 (on 24 bit nvidia)
+//        char* b = (char*)a_Bitmap->getBuffer();
+//        a_Bitmap->prepare();
+//        h_Surface* srf = createSurface(w,h,d);
+//        srf->getPainter()->drawBitmap( a_Bitmap, 0,0, 0,0,w,h );
+//        return srf;
+//      }
 
     //----------------------------------------
     // buffer

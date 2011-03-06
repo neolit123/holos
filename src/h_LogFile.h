@@ -22,14 +22,12 @@
 //----------------------------------------------------------------------
 
 #include <iostream>
-using namespace std;
 #include <fstream>
+using namespace std;
 
-//#include "lib/h_BasePath.h"
 #include "src/h_BasePath.h"
 
 #ifdef H_DEBUG_LOG_UNIQUE
-  //#include "lib/h_Timestamp.h"
   #include "src/h_Timestamp.h"
 #endif
 
@@ -47,8 +45,12 @@ using namespace std;
 class h_LogFile
 {
   private:
-    char    m_LogFileName[H_MAX_PATHSIZE];
-    fstream m_LogFile; // static?
+    char          m_LogFileName[H_MAX_PATHSIZE];
+    fstream       m_LogFile; // static?
+    
+    #ifdef H_DEBUG_LOG_UNIQUE
+      h_Timestamp m_TS;
+    #endif
 
   public:
 
@@ -58,15 +60,45 @@ class h_LogFile
 
     h_LogFile(const char* a_FileName)
       {
-        m_LogFileName[0] = '\0';
-        h_GetBasePath(m_LogFileName);
-        #ifdef H_DEBUG_LOG_UNIQUE
-          h_Timestamp ts;
-          h_Strcat(m_LogFileName, ts.str());
-          h_Strcat(m_LogFileName, (char*)"_");
+        #ifndef H_DEBUG_LOG_HOME
+          // try writing to base path
+          
+          m_LogFileName[0] = '\0';
+          h_GetBasePath(m_LogFileName);
+          #ifdef H_DEBUG_LOG_UNIQUE
+            h_Strcat(m_LogFileName, m_TS.str());
+            h_Strcat(m_LogFileName, (char*)"_");
+          #endif
+          
+          h_Strcat(m_LogFileName, a_FileName);
+          m_LogFile.open(m_LogFileName, std::fstream::out H_DEBUG_LOG_APPEND);
+          
+          if (m_LogFile.fail())
+          {
+            printf( "ERROR: cannot write log to base path: %s\n",
+                  m_LogFileName);
         #endif
-        h_Strcat(m_LogFileName, a_FileName/*H_DEBUG_LOG*/);
-        m_LogFile.open(m_LogFileName, std::fstream::out H_DEBUG_LOG_APPEND);
+            // write to home path instead
+            
+            m_LogFileName[0] = '\0';
+            h_GetHomePath(m_LogFileName);
+            #ifdef H_DEBUG_LOG_UNIQUE
+              h_Strcat(m_LogFileName, m_TS.str());
+              h_Strcat(m_LogFileName, (char*)"_");
+            #endif
+            
+            h_Strcat(m_LogFileName, a_FileName);
+            m_LogFile.open(m_LogFileName, std::fstream::out H_DEBUG_LOG_APPEND);
+  
+            if (m_LogFile.fail())
+            {
+              printf( "ERROR: cannot write log to home path: %s\n",
+                    m_LogFileName);
+              m_LogFile.clear();
+            }
+        #ifndef H_DEBUG_LOG_HOME
+          }
+        #endif
       }
 
     ~h_LogFile()

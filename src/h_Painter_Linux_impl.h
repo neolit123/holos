@@ -28,6 +28,7 @@
 //#include "gui/h_Bitmap.h"
 //#include "gui/h_Painter.h"
 #include "src/h_Point.h"
+#include "src/h_Rect.h"
 #include "src/h_String.h"
 #include "src/h_Math.h"
 #include "src/h_Color.h"
@@ -70,10 +71,10 @@
 class h_PaintSource
 {
   public:
-    virtual Drawable getSourceDrawable(void) { return NULL; }
+    virtual Drawable getSourceDrawable(void) = 0;//{ return NULL; }
     //virtual XImage*  getSourceImage(void) { return NULL; }
     #ifdef H_ALPHA
-    virtual Picture getSourcePicture(void) { return NULL; }
+    virtual Picture getSourcePicture(void) = 0;//{ return NULL; }
     #endif
 };
 
@@ -111,11 +112,11 @@ class h_Painter_Linux
     Drawable      m_Drawable;
     GC            m_GC;
     XFontStruct*  m_Font;
-    //#ifdef H_ALPHA
-    //Picture       m_Picture;
-    //#endif
     h_Rect        m_ClipRect;
     h_Point       m_Pos;
+    #ifdef H_ALPHA
+    Picture       m_Picture;
+    #endif
 
   public:
 
@@ -139,7 +140,7 @@ class h_Painter_Linux
         m_ClipRect  = h_Rect(0,0,0,0);
         m_Pos       = h_Point(0,0);
         #ifdef H_ALPHA
-        m_Picture   = NULL;
+        m_Picture   = H_NULL;
         #endif
       }
 
@@ -405,7 +406,7 @@ class h_Painter_Linux
 
     //----------
 
-    virtual void stretchSurface( h_PaintSource* aSource, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
+    virtual void stretchSurface( h_PaintSource* a_Source, int aX, int aY, int aW, int aH, int aSrcX, int aSrcY, int aSrcW, int aSrcH)
       {
         #ifdef H_ALPHA
         if (aW > 0)
@@ -424,7 +425,7 @@ class h_Painter_Linux
               }
             };
             //Picture pic = aImage->getPicture();
-            Picture pic = a_PaintSource->getSourcePicture();
+            Picture pic = a_Source->getSourcePicture();
             XRenderSetPictureTransform(m_Display, pic, &xform );
             int op = PictOpOver;
             // hmmm.. is srcx, srcy transformed by the matrix too?

@@ -20,6 +20,12 @@
 #ifndef h_Color_included
 #define h_Color_included
 //----------------------------------------------------------------------
+/*
+  TODO: remove this, make rgb() part of h_Window
+  for 16 bit displays, different rgba/bgra formats, etc..
+  skin constructur normally have a h_Editor* argument,
+  which can be used: h_Color col = a_Editor->rgb(255,255,255);
+*/
 
 typedef unsigned long h_Color;
 

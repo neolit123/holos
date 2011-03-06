@@ -26,6 +26,8 @@
 #include <pthread.h>
 //#include <string.h>
 
+#include "src/h_Platform.h"
+
 #include "src/h_Bitmap.h"
 #include "src/h_Surface.h"
 
@@ -200,7 +202,9 @@ class h_Window_Linux : public h_Widget,
     //: h_Widget(a_Listener,a_Rect)
       {
 
-        m_Display = static_Core.m_Platform->openDisplay();
+        //m_Display = static_Core.m_Platform->openDisplay();
+        //m_Display = openDisplay();
+        m_Display = XOpenDisplay(NULL);
 
         if (a_Parent)
         {
@@ -381,7 +385,10 @@ class h_Window_Linux : public h_Widget,
         if (!m_Embedded) XDestroyWindow(m_Display,m_Window);
         //trace("calling closeDisplay");
         // this crashes...
-        static_Core.m_Platform->closeDisplay(m_Display);
+
+        //static_Core.m_Platform->closeDisplay(m_Display);
+        //closeDisplay(m_Display);
+        XCloseDisplay(m_Display);
 
       }
 
@@ -403,6 +410,18 @@ class h_Window_Linux : public h_Widget,
       {
         return new h_Surface(m_Display,m_Window,a_Width,a_Height,a_Depth);
       }
+
+//    h_Surface* createSurface(h_Bitmap* a_Bitmap, int a_Depth=24)
+//      {
+//        int   w = a_Bitmap->getWidth();
+//        int   h = a_Bitmap->getHeight();
+//        int   d = a_Depth;//a_Bitmap->getDepth();//24;//a_Depth;//24;
+//        //char* b = (char*)a_Bitmap->getBuffer();
+//        a_Bitmap->prepare();
+//        h_Surface* srf = createSurface(w,h,d);
+//        srf->getPainter()->drawBitmap( a_Bitmap, 0,0, 0,0,w,h );
+//        return srf;
+//      }
 
     //----------------------------------------
     // buffer

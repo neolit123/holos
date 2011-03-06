@@ -1,10 +1,11 @@
-// test h/h_File.h
+// test h/h_File.h & log to home dir
 
 #define H_DEBUG_CON
+#define H_DEBUG_LOG_HOME
 #define H_DEBUG_LOG "test_file.log"
 
 #include "holos.h"
-#include "h/h_File.h" 
+#include "src/h_File.h"
 
 class desc : public h_Descriptor
 {
@@ -30,39 +31,38 @@ class inst : public h_Instance
     inst(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host, a_Descriptor)
     {
-      h_File  tFile;      
-      char*   fName = (char*)"./testFile.bin";      
-      char*   wBuffer = (char*)"Hello World!\0";      
+      h_File  tFile;
+      char*   fName = (char*)"./testFile.bin";
+      char*   wBuffer = (char*)"Hello World!\0";
       long    fLength = 12;
       short   wResult;
       char*   rBuffer;
-  
+
       // write
       wResult = tFile.write(fName, wBuffer, fLength, sizeof(char), H_FILE_WB);
       dtrace("wResult: " << wResult << "\n");
-      
+
       // get length
       fLength = tFile.length(fName);
       dtrace("fLength:" << fLength << "\n");
-      
-      // manual malloc      
+
+      // manual malloc
       rBuffer = (char*)h_Malloc(fLength);
       tFile.read(fName, rBuffer, fLength, sizeof(char), H_FILE_RB);
       dtrace("tFile.m_Length:" << tFile.m_Length);
       dtrace("rBuffer:" << rBuffer << "\n");
       tFile.freebuf();
-      
-      // auto: get length and malloc
+
+      // auto: get length and malloc      
       tFile.read(fName, rBuffer, H_FILE_RAUTO, sizeof(char), H_FILE_RB);
       dtrace("tFile.m_Length:" << tFile.m_Length);
       dtrace("rBuffer:" << rBuffer << "\n");
       tFile.freebuf();
-      
-      tFile.freebuf();
+
     }
 };
 
 #define H_DESCRIPTOR  desc
 #define H_INSTANCE    inst
 
-#include "holos.cpp"
+#include "holos_impl.h"

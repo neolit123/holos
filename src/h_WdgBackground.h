@@ -39,7 +39,10 @@ class h_WdgBackground : public h_Widget
 
     virtual void do_Paint(h_Painter* a_Painter, h_Rect a_Rect, int a_Mode)
       {
-        m_Skin->drawBackground(a_Painter,a_Rect,0);
+        h_Rect rect = m_Rect;
+        rect.crop( a_Rect.x, a_Rect.y, a_Rect.w, a_Rect.h );
+        //trace( "" << rect.x << "," <<  rect.y << "," << rect.w << "," << rect.h );
+        m_Skin->drawBackground(a_Painter,rect,0);
         h_Widget::do_Paint(a_Painter,a_Rect,0);
       }
 

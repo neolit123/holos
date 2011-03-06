@@ -34,6 +34,7 @@ TODO: multiple listeners?
 #include "src/h_Rect.h"
 #include "src/h_Painter.h"
 #include "src/h_Skin.h"
+#include "src/h_Parameter.h"
 
 //----------
 
@@ -45,6 +46,7 @@ TODO: multiple listeners?
 #define wf_Clipping   ( 1 << 9 )
 #define wf_Align      ( 1 << 10 )
 #define wf_Capture    ( 1 << 11 )
+#define wf_Alpha      ( 1 << 12 )
 
 // widget alignment
 #define wa_None         0
@@ -142,6 +144,7 @@ class h_WidgetListener
 class h_Widget : public h_WidgetBase,
                  public h_WidgetListener
 {
+  friend class h_Window;
   private:
   //protected:
     h_Rect    m_Content;               // rect encapsulating all sub-widgets (updated in doRealign)
@@ -170,6 +173,7 @@ class h_Widget : public h_WidgetBase,
 
   public:
 
+    //inline h_Widget* getParent(void) { return m_Parent; }
     inline int        getFlags(void)                  { return m_Flags; }
     inline int        hasFlag(int a_Flag)             { return (m_Flags&a_Flag); }
     inline void       setFlag(int a_Flag)             { m_Flags|=a_Flag; }

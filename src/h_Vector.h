@@ -21,8 +21,98 @@
 #define h_Vector_included
 //----------------------------------------------------------------------
 
-//TODO:
-// 3d vector (x,y,z)
+#include "src/h_Math.h"
+
+class h_Vector
+{
+  public:
+    float x,y,z;
+
+  public:
+
+    h_Vector()
+      {
+        set(0);
+      }
+
+    h_Vector(float n)
+      {
+        set(n);
+      }
+
+    h_Vector(float ax, float ay, float az)
+      {
+        set(ax,ay,az);
+      }
+
+    void set(float n)
+      {
+        x = n;
+        y = n;
+        z = n;
+      }
+
+    void set(float ax, float ay, float az)
+      {
+        x = ax;
+        y = ay;
+        z = az;
+      }
+
+    void set(h_Vector v)
+      {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+      }
+
+    void add(h_Vector v)
+      {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+      }
+
+    void sub(h_Vector v)
+      {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+      }
+
+    float dot(h_Vector v)
+      {
+        return ( x*v.x + y*v.y + z*v.z);
+      }
+
+    h_Vector cross(h_Vector v)
+      {
+        return h_Vector( y*v.z-v.y*z, v.x*z-x*v.z, x*v.y-v.x*y );
+      }
+
+    float length(void)
+      {
+        return h_Sqrt(x*x + y*y + z*z);
+      }
+
+    float distance(h_Vector v)
+      {
+        float a = x - v.x;
+        float b = y - v.y;
+        float c = z - v.z;
+        return h_Sqrt(a*a + b*b + c*c);
+      }
+
+    void normalize(void)
+      {
+        float len = x*x + y*y + z*z;
+        float invlen = h_InvSqrt(len);
+        x *= invlen;
+        y *= invlen;
+        z *= invlen;
+      }
+
+};
 
 //----------------------------------------------------------------------
 #endif

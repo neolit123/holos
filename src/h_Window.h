@@ -70,14 +70,25 @@ class h_Window : public h_Window_Impl
 
     virtual void on_Redraw(h_Widget* a_Widget, int a_Mode)
       {
-        h_Rect rect = a_Widget->getRect();
+        //h_Rect rect = a_Widget->getRect();
         //trace("redraw: " << rect.x << "," << rect.y << ", " << rect.w << "," << rect.h );
         h_Painter* painter = getSurface()->getPainter();
-        a_Widget->do_Paint(painter,rect,a_Mode);
-        //beginPaint();
-        //trace("blitbuffer: " << rect.x << "," << rect.y << ", " << rect.w << "," << rect.h);
-        blitBuffer(rect);
-        //endPaint();
+        h_Widget* wdg = a_Widget;
+        //while ( (wdg->getFlags()&wf_Alpha) && (wdg->m_Parent) ) wdg = wdg->m_Parent;
+        if (wdg->getFlags()&wf_Alpha)
+        {
+          if (wdg->m_Parent) wdg = wdg->m_Parent;
+          on_Redraw(wdg,a_Mode);
+        }
+        else
+        {
+          h_Rect rect = a_Widget->getRect();
+          wdg->do_Paint(painter,rect,a_Mode);
+          //beginPaint();
+          //trace("blitbuffer: " << rect.x << "," << rect.y << ", " << rect.w << "," << rect.h);
+          blitBuffer( rect );
+          //endPaint();
+        }
       }
 
     // a widget want to change the mouse cursor

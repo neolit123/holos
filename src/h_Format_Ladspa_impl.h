@@ -47,15 +47,15 @@ void lad_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSP
 //static
 void lad_activate_callback(LADSPA_Handle Instance)
   {
-    //axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
-    //inst->lad_activate();
+    h_Instance* inst = (h_Instance*)Instance;
+    inst->lad_activate();
   }
 
 //static
 void lad_run_callback(LADSPA_Handle Instance, unsigned long SampleCount)
   {
-    //axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
-    //inst->lad_run(SampleCount);
+    h_Instance* inst = (h_Instance*)Instance;
+    inst->lad_run(SampleCount);
   }
 
 // we don't support this
@@ -63,7 +63,7 @@ void lad_run_callback(LADSPA_Handle Instance, unsigned long SampleCount)
 //static
 void lad_run_adding_callback(LADSPA_Handle Instance, unsigned long SampleCount)
   {
-    //axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
+    //h_Instance* inst = (h_Instance*)Instance;
     //inst->lad_run_adding(SampleCount);
   }
 
@@ -82,28 +82,33 @@ void lad_set_run_adding_gain_callback(LADSPA_Handle Instance, LADSPA_Data Gain)
 void lad_deactivate_callback(LADSPA_Handle Instance)
   {
     //axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
-    //inst->lad_deactivate();
+    h_Instance* inst = (h_Instance*)Instance;
+    inst->lad_deactivate();
   }
 
 //----------
 
 static void lad_cleanup_callback(LADSPA_Handle Instance)
   {
-    //axInstanceLadspa* inst = (axInstanceLadspa*)Instance;
-    //inst->lad_cleanup();
-    //delete inst; // !!!
+    h_Instance* inst = (h_Instance*)Instance;
+    inst->lad_cleanup();
+    delete inst; // !!!
   }
 
+//----------------------------------------------------------------------
+//
 //----------------------------------------------------------------------
 
 h_Format::h_Format()
   {
+    m_Descriptor = H_NULL;
   }
 
 //----------
 
 h_Format::~h_Format()
   {
+    if (m_Descriptor) delete m_Descriptor;
   }
 
 //----------
@@ -230,73 +235,148 @@ h_Instance* h_Format::createInstance(h_Host* a_Host, h_Descriptor* a_Descriptor)
 
 LADSPA_Descriptor* h_Format::entrypoint(void* a_Ptr)
   {
-    //trace("");
 
+    // note that this specific m_Descriptor is only for filling the
+    // LADSPA_Descriptor struct. each plugin instance has its own h_Parameter
+    // object, since the parameters (and info about them) are part of the
+    // h_Descriptor
+    // a little bit of overhead, but so small that we can just ignore it..
     m_Descriptor = createDescriptor();
 
     int i;
     int index = 0;
+
     // audio inputs
+
+    // todo: add number at name end? [do we care?]
+    // if so, we need to keep the text buffer around, as we only deliver
+    // a ptr to the string to the host...
     for (i=0; i<m_Descriptor->m_NumInputs; i++)
     {
-      m_PortNames[index]               = (char*)"input"; //m_Descriptor->getInputName(i);             // !!!
+      m_PortNames[index]               = (char*)"input";
       m_PortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
       m_PortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
       m_PortHint[index].LowerBound     = -1;
       m_PortHint[index].UpperBound     =  1;
       index++;
     }
+
     // audio outputs
+
+    // todo: add number at name end? see comments above, for inputs..
     for (i=0; i<m_Descriptor->m_NumOutputs; i++)
     {
-      m_PortNames[index]               = (char*)"output"; //mDescriptor->getOutputName(i);            // !!!
+      m_PortNames[index]               = (char*)"output";
       m_PortDesc[index]                = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
       m_PortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_NONE;
       m_PortHint[index].LowerBound     = -1;
       m_PortHint[index].UpperBound     =  1;
       index++;
     }
+
     // parameters
+
     for (i=0; i<m_Descriptor->m_Parameters.size();  i++)
     {
-      //axParamInfo paraminfo = mDescriptor->getParamInfo(i);
-      m_PortNames[index] = m_Descriptor->m_Parameters[i]->getName().ptr(); //  paraminfo.mName;
+      h_Parameter* par = m_Descriptor->m_Parameters[i];
+      m_PortNames[index] = par->getName().ptr(); //  paraminfo.mName;
       m_PortDesc[index]  = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
-      LADSPA_PortRangeHintDescriptor hint = LADSPA_HINT_DEFAULT_NONE;
+      LADSPA_PortRangeHintDescriptor hint = LADSPA_HINT_DEFAULT_NONE; // = 0
+
       /*
-        TODO: we might need a way to get this info from a parameter (type, etc...)
-        perhaps some function in parameter,
-          getParamInfo(index,infostruct)
-        that fills the infostruct with needed info
-        a virtual function that each parameter type overrides...
+
+      * the internal value MUST be 0..1 for our parameter remapping, etc.
+      * which means we also have to have min.val=0, max.val=1, or the ladspa
+        host will allow the slider (or whatever) to go beyond the range, and
+        our conversion/remapping/callbacks will fail.
+      * conversion FROM the internal 0..1 to our useful value is similar to
+        vst, so the values are fully useable, except that the host-provided
+        gui in a ladspa plugin will show values from 0..1 only.
+      * host automation will work alright, range from 'empty' to 'full'
+      * think of the internal values as slider/knob position..
+      * we calculate the 'real' value to use (in process(), etc) during
+        parameter->getValue()
+      * reconsider/re-visit all this at a later time.
+      * first make it all _work_, then tweak to make it _right_
+
+
+
+      * i see one thing now:
+        in h_Instance_Ladspa_impl : lad_run()
+        we read the value directly from the host-provided pointers, and call
+        parameter->setInternal.
+        and in the instance constructor, we call parameter->getInternal
+        to set the value of these pointer-locations..
+        perhaps we could use the min/max values anyway, and call setValue
+        instead? to have the parameter automatically remapped back to 0..1
+        range. it would create a little bit of overhead, since the 0..1 value
+        would need to be recalculated each and every time any parameter
+        changes.. bad for busy automated parts, etc...
+        but, think a little about it... (but there's no hurry!)
+
+      * rather than focus strongly on smaller issues, i would rather spend
+        time now getting all parts of holos in place, even with restricted
+        functionality, so that we see what's needed, and which parts of the
+        lib affects other parts..
+
+
       */
 
+      // default value
+
 /*
-      float val   = paraminfo.mDef - paraminfo.mMin;
-           if (val == paraminfo.mMin ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MINIMUM;
-      else if (val == paraminfo.mMax ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MAXIMUM;
-      else if (val == 0 )   mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_0;
-      else if (val == 1 )   mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_1;
-      else if (val == 100 ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_100;
-      else if (val == 440 ) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_440;
-      else
-      {
-        float sval  = (paraminfo.mDef-paraminfo.mMin) / (paraminfo.mMax-paraminfo.mMin);
-        if (sval < 0.25) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_LOW;
-        else if (sval > 0.75) mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_HIGH;
-        else mPortHint[index].HintDescriptor = LADSPA_HINT_DEFAULT_MIDDLE;
-      }
-      if (paraminfo.mType==pa_Pow) hint |= LADSPA_HINT_LOGARITHMIC;
-      if (paraminfo.mType==pa_Int)
-      {
-        if (paraminfo.mMin==0 && paraminfo.mMax==1) hint |= LADSPA_HINT_TOGGLED;
-        else hint |= LADSPA_HINT_INTEGER;
-      }
+
+hm, we don't have the un-transformed min/max values stored in the h_Parameter.
+either we need to do that (hopefully not!)
+OR
+we check with the transformed version (0..1), since this is already calculated
+using min/max, and for example 0.5 ought to me in the middle of the range..
+
+one obstacle then, is, if a value is 0, is it a _real_ 0, or a transformed 0
+due to minimum range, etc???
+
+for example:
+min=5, max=10:, value=7.5
+the value would be translated to 0.5 when defining the parameter
+(we don't have min/max an
+
+
+let's try that first, and see how it goes..
+
 */
 
+      float val = par->getInternal(); // 0..1, already 'transformed'
+
+
+           if (val == 0.00) hint |= LADSPA_HINT_DEFAULT_MINIMUM;//0;
+      else if (val == 1.00) hint |= LADSPA_HINT_DEFAULT_MAXIMUM;//1;
+      else if (val <  0.25) hint |= LADSPA_HINT_DEFAULT_LOW;
+      else if (val >  0.75) hint |= LADSPA_HINT_DEFAULT_HIGH;
+      else                  hint |= LADSPA_HINT_DEFAULT_MIDDLE;
+      // LADSPA_HINT_DEFAULT_MINIMUM
+      // LADSPA_HINT_DEFAULT_MAXIMUM
+      // LADSPA_HINT_DEFAULT_100
+      // LADSPA_HINT_DEFAULT_440
+
+      // we don't use this, because our internal value must be from 0..1,
+      // and linear, or our remapping/callback functions will not work
+
+      // logarithmic
+      // if (paraminfo.mType==pa_Pow) hint |= LADSPA_HINT_LOGARITHMIC;
+
+      // similar to logarithmic, not used..
+
+      // integer/toggled
+      //if (par->getFlags() & pf_Int)
+      //{
+      //  if (par->getMin()==0 && par->getMax()==1) hint |= LADSPA_HINT_TOGGLED;
+      //  else hint |= LADSPA_HINT_INTEGER;
+      //}
+
       m_PortHint[index].HintDescriptor = hint | LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-      m_PortHint[index].LowerBound = 0;//paraminfo.mMin;
-      m_PortHint[index].UpperBound = 1;//paraminfo.mMax;
+      // and, as mentioned above, we must keep the value within 0..1 range
+      m_PortHint[index].LowerBound = par->m_OrigMin;// getMin(); // 0
+      m_PortHint[index].UpperBound = par->m_OrigMax;// getMax(); // 1
       index++;
     }
 
@@ -330,9 +410,11 @@ LADSPA_Descriptor* h_Format::entrypoint(void* a_Ptr)
 
 LADSPA_Handle h_Format::lad_instantiate(const LADSPA_Descriptor* Descriptor, unsigned long SampleRate)
   {
+    trace("");
     h_Host* host = new h_Host();
-    h_Instance* inst = createInstance(host,m_Descriptor);
-    //inst->mSampleRate = SampleRate;
+    h_Descriptor* desc = createDescriptor();
+    h_Instance* inst = createInstance(host,desc);
+    inst->m_SampleRate = SampleRate;  // ?
     inst->do_HandleState(is_Open);
     return (LADSPA_Handle)inst;
   }
@@ -345,35 +427,3 @@ LADSPA_Handle h_Format::lad_instantiate(const LADSPA_Descriptor* Descriptor, uns
 
 
 
-// axonlib instance descriptor:
-/*
-  // setup parameters
-  for (int i=0; i<mDescriptor->getNumParams(); i++)
-  {
-    axParamInfo p = mDescriptor->getParamInfo(i);
-
-    float val = p.mDef;
-    if (val<0.33) val=0.25;
-    else if (val>0.66) val=0.75;
-    else val=0.5;
-    switch(p.mType)
-    {
-      case pa_Par:
-        appendParameter( new axParameter( this,p.mName,"", val ) );
-        break;
-      case pa_Float:
-        appendParameter( new parFloat(    this,p.mName,"",val, p.mMin, p.mMax, p.mStep ) );
-        break;
-      case pa_Pow:
-        appendParameter( new parFloatPow( this,p.mName,"",val, p.mMin, p.mMax, p.mStep, p.mAux ) );
-        break;
-      case pa_Int:
-        appendParameter( new parInteger(  this,p.mName,"",val, p.mMin, p.mMax, p.mStr ) );
-        break;
-      case pa_Ctm:
-        appendParameter( new parFloatCustom( this,p.mName,"",p.mDef, p.mMin, p.mMax, p.mStep, p.mPtr ) );
-        break;
-    }
-  }
-  setupParameters();
-*/
