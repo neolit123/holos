@@ -17,46 +17,24 @@
   If not, see <http://holos.googlecode.com/>.
 */
 //----------------------------------------------------------------------
-#ifndef h_Core_included
-#define h_Core_included
+#ifndef h_Main_included
+#define h_Main_included
 //----------------------------------------------------------------------
 
-//class h_Platform;
-//class h_Format;
+#ifdef H_EXE
+  int main(int argc, char** argv);
+#endif
 
-#include "src/h_Platform.h"
-#include "src/h_Format.h"
+#ifdef H_LADSPA
+  //__externc __dllexport
+  const LADSPA_Descriptor* ladspa_descriptor(unsigned long Index);
+#endif
 
-//----------
-
-class h_Core
-{
-  private:
-    bool  m_Initialized;
-  public:
-    h_Platform* m_Platform;
-    h_Format*   m_Format;
-  public:
-    h_Core();
-    ~h_Core();
-    void initialize(void);
-};
-
-//----------
-
-/*
-  since this is static, it will be shared among all instances of our plugin,
-  and the constructor will be called just after the dll/exe is loaded, during
-  static variable initialization, before any other functions is called
-  (like main,DllMain,..)
-  and the desctructor is called when it's unloading from memory.. after
-  everything else.
-  and it's available anywhere, and gives access to the platfomr and format
-  specific classes for the rest of the library code..
-*/
-
-static h_Core static_Core;
+#ifdef H_VST
+  AEffect* main(audioMasterCallback audioMaster)
+#endif
 
 //----------------------------------------------------------------------
 #endif
+
 

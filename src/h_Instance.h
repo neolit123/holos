@@ -28,7 +28,7 @@
 #include "src/h_Parameter.h"
 #include "src/h_Descriptor.h"
 
-//----------
+//----------------------------------------------------------------------
 
 // instance states
 #define is_None     0

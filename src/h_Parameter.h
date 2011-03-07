@@ -26,8 +26,6 @@
 #include "src/h_Math.h"
 #include "src/h_Stdlib.h"
 
-#define H_DISP_MAXNUMS 4
-
 // parameter flags
 #define pf_None     0
 #define pf_Automate 1 // effCanBeAutomated
@@ -37,7 +35,14 @@
 #define pf_Int      4
 #define pf_Bool     8
 
-#define PF_DEFAULT pf_Automate
+#ifndef PF_DEFAULT
+  #define PF_DEFAULT pf_Automate
+#endif
+
+#ifndef H_DISP_MAXNUMS
+  #define H_DISP_MAXNUMS 4
+#endif
+
 
 //----------------------------------------------------------------------
 
@@ -50,70 +55,59 @@ class h_Parameter
 
   protected:
     h_String  m_Name;
-    h_String  m_Label;
-    int       m_Flags;
-    float     m_Value;
-    float     m_Min;
-    float     m_Max;
+    h_String  m_Label;    
+    float     m_Value;    
     float     (*m_Ptr)(float);
     float     (*m_InvPtr)(float);
+    
   public:
     //TODO: private + get/set*()
     // untransformed valuies, for ladspa-crap:
-    float     m_OrigMin;
-    float     m_OrigMax;
-    float     m_OrigVal;
+    int       m_Flags;
+    float     m_Min;
+    float     m_Max;
 
-  public:
-  //  float m_Min;
-  //  float m_Max;
-
-    /*
-    idea/suggestions:
-    swap around the parameters a little, so we could do something like:
-      new h_Parameter("Damping", 0.5)
-    and the rest oculd be default arguments
-    (and, i don't know if we use the flags yet? we assume all parameters are
-     automatable? and what about the label? how useful is it?
-
-    ------------------
-    - the label seems to be useful:
-      <name>    <value>   <label>
-      some_par   -32.5      dB
-    - automation is ok to be "on" by default, but switchable (as it is now).
-    - flags can hold both "automation status" and "parameter type", but the
-      type has to be set automatically when creating with "new h_Parameter".
-      (and these should be in a bit field)
-    - in "h_Format_Ladspa_impl.h" there could be a check for that "type".
-    - due to the mess of combining the two formats (ladspa, vst), i think
-      that possibly the calls "new h_Parameter", "new h_ParText"
-      should be replaced with macros that accept n elements, or something
-      (for better control).
-    */
-
+  public: 
     h_Parameter( const h_String a_Name,
                  const h_String a_Label = "",
                  const int a_Flags = PF_DEFAULT,
                  const float a_Value = 0,
+                 const float a_Min = 0,
+                 const float a_Max = 1,
                  float (*a_Ptr)(float) = H_NULL,
                  float (*a_InvPtr)(float) = H_NULL)
       {
-
-        m_OrigMin = 0;
-        m_OrigMax = 1;
-        m_OrigVal = a_Value;
-
         m_Connect  = -1;
         m_Index    = -1;
         m_Name     = a_Name;
         m_Label    = a_Label;
         m_Flags    = a_Flags;
+        m_Default  = m_Value;
+        setValue(a_Value);
+        
         m_Ptr      = a_Ptr;
         m_InvPtr   = a_InvPtr;
-        setValue(a_Value);
-        m_Default  = m_Value;
-        m_Min      = 0;
-        m_Max      = 1;
+        
+        // define limits
+        #ifdef H_LADSPA
+          if (m_Ptr)
+          {
+            m_Min = m_Ptr(a_Min);
+            m_Max = m_Ptr(a_Max);
+            if (!h_Isnormalf(m_Min)) m_Min = 0.f;
+            if (!h_Isnormalf(m_Max)) m_Max = 0.f;
+          }
+          else
+          {
+            m_Min = a_Min;
+            m_Max = a_Max;
+          }
+          m_Ptr = H_NULL;
+          m_InvPtr = H_NULL;
+        #else
+          m_Min = a_Min;
+          m_Max = a_Max;
+        #endif // !H_LADSPA
       }
 
     virtual ~h_Parameter()
@@ -126,17 +120,20 @@ class h_Parameter
     virtual void      setConnect(int a_Connect)   { m_Connect=a_Connect; }
     virtual int       getConnect(void)            { return m_Connect; }
 
-    virtual void      setInternal(float a_Value)  { m_Value=a_Value; }    // 0..1
-    virtual float     getInternal(void)           { return m_Value; }     // 0..1
+    virtual void      setInternal(float a_Value)  { m_Value=a_Value; }      // 0..1
+    virtual float     getInternal(void)           { return m_Value; }       // 0..1
 
-    virtual void      setValue(float a_Value)     { if (m_InvPtr) m_Value=m_InvPtr(a_Value); else m_Value=a_Value; } // transformed
-    virtual float     getValue(void)              { if (m_Ptr) return m_Ptr(m_Value); else return m_Value; } // transformed
+    // ### test with no pointers for default class 
+    // there has to be a NAN check here as well
+    
+    virtual void      setValue(float a_Value)     { /* if (m_InvPtr) m_Value=m_InvPtr(a_Value); else */ m_Value=a_Value; } // transformed
+    virtual float     getValue(void)              { /* if (m_Ptr) return m_Ptr(m_Value); else */ return m_Value; } // transformed
 
     virtual void      reset(void)                 { m_Value=m_Default;}
 
     virtual void      getName(char* buf)          { h_Strcpy(buf,m_Name.ptr()); }
     virtual void      getLabel(char* buf)         { h_Strcpy(buf,m_Label.ptr()); }
-    virtual int       getFlags(void)              { return m_Flags; }     // 0..1
+    virtual int       getFlags(void)              { return m_Flags; }
     virtual void      getDisplay(char* buf)       { h_Ftoa(buf, getValue(),H_DISP_MAXNUMS); }
     virtual h_String  getName(void)               { return m_Name; }
     virtual h_String  getLabel(void)              { return m_Label; }
@@ -169,36 +166,17 @@ class h_ParFloat : public h_Parameter
                 const float a_Step = 0.f,
                 float (*a_Ptr)(float) = H_NULL,
                 float (*a_InvPtr)(float) = H_NULL)
-    : h_Parameter(a_Name,a_Label,a_Flags,a_Value,a_Ptr,a_InvPtr)
+    : h_Parameter(a_Name,a_Label,a_Flags,a_Value,a_Min,a_Max,a_Ptr,a_InvPtr)
     {
-      setup(a_Value,a_Min,a_Max,a_Step);
+      setup(a_Value,a_Step);
     }
 
-    void setup( float a_Value, float a_Min, float a_Max, float a_Step)
+    void setup( float a_Value, float a_Step)
       {
-
-        // if these needs to be transformed by invptr, etc, move further down..
-        m_OrigVal = a_Value;
-        m_OrigMin = a_Min;
-        m_OrigMax = a_Max;
-
-        if (m_InvPtr)
-        {
-          m_Min = m_InvPtr(a_Min);
-          m_Max = m_InvPtr(a_Max);
-        }
-        else
-        {
-          m_Min = a_Min;
-          m_Max = a_Max;
-        }
-
-        // to here....
-
         m_Step = a_Step;
         m_Range = m_Max - m_Min;
         m_InvRange = 1 / m_Range;
-        if (m_Step>0)
+        if (m_Step > 0)
         {
           m_NumSteps = 1 + (m_Range / m_Step);
           m_StepSize = 1 / (m_NumSteps - 1);
@@ -212,19 +190,16 @@ class h_ParFloat : public h_Parameter
         }
 
         setValue(a_Value);
-
       }
 
-    //virtual
     float calcSetValue(const float a_Value)
       {
-        return ((a_Value-m_Min)*m_InvRange);
+        return ((a_Value - m_Min)*m_InvRange);
       }
 
-    //virtual
     float calcGetValue(float a_Value)
       {
-        if (m_Step>0)
+        if (m_Step > 0)
         {
           const float n = a_Value * m_NumSteps;
           const int st = h_Mini((int)n, (int)(m_NumSteps - 1));
@@ -244,8 +219,13 @@ class h_ParFloat : public h_Parameter
 
     virtual float getValue(void)
       {
-        if (m_Ptr) return m_Ptr( calcGetValue(m_Value) );
-        else return calcGetValue(m_Value);
+        float res;
+        if (m_Ptr) res = m_Ptr( calcGetValue(m_Value) );
+        else res = calcGetValue(m_Value);
+        if (!h_Isnormalf(res))
+          return 0.f;          
+        else
+          return res;
       }
 
 };
@@ -271,38 +251,22 @@ class h_ParInt : public h_Parameter
               const int a_Max = 1,
               float (*a_Ptr)(float) = H_NULL,
               float (*a_InvPtr)(float) = H_NULL)
-      : h_Parameter(a_Name, a_Label, a_Flags, a_Value, a_Ptr, a_InvPtr)
+      : h_Parameter(a_Name,a_Label,a_Flags,a_Value,a_Min,a_Max,a_Ptr,a_InvPtr)
       {
-        setup(a_Value,a_Min,a_Max);
+        setup(a_Value);
       }
 
-    void setup( const int a_Value, const int a_Min, const int a_Max)
+    void setup( const int a_Value)
       {
-
-        // and same here...
-        m_OrigVal = a_Value;
-        m_OrigMin = a_Min;
-        m_OrigMax = a_Max;
-        m_Flags |= pf_Int;
-        // if 0,1 only, then pf_Bool ??
-
-        if (m_InvPtr)
-        {
-          m_Min = m_InvPtr(a_Min);
-          m_Max = m_InvPtr(a_Max);
-        }
-        else
-        {
-          m_Min = a_Min;
-          m_Max = a_Max;
-        }
+        if (m_Min == 0 && m_Max == 1) m_Flags |= pf_Bool;
+        else m_Flags |= pf_Int;
+        
         m_Range     = m_Max - m_Min + 1;
         m_InvRange  = 1/m_Range;
         m_HalfStep  = (m_InvRange)*0.5;
         setValue(a_Value);
       }
 
-    //virtual
     float calcSetValue(const int a_Value)
       {
         float res = (float)(a_Value - m_Min) * m_InvRange;
@@ -310,28 +274,32 @@ class h_ParInt : public h_Parameter
         return res;
       }
 
-    //virtual //int
     float calcGetValue(int a_Value)
       {
         const float n = h_Floor(m_Value * m_Range);
-        return (int)(m_Min + h_Mini((int)n, (int)(m_Range - 1)));
+        return (int)(m_Min + h_Mini((int)n, (int)(m_Range - 1)));        
       }
 
     virtual void setValue(const float a_Value)
       {
-        if (m_InvPtr) m_Value = calcSetValue( m_InvPtr(a_Value) );
-        else m_Value = calcSetValue(a_Value);
+        if (m_InvPtr) m_Value = calcSetValue((int)m_InvPtr(a_Value));
+        else m_Value = calcSetValue((int)a_Value);
       }
 
     virtual float getValue(void)
       {
-        if (m_Ptr) return m_Ptr( calcGetValue(m_Value) );
-        else return calcGetValue(m_Value);
+        float res;
+        if (m_Ptr) res = m_Ptr(calcGetValue((int)m_Value));
+        else res = calcGetValue((int)m_Value);
+        if (!h_Isnormalf(res))
+          return 0.f;
+        else
+          return res;          
       }
 
     virtual void getDisplay(char* buf)
       {
-        const int i = getValue();//calcGetValue(m_Value);
+        const int i = (int)getValue();
         h_Itoa(buf,i);
       }
 
@@ -364,7 +332,7 @@ class h_ParText : public h_ParInt
 
     virtual void getDisplay(char* buf)
       {
-        const int i = /*h_ParInt::*/calcGetValue(m_Value);
+        const int i = (int)getValue();
         if (m_Strings) h_Strcpy(buf, m_Strings[i]);
         else h_Itoa(buf, i);
       }
@@ -375,3 +343,32 @@ class h_ParText : public h_ParInt
 typedef h_Array<h_Parameter*> h_Parameters;
 
 #endif /* h_Parameter_included */
+
+
+
+
+
+// comments
+
+    /*
+    idea/suggestions:
+    swap around the parameters a little, so we could do something like:
+      new h_Parameter("Damping", 0.5)
+    and the rest oculd be default arguments
+    (and, i don't know if we use the flags yet? we assume all parameters are
+     automatable? and what about the label? how useful is it?
+
+    ------------------
+    - the label seems to be useful:
+      <name>    <value>   <label>
+      some_par   -32.5      dB
+    - automation is ok to be "on" by default, but switchable (as it is now).
+    - flags can hold both "automation status" and "parameter type", but the
+      type has to be set automatically when creating with "new h_Parameter".
+      (and these should be in a bit field)
+    - in "h_Format_Ladspa_impl.h" there could be a check for that "type".
+    - due to the mess of combining the two formats (ladspa, vst), i think
+      that possibly the calls "new h_Parameter", "new h_ParText"
+      should be replaced with macros that accept n elements, or something
+      (for better control).
+    */

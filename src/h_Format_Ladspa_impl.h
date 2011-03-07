@@ -345,38 +345,23 @@ let's try that first, and see how it goes..
 
 */
 
-      float val = par->getInternal(); // 0..1, already 'transformed'
+      float val = par->getInternal();
 
-
-           if (val == 0.00) hint |= LADSPA_HINT_DEFAULT_MINIMUM;//0;
-      else if (val == 1.00) hint |= LADSPA_HINT_DEFAULT_MAXIMUM;//1;
+           if (val == 0.00) hint |= LADSPA_HINT_DEFAULT_MINIMUM;
+      else if (val == 1.00) hint |= LADSPA_HINT_DEFAULT_MAXIMUM;
       else if (val <  0.25) hint |= LADSPA_HINT_DEFAULT_LOW;
       else if (val >  0.75) hint |= LADSPA_HINT_DEFAULT_HIGH;
       else                  hint |= LADSPA_HINT_DEFAULT_MIDDLE;
-      // LADSPA_HINT_DEFAULT_MINIMUM
-      // LADSPA_HINT_DEFAULT_MAXIMUM
-      // LADSPA_HINT_DEFAULT_100
-      // LADSPA_HINT_DEFAULT_440
+      
+            if (par->m_Flags & pf_Log)   hint |= LADSPA_HINT_LOGARITHMIC;
+      else  if (par->m_Flags & pf_Bool)  hint |= LADSPA_HINT_TOGGLED;
+      else  if (par->m_Flags & pf_Int)   hint |= LADSPA_HINT_INTEGER;
+      
+      m_PortHint[index].HintDescriptor =  hint | LADSPA_HINT_BOUNDED_BELOW |
+                                          LADSPA_HINT_BOUNDED_ABOVE;
 
-      // we don't use this, because our internal value must be from 0..1,
-      // and linear, or our remapping/callback functions will not work
-
-      // logarithmic
-      // if (paraminfo.mType==pa_Pow) hint |= LADSPA_HINT_LOGARITHMIC;
-
-      // similar to logarithmic, not used..
-
-      // integer/toggled
-      //if (par->getFlags() & pf_Int)
-      //{
-      //  if (par->getMin()==0 && par->getMax()==1) hint |= LADSPA_HINT_TOGGLED;
-      //  else hint |= LADSPA_HINT_INTEGER;
-      //}
-
-      m_PortHint[index].HintDescriptor = hint | LADSPA_HINT_BOUNDED_BELOW |  LADSPA_HINT_BOUNDED_ABOVE;
-      // and, as mentioned above, we must keep the value within 0..1 range
-      m_PortHint[index].LowerBound = par->m_OrigMin;// getMin(); // 0
-      m_PortHint[index].UpperBound = par->m_OrigMax;// getMax(); // 1
+      m_PortHint[index].LowerBound = par->m_Min;
+      m_PortHint[index].UpperBound = par->m_Max;
       index++;
     }
 

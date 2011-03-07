@@ -38,13 +38,14 @@ class desc : public h_Descriptor
       m_NumOutputs  = 2;
       m_EditorRect  = H_NULL_RECT;
       appendParameter
-        (new h_ParFloat("parFloat", "", H_NULL, 4, 0, 10, 0.1, &pow2, &inv_pow2));
-      //appendParameter
-      //  (new h_ParDb("parDb", H_NULL, 0, -24, 24, 0.001));
+        (new h_ParFloat("parFloat", "", H_NULL, 2.5, 0, 5, 0.01, &pow2, &inv_pow2 ));
       appendParameter
-        (new h_ParInt("parInt", "", H_NULL, 4, 0, 40, &pow2, &inv_pow2));
+        (new h_ParInt("parInt", "", H_NULL, 4, 0, 40, &pow2, &inv_pow2 ));
+      appendParameter
+        (new h_ParInt("parBool", "", H_NULL, 0, 0, 1));
       appendParameter
         (new h_ParText("parText", "", H_NULL, 2, 4, strings));
+      
     }
 };
 

@@ -255,7 +255,7 @@ goto begin
 
 :: format is vst
 :vsttarget
-if not exist %vstpath%\pluginterfaces\vst2.x\aeffect.h goto novstsdk
+if not exist %vstpath%\aeffect.h goto novstsdk
 if not [%v%]==[] echo ---------------------------------------------------------------------------
 set suffix=-vst
 set ext=.dll

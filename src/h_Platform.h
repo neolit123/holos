@@ -21,6 +21,18 @@
 #define h_Platform_included
 //----------------------------------------------------------------------
 
+#include "src/h_String.h"
+
+class h_Platform_Base
+{
+  public:
+    h_Platform_Base();
+    virtual ~h_Platform_Base();
+    virtual h_String getName(void);
+};
+
+//----------------------------------------------------------------------
+
 #ifdef H_LINUX
   #include "src/h_Platform_Linux.h"
 #endif

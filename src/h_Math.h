@@ -46,6 +46,7 @@ naming scheme:
   #define H_MATH_INLINE inline
 #endif
 
+// constants
 #define DENORM      1.0000000E-37F
 #define LIN2DB      8.65617024533F
 #define DB2LIN      0.11552453009F
@@ -71,6 +72,92 @@ naming scheme:
 
 #define H_PI_180    0.0174532925199432957692369076848
 #define H_180_PI    57.295779513082320876798154814105
+
+// internal IEEE floating point number classification (fast)
+#include "sys/param.h"
+
+#define H_BYTE_ORDER BYTE_ORDER
+
+#define H_FP_INFINITE     0x01
+#define H_FP_NAN          0x02
+#define H_FP_NORMAL       0x04
+#define H_FP_SUBNORMAL    0x08
+#define H_FP_ZERO         0x10
+
+union h_IEEE_bits_float
+{
+  float x;
+  struct
+  {
+    #if H_BYTE_ORDER == LITTLE_ENDIAN
+      unsigned int man  : 23;
+      unsigned int exp  : 8;
+      unsigned int sign : 1;
+    #else
+      unsigned int sign : 1;
+      unsigned int exp  : 8;
+      unsigned int man  : 23;
+    #endif // BIG_ENDIAN
+  } bits;
+};
+
+int h_Fpclassifyf(const float x)
+{
+  union h_IEEE_bits_float u;
+  u.x = x;
+  if (u.bits.exp == 0)
+  {
+    if (u.bits.man == 0)
+      return (H_FP_ZERO);
+    return (H_FP_SUBNORMAL);
+  }
+  if (u.bits.exp == 255)
+  {
+    if (u.bits.man == 0)
+      return (H_FP_INFINITE);
+    return (H_FP_NAN);
+  }
+  return (H_FP_NORMAL);
+}
+
+// isinf_float
+H_MATH_INLINE
+int h_Isinff(const float x)
+{
+  union h_IEEE_bits_float u;
+  u.x = x;
+  return (u.bits.exp == 255 && u.bits.man == 0);
+}
+
+// isfinite_float
+H_MATH_INLINE
+int h_Isfinitef(const float x)
+{
+  union h_IEEE_bits_float u;
+  u.x = x;
+  return (u.bits.exp != 255);
+}
+
+// isnan_float
+H_MATH_INLINE
+int h_Isnanf(const float x)
+{
+  union h_IEEE_bits_float u;
+  u.x = x;
+  return (u.bits.exp == 255 && u.bits.man != 0);
+}
+
+// issubnormal_float
+H_MATH_INLINE
+int h_Isnormalf(const float x)
+{
+  union h_IEEE_bits_float u;
+  u.x = x;
+  return (u.bits.exp != 255 && u.bits.exp != 0);
+}
+
+
+// ---------------------------------------------------------------------------
 
 // cabs
 #define h_Cabs(a, b) \

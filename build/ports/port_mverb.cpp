@@ -75,9 +75,11 @@ class my_Instance : public h_Instance
     my_Instance(h_Host* a_Host, h_Descriptor* a_Descriptor)
     : h_Instance(a_Host,a_Descriptor)
       {
+        /*
         char buffer[256];
         h_GetHomePath(buffer);
         trace( "h_GetHomePath: " << buffer );
+        */
       }
 
     //----------

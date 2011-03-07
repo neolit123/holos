@@ -21,6 +21,24 @@
 #define h_Format_included
 //----------------------------------------------------------------------
 
+#include "src/h_String.h"
+#include "src/h_Descriptor.h"
+#include "src/h_Instance.h"
+#include "src/h_Host.h"
+
+class h_Format_Base
+{
+  public:
+    h_Format_Base();
+    virtual ~h_Format_Base();
+    virtual h_Descriptor* createDescriptor(void);
+    virtual h_Instance*   createInstance(h_Host* a_Host,h_Descriptor* a_Descriptor);
+    virtual int           entrypoint(void* a_Ptr);
+    virtual h_String      getName(void) { return "exe"; }
+};
+
+//----------------------------------------------------------------------
+
 #ifdef H_EXE
   #include "src/h_Format_Exe.h"
 #endif
