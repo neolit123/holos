@@ -28,6 +28,9 @@ code in this header:
   - is non-portable to hardware without FPU  
   - needs user defined types via macro
   - needs a lot of cleanup
+  
+todo:
+  - separation between x86, x64 and other platforms
 
 naming scheme:
   - stdlib replacements  h_Sqrt
@@ -147,7 +150,7 @@ int h_Isnanf(const float x)
   return (u.bits.exp == 255 && u.bits.man != 0);
 }
 
-// issubnormal_float
+// isnormal_float
 H_MATH_INLINE
 int h_Isnormalf(const float x)
 {
@@ -497,7 +500,7 @@ float h_ExpF(register const float v)
     double d;
     struct
     {
-      #ifdef LITTLE_ENDIAN
+      #if H_BYTE_ORDER == LITTLE_ENDIAN
         int i, j;
       #else
         int j, i;
@@ -694,8 +697,8 @@ float h_Asin(register float value)
 H_MATH_INLINE
 float h_AsinF(register const float x)
 {
-  return PI_2 - h_SqrtF(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610 -
-  x*(0.0187293 + 0.395*x))));
+  return  PI_2 - h_SqrtF(1 - x)*(1.5707288 - x*(0.2121144 + x*(0.0742610 -
+          x*(0.0187293 + 0.395*x))));
 }
 
 // calculates the arc-cosine of a floating point number (fpu)

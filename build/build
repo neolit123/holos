@@ -46,7 +46,7 @@ windres="i586-mingw32msvc-windres"
 resfile="rc_default.rc"
 
 # warning flags
-warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long
+warn="-pedantic -fpermissive -W -Wall -Wextra -Wno-unused -Wno-long-long"
 
 # optimization
 # you can add --whole-program --combine here for newer GCC
@@ -68,7 +68,7 @@ function show_help
   echo ""
   echo "usage:"
   echo "./build [file.cpp] [-h] [-linux or -win32] [format] [options] [...]"
-  echo ""  
+  echo ""
   echo "-linux : target linux (default)"
   echo "-win32 : target windows using mingw"
   echo "-exe : create an executable (default)"
@@ -77,9 +77,9 @@ function show_help
   echo "-64 : target 64bit (default is 32bit)"
   echo "-nogui : compile without gui"
   echo "-nmv : do not move result to ../bin"
-  echo "-ts : add time stamp to name e.g. plugin-vst-20153569.so" 
+  echo "-ts : add time stamp to name e.g. plugin-vst-20153569.so"
   echo "-d : enable library debug mode"
-  echo "-g : enable gcc debug mode (-gstabs)"  
+  echo "-g : enable gcc debug mode (-gstabs)"
   echo "-v : verbose"
   echo "-h : show this help message"
   echo "[...] : pass extra parameters e.g. -DSOME_DEF_1 -DSOME_DEF_2"
