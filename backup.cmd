@@ -12,7 +12,7 @@ set target_path=h:\
 set source_path=
 :: backup period in minutes; set to blank for no periodic backup
 set period=
-:: path to 7za.exe (with \ at the end); set to blank if 7za is included in PATH 
+:: path to 7za.exe (with \ at the end); set to blank if 7za is included in PATH
 set path_7za=
 :: 7za command line
 set cmd_7za=a -tzip -mx3
@@ -46,21 +46,21 @@ set td=%td::=%
 set td0=%td:~0,8%
 set td1=%td:~9%
 set target=%target_path%%c_dir_name%_%td0%_%td1%.zip
-set cmd_7za_exec=%path_7za%7za %cmd_7za% %target% "%source_path%" %exclude%
+set cmd_7za_exec=%path_7za%7za %cmd_7za% "%target%" "%source_path%" %exclude%
 
 %cmd_7za_exec%
 echo.
-if exist %target% (
-  echo *** success 
+if exist "%target%" (
+  echo *** success
 ) else (
-  echo *** %target% failed  
+  echo *** %target% failed
   echo *** exit
   pause
   goto exit
 )
 echo.
 if [%period%]==[] (
-  ping -n 1 -w 1000 0.0.0.1 > NUL  
+  ping -n 1 -w 1000 0.0.0.1 > NUL
 ) else (
   echo *** next backup in %period% minute^(s^)
   ping -n 1 -w %per_ms% 0.0.0.1 > NUL

@@ -223,7 +223,9 @@ if [%6]==[-exe] goto exetarget
 if [%7]==[-exe] goto exetarget
 if [%8]==[-exe] goto exetarget
 if [%9]==[-exe] goto exetarget
-goto :exetarget
+
+:defaultexe
+goto exetarget
 
 :: set lib debug
 :setlibdebug
